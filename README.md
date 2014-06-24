@@ -1,4 +1,4 @@
 Genome2D-ContextFlash
 =====================
 
-Flash/AIR context for Genome2D framework
+Flash/AIR low level context for Genome2D framework
