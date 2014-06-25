@@ -56,7 +56,7 @@ class GImageAsset extends GAsset {
         g2d_type = GImageAssetType.BITMAPDATA;
     }
 
-    override private function completeHandler(event:Event):Void {
+    override private function g2d_completeHandler(event:Event):Void {
         g2d_bytes = event.target.data;
         GAssetManager.PATH_REGEX.match(g2d_url);
         var extension:String = GAssetManager.PATH_REGEX.matched(2);
@@ -65,7 +65,7 @@ class GImageAsset extends GAsset {
                 var loaderContext:LoaderContext = new LoaderContext();
                 var loader:Loader = new Loader();
                 loaderContext.imageDecodingPolicy = ImageDecodingPolicy.ON_LOAD;
-                loader.contentLoaderInfo.addEventListener(Event.COMPLETE, bytesComplete);
+                loader.contentLoaderInfo.addEventListener(Event.COMPLETE, g2d_bytesComplete);
                 loader.loadBytes(g2d_bytes, loaderContext);
             case _:
                 if (String.fromCharCode(g2d_bytes[0])+String.fromCharCode(g2d_bytes[1])+String.fromCharCode(g2d_bytes[2]) == "ATF") {
@@ -75,7 +75,7 @@ class GImageAsset extends GAsset {
         }
     }
 
-    private function bytesComplete(event:Event):Void {
+    private function g2d_bytesComplete(event:Event):Void {
         g2d_type = GImageAssetType.BITMAPDATA;
         g2d_nativeImage = cast (event.target.loader.content,Bitmap).bitmapData;
         onLoaded.dispatch(this);

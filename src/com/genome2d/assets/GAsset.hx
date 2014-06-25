@@ -53,7 +53,7 @@ class GAsset
             var urlLoader:URLLoader = new URLLoader();
             urlLoader.dataFormat = URLLoaderDataFormat.BINARY;
             urlLoader.addEventListener(Event.COMPLETE, g2d_completeHandler);
-            urlLoader.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandler);
+            urlLoader.addEventListener(IOErrorEvent.IO_ERROR, g2d_ioErrorHandler);
             urlLoader.load(new URLRequest(g2d_url));
         }
     }
@@ -61,7 +61,7 @@ class GAsset
     private function g2d_completeHandler(p_event:Event):Void {
     }
 
-    private function ioErrorHandler(event:IOErrorEvent):Void {
+    private function g2d_ioErrorHandler(event:IOErrorEvent):Void {
         trace(event);
     }
 }
