@@ -8,6 +8,7 @@
  */
 package com.genome2d.textures.factories;
 
+import com.genome2d.textures.GTexture;
 import com.genome2d.geom.GRectangle;
 import com.genome2d.context.IContext;
 import com.genome2d.geom.GRectangle;
@@ -69,12 +70,12 @@ class GTextureAtlasFactory
 		textureAtlas.invalidateNativeTexture(false);
 		return textureAtlas;
 	}	
-	
+
 	static public function createFromAssets(p_id:String, p_imageAsset:GImageAsset, p_xmlAsset:GXmlAsset, p_format:String = "bgra"):GTextureAtlas {
 		return createFromBitmapDataAndXml(p_id, p_imageAsset.nativeImage, p_xmlAsset.xml, p_format);
 	}
 
-    static public function createFontFromAssets(p_id:String, p_imageAsset:GImageAsset, p_xmlAsset:GXmlAsset, p_format:String = "bgra"):GTextureAtlas {
+    static public function createFontFromAssets(p_id:String, p_imageAsset:GImageAsset, p_xmlAsset:GXmlAsset, p_format:String = "bgra"):GFontTextureAtlas {
         return createFromBitmapDataAndFontXml(p_id, p_imageAsset.nativeImage, p_xmlAsset.xml, p_format);
     }
 
@@ -108,21 +109,27 @@ class GTextureAtlasFactory
         return createFromBitmapDatas(p_id, bitmaps, ids, p_format);
     }
 
-    static public function createFromBitmapDataAndFontXml(p_id:String, p_bitmapData:BitmapData, p_fontXml:Xml, p_format:String = "bgra"):GTextureAtlas {
-        var textureAtlas:GTextureAtlas = new GTextureAtlas(g2d_context, p_id, GTextureSourceType.BITMAPDATA, p_bitmapData, p_bitmapData.rect, p_format, null);
+    static public function createFromBitmapDataAndFontXml(p_id:String, p_bitmapData:BitmapData, p_fontXml:Xml, p_format:String = "bgra"):GFontTextureAtlas {
+        var textureAtlas:GFontTextureAtlas = new GFontTextureAtlas(g2d_context, p_id, GTextureSourceType.BITMAPDATA, p_bitmapData, p_bitmapData.rect, p_format, null);
 
-        var root = p_fontXml.firstElement();
+        var root:Xml = p_fontXml.firstElement();
+
+        var common:Xml = root.elementsNamed("common").next();
+        textureAtlas.lineHeight = Std.parseInt(common.get("lineHeight"));
+
         var it:Iterator<Xml> = root.elementsNamed("chars");
         it = it.next().elements();
 
         while(it.hasNext()) {
             var node:Xml = it.next();
-            var region:GRectangle = new GRectangle(Std.parseInt(node.get("x")), Std.parseInt(node.get("y")), Std.parseInt(node.get("width")), Std.parseInt(node.get("height")));
+            var w:Int = Std.parseInt(node.get("width"));
+            var h:Int = Std.parseInt(node.get("height"));
+            var region:GRectangle = new GRectangle(Std.parseInt(node.get("x")), Std.parseInt(node.get("y")), w, h);
 
-            var pivotX:Float = -Std.parseFloat(node.get("xoffset"));
-            var pivotY:Float = -Std.parseFloat(node.get("yoffset"));
-
-            textureAtlas.addSubTexture(node.get("id"), region, pivotX, pivotY);
+            var subtexture:GCharTexture = textureAtlas.addSubTexture(node.get("id"), region, -w/2, -h/2);
+            subtexture.xoffset = Std.parseInt(node.get("xoffset"));
+            subtexture.yoffset = Std.parseInt(node.get("yoffset"));
+            subtexture.xadvance = Std.parseInt(node.get("xadvance"));
         }
 
         textureAtlas.invalidateNativeTexture(false);
