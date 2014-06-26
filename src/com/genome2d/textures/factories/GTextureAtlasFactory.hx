@@ -132,6 +132,24 @@ class GTextureAtlasFactory
             subtexture.xadvance = Std.parseInt(node.get("xadvance"));
         }
 
+        var kernings:Xml = root.elementsNamed("kernings").next();
+        if (kernings != null) {
+            it = kernings.elements();
+            textureAtlas.g2d_kerning = new Map<Int,Map<Int,Int>>();
+
+            while(it.hasNext()) {
+                var node:Xml = it.next();
+                var first:Int = Std.parseInt(node.get("first"));
+                var map:Map<Int,Int> = textureAtlas.g2d_kerning.get(first);
+                if (map == null) {
+                    map = new Map<Int,Int>();
+                    textureAtlas.g2d_kerning.set(first, map);
+                }
+                var second:Int = Std.parseInt(node.get("second"));
+                map.set(second, Std.parseInt("amount"));
+            }
+        }
+
         textureAtlas.invalidateNativeTexture(false);
         return textureAtlas;
     }
