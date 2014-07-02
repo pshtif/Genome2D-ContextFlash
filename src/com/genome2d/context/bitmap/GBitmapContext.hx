@@ -342,6 +342,10 @@ class GBitmapContext implements IContext
         g2d_onKeyboardSignal.dispatch(signal);
     }
 
+    public function resize(p_rect:GRectangle):Void {
+        // TODO add resize functionality
+    }
+
     public function bindRenderer(p_renderer:Dynamic):Void {
 
     }
