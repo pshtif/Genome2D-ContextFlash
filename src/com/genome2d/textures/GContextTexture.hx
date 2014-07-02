@@ -122,6 +122,8 @@ class GContextTexture
     public var atfType:String = "";
     public var premultiplied:Bool = true;
 
+    public var scaleFactor:Int = 1;
+
     static public var defaultFilteringType:Int = 1;
 
     public var g2d_filteringType:Int;

@@ -270,6 +270,11 @@ class GQuadTextureShaderRenderer implements IGRenderer
 			}
 		}
 
+        if (p_texture.scaleFactor != 1) {
+            p_scaleX /= p_texture.scaleFactor;
+            p_scaleY /= p_texture.scaleFactor;
+        }
+
         var uvx:Float;
         var uvy:Float;
         var uvsx:Float;
