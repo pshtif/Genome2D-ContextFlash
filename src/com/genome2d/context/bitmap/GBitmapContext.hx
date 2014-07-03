@@ -12,6 +12,7 @@ package com.genome2d.context.bitmap;
 import com.genome2d.geom.GMatrix3D;
 import msignal.Signal.Signal0;
 import msignal.Signal.Signal1;
+import msignal.Signal.Signal2;
 import flash.geom.Matrix3D;
 import com.genome2d.signals.GKeyboardSignalType;
 import com.genome2d.signals.GMouseSignalType;
@@ -108,6 +109,14 @@ class GBitmapContext implements IContext
         return g2d_onInvalidated;
     }
 
+    private var g2d_onResize:Signal2<Int,Int>;
+    #if swc @:extern #end
+    public var onResize(get,never):Signal2<Int,Int>;
+    #if swc @:getter(onResize) #end
+    inline private function get_onResize():Signal2<Int,Int>{
+        return g2d_onResize;
+    }
+
     private var g2d_stats:GStats;
     private var g2d_activeCamera:GContextCamera;
     private var g2d_activeViewRect:GRectangle;
@@ -153,6 +162,7 @@ class GBitmapContext implements IContext
         g2d_onMouseSignal = new Signal1<GMouseSignal>();
         g2d_onKeyboardSignal = new Signal1<GKeyboardSignal>();
         g2d_onInvalidated = new Signal0();
+        g2d_onResize = new Signal2<Int,Int>();
 
         g2d_stageViewRect = p_config.viewRect;
         g2d_nativeStage = p_config.nativeStage;
@@ -237,6 +247,7 @@ class GBitmapContext implements IContext
         g2d_onFrame = null;
         g2d_onMouseSignal = null;
         g2d_onKeyboardSignal = null;
+        g2d_onResize = null;
 	}
 	
 	public function begin():Void  {
@@ -344,6 +355,7 @@ class GBitmapContext implements IContext
 
     public function resize(p_rect:GRectangle):Void {
         // TODO add resize functionality
+        g2d_onResize.dispatch(untyped __int__(p_rect.width), untyped __int__(p_rect.height));
     }
 
     public function bindRenderer(p_renderer:Dynamic):Void {
