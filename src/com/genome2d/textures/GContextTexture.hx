@@ -140,7 +140,7 @@ class GContextTexture
         if (g2d_references == null) g2d_references = new Dictionary(false);
         if (p_id == null || p_id.length == 0) new GError("Invalid textures id");
         //if (p_region.width == 0 || p_region.height == 0) new GError("Textures can't have 0 size regions.");
-        if (untyped g2d_references[p_id] != null) new GError("Duplicate textures id");
+        if (untyped g2d_references[p_id] != null) new GError("Duplicate textures id: "+p_id);
 
 		g2d_instanceCount++;
 		g2d_contextId = g2d_instanceCount;
@@ -294,4 +294,6 @@ class GContextTexture
 
         return g2d_bitmapData.getPixel32(untyped __int__(g2d_region.x + p_u*g2d_region.width), untyped __int__(g2d_region.y + p_v*g2d_region.height))>>24&0xFF;
     }
+
+    public var userData:Array<Float>;
 }

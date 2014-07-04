@@ -68,6 +68,22 @@ class GMaxRectPacker
         g2d_newBoundingArea = GPackerRectangle.get(0,0,0,0);
         g2d_heuristics = p_heuristics;
     }
+
+    public function packRectangle(p_rect:GPackerRectangle, p_padding:Int = 0, p_forceValidTextureSize:Bool = true):Bool {
+        var success:Bool = g2d_addRectangle(p_rect, p_padding);
+
+        if (!success && g2d_autoExpand) {
+            var storedRectangles:Array<GPackerRectangle> = getRectangles();
+            storedRectangles.push(p_rect);
+
+            clear();
+            g2d_packRectangles(storedRectangles, p_padding, g2d_sortOnExpand);
+
+            success = true;
+        }
+
+        return success;
+    }
     
     public function g2d_packRectangles(p_rectangles:Array<GPackerRectangle>, p_padding:Int = 0, p_sort:Int = SORT_DESCENDING):Bool {
         if (p_sort != SORT_NONE) p_rectangles.sort((p_sort == SORT_ASCENDING) ? g2d_sortOnHeightAscending : g2d_sortOnHeightDescending);
@@ -118,22 +134,6 @@ class GMaxRectPacker
             i--;
         }
         return area;
-    }
-    
-    public function packRectangle(p_rect:GPackerRectangle, p_padding:Int = 0, p_forceValidTextureSize:Bool = true):Bool {
-        var success:Bool = g2d_addRectangle(p_rect, p_padding);
-        
-        if (!success && g2d_autoExpand) {
-            var storedRectangles:Array<GPackerRectangle> = getRectangles();
-            storedRectangles.push(p_rect);
-            
-            clear();
-            g2d_packRectangles(storedRectangles, p_padding, g2d_sortOnExpand);
-        
-            success = true;
-        }
-        
-        return success;
     }
     
     private function g2d_addRectangles(p_rectangles:Array<GPackerRectangle>, p_padding:Int = 0, p_force:Bool = true):Bool {

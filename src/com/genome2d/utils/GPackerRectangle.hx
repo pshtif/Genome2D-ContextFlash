@@ -61,6 +61,8 @@ class GPackerRectangle
 
     public var padding:Int = 0;
 
+    public var userData:Array<Float>;
+
     public function set(p_x:Int, p_y:Int, p_width:Int, p_height:Int):Void {
         x = p_x;
         y = p_y;

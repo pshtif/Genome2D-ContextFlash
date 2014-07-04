@@ -8,6 +8,7 @@
  */
 package com.genome2d.context.stage3d;
 
+import com.genome2d.context.stage3d.renderers.GCustomRenderer;
 import msignal.Signal.Signal0;
 import msignal.Signal.Signal1;
 import msignal.Signal.Signal2;
@@ -137,12 +138,12 @@ class GStage3DContext implements IContext
         return g2d_onKeyboardSignal;
     }
 
-    private var g2d_onResizeSignal:Signal2<Int,Int>;
+    private var g2d_onResize:Signal2<Int,Int>;
     #if swc @:extern #end
-    public var onResizeSignal(get,never):Signal2<Int,Int>;
-    #if swc @:getter(onResizeSignal) #end
-    inline private function get_onResizeSignal():Signal2<Int,Int>{
-        return g2d_onResizeSignal;
+    public var onResize(get,never):Signal2<Int,Int>;
+    #if swc @:getter(onResize) #end
+    inline private function get_onResize():Signal2<Int,Int>{
+        return g2d_onResize;
     }
 
     private var g2d_onMouseSignal:Signal1<GMouseSignal>;
@@ -216,7 +217,7 @@ class GStage3DContext implements IContext
         g2d_onMouseSignal = new Signal1<GMouseSignal>();
         g2d_onKeyboardSignal = new Signal1<GKeyboardSignal>();
         g2d_onInvalidated = new Signal0();
-        g2d_onResizeSignal = new Signal2<Int,Int>();
+        g2d_onResize = new Signal2<Int,Int>();
 
         g2d_stageViewRect = p_config.viewRect;
 		g2d_nativeStage = p_config.nativeStage;
@@ -360,7 +361,7 @@ class GStage3DContext implements IContext
     public function resize(p_rect:GRectangle):Void {
         g2d_stageViewRect = p_rect;
         g2d_invalidate();
-        g2d_onResizeSignal.dispatch(untyped __int__(g2d_stageViewRect.width), untyped __int__(g2d_stageViewRect.height));
+        g2d_onResize.dispatch(untyped __int__(g2d_stageViewRect.width), untyped __int__(g2d_stageViewRect.height));
     }
 	
 	private function g2d_contextErrorHandler(event:ErrorEvent):Void {
