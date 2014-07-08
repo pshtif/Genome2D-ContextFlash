@@ -63,6 +63,7 @@ class GRenderersCommon
         AGAL_VERSION = p_agalVersion;
 
         DEFAULT_CONSTANTS = Vector.ofArray([0, 0.5, 1, 2]);
+
         NORMALIZED_VERTICES = Vector.ofArray([-.5, .5,
                                               -.5,-.5,
                                                .5,-.5,

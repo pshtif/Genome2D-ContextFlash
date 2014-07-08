@@ -417,7 +417,7 @@ class GStage3DContext implements IContext
         p_camera.matrix.prependTranslation(vx, vy, 0);
         p_camera.matrix.prependRotation(g2d_activeCamera.rotation*180/Math.PI, Vector3D.Z_AXIS, NORMALIZED_VECTOR);
         p_camera.matrix.prependScale(g2d_activeCamera.scaleX, g2d_activeCamera.scaleY, 1);
-        p_camera.matrix.prependTranslation( -g2d_activeCamera.x, -g2d_activeCamera.y, 0);
+        p_camera.matrix.prependTranslation(-g2d_activeCamera.x, -g2d_activeCamera.y, 0);
 
         g2d_nativeContext.setScissorRectangle(g2d_activeViewRect);
         g2d_nativeContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 0, g2d_activeCamera.matrix, true);

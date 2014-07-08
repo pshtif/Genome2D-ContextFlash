@@ -40,7 +40,7 @@ class GQuadTextureShaderRenderer implements IGRenderer
 	
 	inline static private var VERTEX_SHADER_CODE:String =
 			"mov vt0, va0						\n" +
-				
+
 			"mov vt1.x, vc[va2.x].w				\n" +
 			"add vt1.x, vt1.x, vc4.z			\n" +
 			"mov vt1, vc[vt1.x]					\n" +
@@ -49,8 +49,8 @@ class GQuadTextureShaderRenderer implements IGRenderer
 
 			// Pivot
 			"sub vt5, vt5.xy, vt1.zw			\n" +
-			"mov vt4.x, vc[va2.x].z				\n" +
 
+			"mov vt4.x, vc[va2.x].z				\n" +
 			"sin vt1.x, vt4.x					\n" +
 			"cos vt1.y, vt4.x					\n" +
 				
@@ -186,7 +186,7 @@ class GQuadTextureShaderRenderer implements IGRenderer
             var arrayAlpha:Array<Float> = [index, index + 1, index, index + 1, index, index + 1, index, index + 1];
             registerIndicesAlpha = registerIndicesAlpha.concat(Vector.ofArray(arrayAlpha));
 		}
-		
+
 		g2d_geometryBuffer = g2d_nativeContext.createVertexBuffer(4*BATCH_SIZE, 2);
 		g2d_geometryBuffer.uploadFromVector(vertices, 0, 4*BATCH_SIZE);
 		
