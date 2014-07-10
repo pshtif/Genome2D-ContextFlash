@@ -47,7 +47,6 @@ class GQuadTextureShaderRenderer implements IGRenderer
 
 			"mul vt5, va0.xy, vt1.xy			\n" +
 
-			// Pivot
 			"sub vt5, vt5.xy, vt1.zw			\n" +
 
 			"mov vt4.x, vc[va2.x].z				\n" +
