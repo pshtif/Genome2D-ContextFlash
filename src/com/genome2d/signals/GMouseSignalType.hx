@@ -26,6 +26,10 @@ class GMouseSignalType {
                 type = MOUSE_DOWN;
             case "mouseUp":
                 type = MOUSE_UP;
+			case "rightMouseDown":
+				type = RIGHT_MOUSE_DOWN;
+			case "rightMouseUp":
+				type = RIGHT_MOUSE_UP;
         }
 
         return type;

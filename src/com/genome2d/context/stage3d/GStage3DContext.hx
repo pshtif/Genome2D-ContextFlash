@@ -334,6 +334,8 @@ class GStage3DContext implements IContext
         g2d_nativeStage.addEventListener(MouseEvent.MOUSE_DOWN, g2d_mouseEventHandler);
         g2d_nativeStage.addEventListener(MouseEvent.MOUSE_UP, g2d_mouseEventHandler);
         g2d_nativeStage.addEventListener(MouseEvent.MOUSE_MOVE, g2d_mouseEventHandler);
+		g2d_nativeStage.addEventListener(MouseEvent.RIGHT_MOUSE_DOWN, g2d_mouseEventHandler);
+		g2d_nativeStage.addEventListener(MouseEvent.RIGHT_MOUSE_UP, g2d_mouseEventHandler);
 
         // Keyboard interaction handlers
         g2d_nativeStage.addEventListener(KeyboardEvent.KEY_DOWN, g2d_keyboardEventHandler);
