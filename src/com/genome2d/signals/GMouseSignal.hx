@@ -13,6 +13,7 @@ class GMouseSignal {
     public var y:Float;
     public var buttonDown:Bool;
     public var ctrlDown:Bool;
+	public var wheelDelta:Int = 0;
     public var type:String;
     public var nativeCaptured:Bool;
 

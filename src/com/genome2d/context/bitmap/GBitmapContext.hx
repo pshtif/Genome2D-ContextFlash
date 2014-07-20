@@ -231,6 +231,7 @@ class GBitmapContext implements IContext
         g2d_nativeStage.addEventListener(MouseEvent.MOUSE_MOVE, g2d_mouseEventHandler);
 		g2d_nativeStage.addEventListener(MouseEvent.RIGHT_MOUSE_DOWN, g2d_mouseEventHandler);
 		g2d_nativeStage.addEventListener(MouseEvent.RIGHT_MOUSE_UP, g2d_mouseEventHandler);
+		g2d_nativeStage.addEventListener(MouseEvent.MOUSE_WHEEL, g2d_mouseEventHandler);
 
         // Keyboard interaction handlers
         g2d_nativeStage.addEventListener(KeyboardEvent.KEY_DOWN, g2d_keyboardEventHandler);
@@ -347,6 +348,7 @@ class GBitmapContext implements IContext
         var mx:Float = event.stageX-g2d_stageViewRect.x;
         var my:Float = event.stageY-g2d_stageViewRect.y;
         var signal:GMouseSignal = new GMouseSignal(GMouseSignalType.fromNative(event.type), mx, my, captured);// event.buttonDown, event.ctrlKey,
+		signal.wheelDelta = event.delta;
         g2d_onMouseSignal.dispatch(signal);
     }
 
