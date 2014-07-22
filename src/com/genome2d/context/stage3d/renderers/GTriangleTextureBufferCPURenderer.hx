@@ -50,6 +50,7 @@ class GTriangleTextureBufferCPURenderer implements IGRenderer
     private var g2d_activeFilter:GFilter;
     private var g2d_activeFiltering:Int;
     private var g2d_activeTexture:TextureBase;
+    private var g2d_activeRepeat:Bool = false;
 
     private var g2d_useSeparatedAlphaPipeline:Bool = true;
 
@@ -123,8 +124,9 @@ class GTriangleTextureBufferCPURenderer implements IGRenderer
         var notSameAlpha:Bool = g2d_activeAlpha != useAlpha;
         var notSameAtf:Bool = g2d_activeAtf != p_texture.atfType;
         var notSameFilter:Bool = g2d_activeFilter != p_filter;
+        var notSameRepeat:Bool = g2d_activeRepeat != p_texture.g2d_repeatable;
 
-        if (notSameTexture || notSameFiltering || notSameAlpha || notSameAtf) {
+        if (notSameRepeat || notSameTexture || notSameFiltering || notSameAlpha || notSameAtf) {
             if (g2d_activeTexture != null) push();
 
             if (notSameTexture) {
@@ -139,6 +141,7 @@ class GTriangleTextureBufferCPURenderer implements IGRenderer
                 if (g2d_activeFilter != null) g2d_activeFilter.clear(g2d_context);
                 g2d_activeFilter = p_filter;
                 if (g2d_activeFilter != null) g2d_activeFilter.bind(g2d_context, p_texture);
+                g2d_activeRepeat = p_texture.g2d_repeatable;
                 g2d_nativeContext.setProgram(getCachedProgram("true", g2d_activeFiltering, g2d_activeAlpha, g2d_activeAtf, g2d_activeFilter));
             }
         }

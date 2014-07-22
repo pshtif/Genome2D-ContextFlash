@@ -83,6 +83,7 @@ class GQuadTextureBufferGPURenderer implements IGRenderer
 	private var g2d_activeAtf:String = "";
 	private var g2d_activeFilter:GFilter;
 	private var g2d_activeFiltering:Int;
+    private var g2d_activeRepeat:Bool = false;
 
     private var g2d_context:GStage3DContext;
 	private var g2d_nativeContext:Context3D;
@@ -180,6 +181,7 @@ class GQuadTextureBufferGPURenderer implements IGRenderer
 		var notSameUseAlpha:Bool = g2d_activeAlpha != useAlpha;
 		var notSameAtf:Bool = g2d_activeAtf != p_texture.atfType;
 		var notSameFilter:Bool = g2d_activeFilter != p_filter;
+        var notSameRepeat:Bool = g2d_activeRepeat != p_texture.g2d_repeatable;
 
 		if (notSameTexture || notSameFiltering || notSameUseAlpha || notSameAtf || notSameFilter) {
 			if (g2d_activeTexture != null) push();
@@ -189,13 +191,14 @@ class GQuadTextureBufferGPURenderer implements IGRenderer
 				g2d_nativeContext.setTextureAt(0, g2d_activeTexture);
 			}
 			
-			if (notSameFiltering || notSameUseAlpha || notSameAtf || notSameFilter) {
+			if (notSameRepeat || notSameFiltering || notSameUseAlpha || notSameAtf || notSameFilter) {
 				g2d_activeFiltering = p_texture.g2d_filteringType;
 				g2d_activeAlpha = useAlpha;
 				g2d_activeAtf = p_texture.atfType;
 				if (g2d_activeFilter != null) g2d_activeFilter.clear(g2d_context);
 				g2d_activeFilter = p_filter;
 				if (g2d_activeFilter != null) g2d_activeFilter.bind(g2d_context, p_texture);
+                g2d_activeRepeat = p_texture.g2d_repeatable;
 				g2d_nativeContext.setProgram(getCachedProgram("true", g2d_activeFiltering, g2d_activeAlpha, g2d_activeAtf, g2d_activeFilter));
 			}
 		}

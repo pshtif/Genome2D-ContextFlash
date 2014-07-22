@@ -81,6 +81,7 @@ class GMatrixQuadTextureShaderRenderer implements IGRenderer
 	private var g2d_activeAlpha:Bool = false;
 	private var g2d_activeAtf:String = "";
 	private var g2d_activeFilter:GFilter;
+    private var g2d_activeRepeat:Bool = false;
 	
 	private var g2d_useSeparatedAlphaPipeline:Bool;
 	
@@ -209,6 +210,7 @@ class GMatrixQuadTextureShaderRenderer implements IGRenderer
 		var notSameUseAlpha:Bool = g2d_activeAlpha != useAlpha;
 		var notSameAtf:Bool = g2d_activeAtf != p_texture.atfType;
 		var notSameFilter:Bool = g2d_activeFilter != p_filter;
+        var notSameRepeat:Bool = g2d_activeRepeat != p_texture.g2d_repeatable;
 
 		if (notSameTexture || notSameFiltering || notSameUseAlpha || notSameAtf || notSameFilter) {
             // If any state changed we need to push remaining stuff to backbuffer
@@ -219,7 +221,7 @@ class GMatrixQuadTextureShaderRenderer implements IGRenderer
 				g2d_nativeContext.setTextureAt(0, p_texture.nativeTexture);
 			}
 			// Any flag affecting shader has changed
-			if (notSameFiltering || notSameUseAlpha || notSameAtf || notSameFilter) {
+			if (notSameRepeat || notSameFiltering || notSameUseAlpha || notSameAtf || notSameFilter) {
                 // Set filtering
 				g2d_activeFiltering = p_texture.getFilteringType();
                 // Set alpha usage
@@ -232,6 +234,7 @@ class GMatrixQuadTextureShaderRenderer implements IGRenderer
 				if (g2d_activeFilter != null) g2d_activeFilter.clear(g2d_context);
 				g2d_activeFilter = p_filter;
 				if (g2d_activeFilter != null) g2d_activeFilter.bind(g2d_context, p_texture);
+                g2d_activeRepeat = p_texture.g2d_repeatable;
 				g2d_nativeContext.setProgram(getCachedProgram(g2d_activeAlpha, true, g2d_activeFiltering, g2d_activeAtf, g2d_activeFilter));
 			}
 		}

@@ -22,7 +22,6 @@ import flash.display3D.Context3DVertexBufferFormat;
 import flash.display3D.IndexBuffer3D;
 import flash.display3D.Program3D;
 import flash.display3D.VertexBuffer3D;
-import flash.display3D.textures.Texture;
 import flash.utils.ByteArray;
 import flash.utils.Dictionary;
 import flash.utils.Endian;
@@ -90,6 +89,7 @@ class GQuadTextureShaderRenderer implements IGRenderer
 	private var g2d_quadCount:Int = 0;
 	private var g2d_activeNativeTexture:TextureBase;
 	private var g2d_activeFiltering:Int;
+    private var g2d_activeRepeat:Bool = false;
 	private var g2d_activeAlpha:Bool = false;
 	private var g2d_activeAtf:String = "";
 	private var g2d_activeFilter:GFilter;
@@ -235,6 +235,7 @@ class GQuadTextureShaderRenderer implements IGRenderer
 	inline public function draw(p_x:Float, p_y:Float, p_scaleX:Float, p_scaleY:Float, p_rotation:Float, p_red:Float, p_green:Float, p_blue:Float, p_alpha:Float, p_texture:GContextTexture, p_filter:GFilter, p_overrideSource:Bool, p_sourceX:Float, p_sourceY:Float, p_sourceWidth:Float, p_sourceHeight:Float):Void {
 		var notSameTexture:Bool = g2d_activeNativeTexture != p_texture.nativeTexture;
 		var notSameFiltering:Bool = g2d_activeFiltering != p_texture.getFilteringType();
+        var notSameRepeat:Bool = g2d_activeRepeat != p_texture.g2d_repeatable;
 		var useAlpha:Bool = !g2d_useSeparatedAlphaPipeline || !(p_red == 1 && p_green == 1 && p_blue == 1 && p_alpha == 1);
 		var notSameUseAlpha:Bool = g2d_activeAlpha != useAlpha;
 		var notSameAtf:Bool = g2d_activeAtf != p_texture.atfType;
@@ -249,7 +250,7 @@ class GQuadTextureShaderRenderer implements IGRenderer
 				g2d_nativeContext.setTextureAt(0, p_texture.nativeTexture);
 			}
 			// Any flag affecting shader has changed
-			if (notSameFiltering || notSameUseAlpha || notSameAtf || notSameFilter) {
+			if (notSameRepeat || notSameFiltering || notSameUseAlpha || notSameAtf || notSameFilter) {
                 // Set filtering
 				g2d_activeFiltering = p_texture.getFilteringType();
                 // Set alpha usage
@@ -265,6 +266,7 @@ class GQuadTextureShaderRenderer implements IGRenderer
 				if (g2d_activeFilter != null) g2d_activeFilter.clear(g2d_context);
 				g2d_activeFilter = p_filter;
 				if (g2d_activeFilter != null) g2d_activeFilter.bind(g2d_context, p_texture);
+                g2d_activeRepeat = p_texture.g2d_repeatable;
 				g2d_nativeContext.setProgram(getCachedProgram(g2d_activeAlpha, p_texture.g2d_repeatable, g2d_activeFiltering, g2d_activeAtf, g2d_activeFilter));
 			}
 		}
