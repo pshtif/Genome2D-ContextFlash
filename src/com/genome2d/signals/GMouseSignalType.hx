@@ -16,6 +16,7 @@ class GMouseSignalType {
     inline static public var MOUSE_OUT:String = "mouseOut";
     inline static public var RIGHT_MOUSE_DOWN:String = "rightmousedown";
     inline static public var RIGHT_MOUSE_UP:String = "rightmouseup";
+	inline static public var MOUSE_WHEEL:String = "mouseWheel";
 
     inline static public function fromNative(p_nativeType:String):String {
         var type:String = "";
@@ -26,6 +27,12 @@ class GMouseSignalType {
                 type = MOUSE_DOWN;
             case "mouseUp":
                 type = MOUSE_UP;
+			case "rightMouseDown":
+				type = RIGHT_MOUSE_DOWN;
+			case "rightMouseUp":
+				type = RIGHT_MOUSE_UP;
+			case "mouseWheel":
+				type = MOUSE_WHEEL;
         }
 
         return type;
