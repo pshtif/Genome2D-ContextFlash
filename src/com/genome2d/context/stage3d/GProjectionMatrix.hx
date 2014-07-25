@@ -44,7 +44,6 @@ class GProjectionMatrix extends Matrix3D
     }
 
     public function perspective(p_width:Float, p_height:Float, zNear:Float, zFar:Float):GProjectionMatrix {
-        trace(p_height);
         this.copyRawDataFrom(Vector.ofArray([2/p_width, 0.0, 0.0, 0.0,
                                              0.0, -2/p_height, 0.0, 0.0,
                                              0, 0, zFar/(zFar-zNear), 1.0,

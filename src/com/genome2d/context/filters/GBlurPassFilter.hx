@@ -30,7 +30,7 @@ class GBlurPassFilter extends GFilter
     public function new(p_blur:Int, p_direction:Int) {
         super();
 
-        //if (Genome2D.getInstance().cConfig.profile != "baseline") throw new GError(GError.CANNOT_RUN_IN_CONSTRAINED, GBlurPassFilter);
+        //if (Genome2D.getInstance().cConfig.profile != "baseline") new GError(GError.CANNOT_RUN_IN_CONSTRAINED, GBlurPassFilter);
 
         overrideFragmentShader = true;
 

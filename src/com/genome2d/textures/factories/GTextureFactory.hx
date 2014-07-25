@@ -52,7 +52,7 @@ class GTextureFactory {
 
     static public function createFromATF(p_id:String, p_atfData:ByteArray, p_uploadCallback:Function = null):GTexture {
         var atf:String = String.fromCharCode(p_atfData[0]) + String.fromCharCode(p_atfData[1]) + String.fromCharCode(p_atfData[2]);
-        if (atf != "ATF") throw new GError("Invalid ATF data");
+        if (atf != "ATF") new GError("Invalid ATF data");
         var type:Int = GTextureSourceType.ATF_BGRA;
         var offset:Int = p_atfData[6] == 255 ? 12 : 6;
         switch (p_atfData[offset]) {

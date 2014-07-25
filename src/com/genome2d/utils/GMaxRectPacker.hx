@@ -8,6 +8,7 @@
  */
 package com.genome2d.utils;
 
+import com.genome2d.error.GError;
 import flash.display.BitmapData;
 import flash.geom.Matrix;
 class GMaxRectPacker
@@ -56,7 +57,7 @@ class GMaxRectPacker
     }
 
     public function new(p_width:Int = 1, p_height:Int = 1, p_maxWidth:Int = 2048, p_maxHeight:Int = 2048, p_autoExpand:Bool = false, p_heuristics:Int = BOTTOM_LEFT) {
-        if (p_width <= 0 || p_height <= 0) throw "Invalid packer size";
+        if (p_width <= 0 || p_height <= 0) new GError("Invalid packer size.");
         g2d_width = p_width;
         g2d_height = p_height;
         g2d_maxWidth = p_maxWidth;
