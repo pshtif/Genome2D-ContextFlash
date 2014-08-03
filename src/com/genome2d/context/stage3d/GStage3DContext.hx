@@ -419,7 +419,7 @@ class GStage3DContext implements IContext
         p_camera.matrix.prependScale(g2d_activeCamera.scaleX, g2d_activeCamera.scaleY, 1);
         p_camera.matrix.prependTranslation(-g2d_activeCamera.x, -g2d_activeCamera.y, 0);
 
-        g2d_nativeContext.setScissorRectangle(g2d_activeViewRect);
+        if (!g2d_activeViewRect.equals(g2d_stageViewRect)) g2d_nativeContext.setScissorRectangle(g2d_activeViewRect);
         g2d_nativeContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 0, g2d_activeCamera.matrix, true);
     }
 
@@ -658,8 +658,9 @@ class GStage3DContext implements IContext
             setCamera(g2d_activeCamera);
 		} else {
 			g2d_nativeContext.setRenderToTexture(p_texture.nativeTexture, g2d_enableDepthAndStencil, g2d_antiAliasing, 0);
+            g2d_nativeContext.setScissorRectangle(null);
 			g2d_nativeContext.clear(0,0,0,0);
-			
+
 			g2d_nativeContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 0, GProjectionMatrix.getOrtho(p_texture.width, p_texture.height, p_transform), true);
 		}
 		
@@ -673,6 +674,7 @@ class GStage3DContext implements IContext
             g2d_nativeContext.setRenderToTexture(p_textures[i].nativeTexture, g2d_enableDepthAndStencil, g2d_antiAliasing, 0, i);
         }
 
+        g2d_nativeContext.setScissorRectangle(null);
         g2d_nativeContext.clear(0,0,0,0,0);
         g2d_nativeContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 0, GProjectionMatrix.getOrtho(p_textures[0].width, p_textures[0].height, p_transform), true);
 
