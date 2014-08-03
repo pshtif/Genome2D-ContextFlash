@@ -134,7 +134,7 @@ class GTriangleTextureBufferCPURenderer implements IGRenderer
                 g2d_nativeContext.setTextureAt(0, g2d_activeTexture);
             }
 
-            if (notSameFiltering || notSameAlpha || notSameAtf) {
+            if (notSameRepeat || notSameFiltering || notSameAlpha || notSameAtf) {
                 g2d_activeFiltering = p_texture.g2d_filteringType;
                 g2d_activeAlpha = useAlpha;
                 g2d_activeAtf = p_texture.atfType;

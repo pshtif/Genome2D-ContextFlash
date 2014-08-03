@@ -89,6 +89,7 @@ class GQuadTextureBufferGPURenderer implements IGRenderer
 	private var g2d_nativeContext:Context3D;
 
 	private var g2d_cachedPrograms:Dictionary;
+    private var g2d_cachedProgramIds:Dictionary;
 	private var g2d_vertexShaderCode:ByteArray;
 	private var g2d_vertexShaderAlphaCode:ByteArray;
 	
@@ -98,23 +99,42 @@ class GQuadTextureBufferGPURenderer implements IGRenderer
         g2d_useFastMem = p_useFastMem;
         g2d_fastMemArray = p_fastMemArray;
     }
-	
-	private function getCachedProgram(p_repeat:String, p_filtering:Int, p_alpha:Bool, p_atf:String, p_filter:GFilter):Program3D {
-		var filterId:String = (p_filter != null) ? p_filter.id : "";
-        if (untyped g2d_cachedPrograms.hasOwnProperty(p_repeat + String(p_filtering) + String(p_alpha) + p_atf + filterId)) return untyped g2d_cachedPrograms[p_repeat + String(p_filtering) + String(p_alpha) + p_atf + filterId];
-		
-		var program:Program3D = g2d_nativeContext.createProgram();
-		program.upload((p_alpha) ? g2d_vertexShaderAlphaCode : g2d_vertexShaderCode, GRenderersCommon.getTexturedShaderCode(false, p_filtering, p_alpha, p_atf, p_filter));
-		untyped g2d_cachedPrograms[p_repeat + String(p_filtering) + String(p_alpha) + p_atf + filterId] = program;
-		
-		return program;
-	}
+
+    inline private function getCachedProgram(p_alpha:Bool, p_repeat:Bool, p_filtering:Int, p_atf:String, p_filter:GFilter):Program3D {
+        var programBit:Int = 0;
+
+        if (p_alpha) programBit |= 1;
+        if (p_repeat) programBit |= 1 << 2;
+        if (p_filtering == GTextureFilteringType.LINEAR) programBit |= 1 << 3;
+
+        if (p_atf == "dxt1") programBit |= 1 << 4;
+        else if (p_atf == "dxt5") programBit |= 1 << 5;
+
+        var programId:String = untyped g2d_cachedProgramIds[programBit];
+
+        if (programId == null) {
+            programId = untyped String(programBit);
+            untyped g2d_cachedProgramIds[programBit] = programId;
+        }
+
+        if (p_filter != null) programId+=p_filter.id;
+
+        var program:Program3D = untyped g2d_cachedPrograms[programId];
+        if (program == null) {
+            program = g2d_nativeContext.createProgram();
+            program.upload((p_alpha) ? g2d_vertexShaderAlphaCode : g2d_vertexShaderCode, GRenderersCommon.getTexturedShaderCode(p_repeat, p_filtering, p_alpha, p_atf, p_filter));
+            untyped g2d_cachedPrograms[programId] = program;
+        }
+
+        return program;
+    }
 
 	public function initialize(p_context:GStage3DContext):Void {
         g2d_context = p_context;
 		g2d_nativeContext = g2d_context.getNativeContext();
 
 		g2d_cachedPrograms = new Dictionary(false);
+        g2d_cachedProgramIds = new Dictionary();
 		
 		var agal:AGALMiniAssembler = new AGALMiniAssembler();
 		agal.assemble("vertex", VERTEX_SHADER_CODE, GRenderersCommon.AGAL_VERSION);
@@ -165,7 +185,7 @@ class GQuadTextureBufferGPURenderer implements IGRenderer
 		if (g2d_cachedPrograms == null || (p_reinitialize && !g2d_initializedThisFrame)) initialize(p_context);
 		g2d_initializedThisFrame = p_reinitialize;
 
-		g2d_nativeContext.setProgram(getCachedProgram("true", g2d_activeFiltering, g2d_activeAlpha, g2d_activeAtf, g2d_activeFilter));
+		g2d_nativeContext.setProgram(getCachedProgram(g2d_activeAlpha, g2d_activeRepeat, g2d_activeFiltering, g2d_activeAtf, g2d_activeFilter));
 		
 		g2d_nativeContext.setVertexBufferAt(0, g2d_geometryBuffer, 0, Context3DVertexBufferFormat.FLOAT_2);
 		
@@ -183,7 +203,7 @@ class GQuadTextureBufferGPURenderer implements IGRenderer
 		var notSameFilter:Bool = g2d_activeFilter != p_filter;
         var notSameRepeat:Bool = g2d_activeRepeat != p_texture.g2d_repeatable;
 
-		if (notSameTexture || notSameFiltering || notSameUseAlpha || notSameAtf || notSameFilter) {
+		if (notSameRepeat || notSameTexture || notSameFiltering || notSameUseAlpha || notSameAtf || notSameFilter) {
 			if (g2d_activeTexture != null) push();
 			
 			if (notSameTexture) {
@@ -199,7 +219,7 @@ class GQuadTextureBufferGPURenderer implements IGRenderer
 				g2d_activeFilter = p_filter;
 				if (g2d_activeFilter != null) g2d_activeFilter.bind(g2d_context, p_texture);
                 g2d_activeRepeat = p_texture.g2d_repeatable;
-				g2d_nativeContext.setProgram(getCachedProgram("true", g2d_activeFiltering, g2d_activeAlpha, g2d_activeAtf, g2d_activeFilter));
+				g2d_nativeContext.setProgram(getCachedProgram(g2d_activeAlpha, g2d_activeRepeat, g2d_activeFiltering, g2d_activeAtf, g2d_activeFilter));
 			}
 		}
 

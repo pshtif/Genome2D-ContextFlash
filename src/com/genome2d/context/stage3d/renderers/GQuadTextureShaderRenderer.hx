@@ -241,7 +241,7 @@ class GQuadTextureShaderRenderer implements IGRenderer
 		var notSameAtf:Bool = g2d_activeAtf != p_texture.atfType;
 		var notSameFilter:Bool = g2d_activeFilter != p_filter;
 
-		if (notSameTexture || notSameFiltering || notSameUseAlpha || notSameAtf || notSameFilter) {
+		if (notSameRepeat || notSameTexture || notSameFiltering || notSameUseAlpha || notSameAtf || notSameFilter) {
             // If any state changed we need to push remaining stuff to backbuffer
 			if (g2d_activeNativeTexture != null) push();
 			// Texture has changed

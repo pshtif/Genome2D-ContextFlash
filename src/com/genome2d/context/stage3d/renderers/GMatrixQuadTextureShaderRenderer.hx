@@ -124,7 +124,7 @@ class GMatrixQuadTextureShaderRenderer implements IGRenderer
         var program:Program3D = untyped g2d_cachedPrograms[programId];
         if (program == null) {
             program = g2d_nativeContext.createProgram();
-            program.upload((p_alpha) ? g2d_vertexShaderAlphaCode : g2d_vertexShaderCode, GRenderersCommon.getTexturedShaderCode(false, p_filtering, p_alpha, p_atf, p_filter));
+            program.upload((p_alpha) ? g2d_vertexShaderAlphaCode : g2d_vertexShaderCode, GRenderersCommon.getTexturedShaderCode(p_repeat, p_filtering, p_alpha, p_atf, p_filter));
             untyped g2d_cachedPrograms[programId] = program;
         }
 
@@ -212,7 +212,7 @@ class GMatrixQuadTextureShaderRenderer implements IGRenderer
 		var notSameFilter:Bool = g2d_activeFilter != p_filter;
         var notSameRepeat:Bool = g2d_activeRepeat != p_texture.g2d_repeatable;
 
-		if (notSameTexture || notSameFiltering || notSameUseAlpha || notSameAtf || notSameFilter) {
+		if (notSameRepeat || notSameTexture || notSameFiltering || notSameUseAlpha || notSameAtf || notSameFilter) {
             // If any state changed we need to push remaining stuff to backbuffer
 			if (g2d_activeNativeTexture != null) push();
 			// Texture has changed
@@ -235,7 +235,7 @@ class GMatrixQuadTextureShaderRenderer implements IGRenderer
 				g2d_activeFilter = p_filter;
 				if (g2d_activeFilter != null) g2d_activeFilter.bind(g2d_context, p_texture);
                 g2d_activeRepeat = p_texture.g2d_repeatable;
-				g2d_nativeContext.setProgram(getCachedProgram(g2d_activeAlpha, true, g2d_activeFiltering, g2d_activeAtf, g2d_activeFilter));
+				g2d_nativeContext.setProgram(getCachedProgram(g2d_activeAlpha, g2d_activeRepeat, g2d_activeFiltering, g2d_activeAtf, g2d_activeFilter));
 			}
 		}
 
