@@ -8,6 +8,7 @@
  */
 package com.genome2d.context.stage3d;
 
+import com.genome2d.context.stats.GStats;
 import com.genome2d.context.stage3d.renderers.GCustomRenderer;
 import msignal.Signal.Signal0;
 import msignal.Signal.Signal1;
@@ -400,7 +401,9 @@ class GStage3DContext implements IContext
     /**
 	  	Set camera that should be used for all subsequent draws
 	 */
-    public function setCamera(p_camera:GContextCamera):Void {
+    public function setCamera(p_camera:GContextCamera, p_forceInvalidate:Bool = false):Void {
+        if (g2d_activeCamera == p_camera && !p_forceInvalidate) return;
+
         g2d_activeCamera = p_camera;
 
         g2d_activeViewRect.setTo(untyped __int__(g2d_stageViewRect.width*g2d_activeCamera.normalizedViewX),
@@ -655,7 +658,7 @@ class GStage3DContext implements IContext
 			g2d_nativeContext.setRenderToBackBuffer();
 
             // Reset camera
-            setCamera(g2d_activeCamera);
+            setCamera(g2d_activeCamera, true);
 		} else {
 			g2d_nativeContext.setRenderToTexture(p_texture.nativeTexture, g2d_enableDepthAndStencil, g2d_antiAliasing, 0);
             g2d_nativeContext.setScissorRectangle(null);
@@ -694,7 +697,11 @@ class GStage3DContext implements IContext
 
         var mx:Float = event.stageX-g2d_stageViewRect.x;
         var my:Float = event.stageY-g2d_stageViewRect.y;
-        var signal:GMouseSignal = new GMouseSignal(GMouseSignalType.fromNative(event.type), mx, my, captured);// event.buttonDown, event.ctrlKey,
+        var signal:GMouseSignal = new GMouseSignal(GMouseSignalType.fromNative(event.type), mx, my, captured);
+        signal.buttonDown = event.buttonDown;
+        signal.ctrlKey = event.ctrlKey;
+        signal.altKey = event.altKey;
+        signal.shiftKey = event.shiftKey;
         g2d_onMouseSignal.dispatch(signal);
     }
 

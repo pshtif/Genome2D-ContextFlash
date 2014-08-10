@@ -9,7 +9,7 @@
 package com.genome2d.context.stage3d.renderers;
 
 import com.genome2d.context.filters.GFilter;
-import com.adobe.utils.AGALMiniAssembler;
+import com.adobe.utils.extended.AGALMiniAssembler;
 import flash.utils.ByteArray;
 import flash.Vector;
 

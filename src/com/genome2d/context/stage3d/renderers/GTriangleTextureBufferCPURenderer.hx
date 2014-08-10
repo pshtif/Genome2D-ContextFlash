@@ -12,7 +12,7 @@ import com.genome2d.context.stage3d.GStage3DContext;
 import flash.display3D.textures.TextureBase;
 import flash.utils.Dictionary;
 import com.genome2d.context.filters.GFilter;
-import com.adobe.utils.AGALMiniAssembler;
+import com.adobe.utils.extended.AGALMiniAssembler;
 import com.genome2d.textures.GContextTexture;
 import flash.display3D.Context3D;
 import flash.display3D.Context3DProgramType;

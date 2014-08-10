@@ -13,7 +13,7 @@ import com.genome2d.textures.GTextureFilteringType;
 import com.genome2d.textures.GContextTexture;
 import com.genome2d.context.stats.GStats;
 import com.genome2d.context.filters.GFilter;
-import com.adobe.utils.AGALMiniAssembler;
+import com.adobe.utils.extended.AGALMiniAssembler;
 import flash.Memory;
 import flash.Vector;
 import flash.display3D.Context3D;
