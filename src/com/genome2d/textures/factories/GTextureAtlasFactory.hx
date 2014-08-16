@@ -75,85 +75,6 @@ class GTextureAtlasFactory
 		return createFromBitmapDataAndXml(p_id, p_imageAsset.nativeImage, p_xmlAsset.xml, p_format);
 	}
 
-    static public function createFontFromAssets(p_id:String, p_imageAsset:GImageAsset, p_xmlAsset:GXmlAsset, p_format:String = "bgra"):GFontTextureAtlas {
-        return createFromBitmapDataAndFontXml(p_id, p_imageAsset.nativeImage, p_xmlAsset.xml, p_format);
-    }
-
-    static public function createFromFont(p_id:String, p_textFormat:TextFormat, p_chars:String, p_embedded:Bool = true, p_horizontalPadding:Int = 0, p_verticalPadding:Int = 0, p_filters:Array<BitmapFilter> = null, p_forceMod2:Bool = false, p_format:String = "bgra"):GTextureAtlas {
-        var text:TextField = new TextField();
-        text.embedFonts = p_embedded;
-        text.defaultTextFormat = p_textFormat;
-        text.multiline = false;
-        text.autoSize = TextFieldAutoSize.LEFT;
-
-        if (p_filters != null) {
-            text.filters = p_filters;
-        }
-
-        var bitmaps:Array<BitmapData> = new Array<BitmapData>();
-        var ids:Array<String> = new Array<String>();
-        var matrix:Matrix = new Matrix();
-        matrix.translate(p_horizontalPadding, p_verticalPadding);
-
-        for (i in 0...p_chars.length) {
-            text.text = p_chars.charAt(i);
-            var width:Float = (text.width%2 != 0 && p_forceMod2) ? text.width+1 : text.width;
-            var height:Float = (text.height%2 != 0 && p_forceMod2) ? text.height+1 : text.height;
-            var bitmapData:BitmapData = new BitmapData(untyped __int__(width+p_horizontalPadding*2), untyped __int__(height+p_verticalPadding*2), true, 0x0);
-            bitmapData.draw(text, matrix);
-            bitmaps.push(bitmapData);
-
-            untyped ids.push(String(p_chars.charCodeAt(i)));
-        }
-
-        return createFromBitmapDatas(p_id, bitmaps, ids, p_format);
-    }
-
-    static public function createFromBitmapDataAndFontXml(p_id:String, p_bitmapData:BitmapData, p_fontXml:Xml, p_format:String = "bgra"):GFontTextureAtlas {
-        var textureAtlas:GFontTextureAtlas = new GFontTextureAtlas(g2d_context, p_id, GTextureSourceType.BITMAPDATA, p_bitmapData, p_bitmapData.rect, p_format, null);
-
-        var root:Xml = p_fontXml.firstElement();
-
-        var common:Xml = root.elementsNamed("common").next();
-        textureAtlas.lineHeight = Std.parseInt(common.get("lineHeight"));
-
-        var it:Iterator<Xml> = root.elementsNamed("chars");
-        it = it.next().elements();
-
-        while(it.hasNext()) {
-            var node:Xml = it.next();
-            var w:Int = Std.parseInt(node.get("width"));
-            var h:Int = Std.parseInt(node.get("height"));
-            var region:GRectangle = new GRectangle(Std.parseInt(node.get("x")), Std.parseInt(node.get("y")), w, h);
-
-            var subtexture:GCharTexture = textureAtlas.addSubTexture(node.get("id"), region, -w/2, -h/2);
-            subtexture.xoffset = Std.parseInt(node.get("xoffset"));
-            subtexture.yoffset = Std.parseInt(node.get("yoffset"));
-            subtexture.xadvance = Std.parseInt(node.get("xadvance"));
-        }
-
-        var kernings:Xml = root.elementsNamed("kernings").next();
-        if (kernings != null) {
-            it = kernings.elements();
-            textureAtlas.g2d_kerning = new Map<Int,Map<Int,Int>>();
-
-            while(it.hasNext()) {
-                var node:Xml = it.next();
-                var first:Int = Std.parseInt(node.get("first"));
-                var map:Map<Int,Int> = textureAtlas.g2d_kerning.get(first);
-                if (map == null) {
-                    map = new Map<Int,Int>();
-                    textureAtlas.g2d_kerning.set(first, map);
-                }
-                var second:Int = Std.parseInt(node.get("second"));
-                map.set(second, Std.parseInt("amount"));
-            }
-        }
-
-        textureAtlas.invalidateNativeTexture(false);
-        return textureAtlas;
-    }
-
     static public function createFromBitmapDatas(p_id:String, p_bitmaps:Array<BitmapData>, p_ids:Array<String>, p_format:String = "bgra", p_packer:GMaxRectPacker = null, p_padding:Int = 2):GTextureAtlas {
         var rectangles:Array<GPackerRectangle> = new Array<GPackerRectangle>();
         var i:Int;
@@ -217,6 +138,86 @@ class GTextureAtlasFactory
             var pivotY:Float = (node.get("frameY") == null || node.get("frameHeight") == null) ? 0 : (Std.parseInt(node.get("frameHeight"))-region.height)/2 + Std.parseInt(node.get("frameY"));
 
             textureAtlas.addSubTexture(node.get("name"), region, pivotX, pivotY);
+        }
+
+        textureAtlas.invalidateNativeTexture(false);
+        return textureAtlas;
+    }
+
+    static public function createFontFromAssets(p_id:String, p_imageAsset:GImageAsset, p_xmlAsset:GXmlAsset, p_format:String = "bgra"):GTextureFontAtlas {
+        return createFromBitmapDataAndFontXml(p_id, p_imageAsset.nativeImage, p_xmlAsset.xml, p_format);
+    }
+
+    /*
+    static public function createFromFont(p_id:String, p_textFormat:TextFormat, p_chars:String, p_embedded:Bool = true, p_horizontalPadding:Int = 0, p_verticalPadding:Int = 0, p_filters:Array<BitmapFilter> = null, p_forceMod2:Bool = false, p_format:String = "bgra"):GTextureAtlas {
+        var text:TextField = new TextField();
+        text.embedFonts = p_embedded;
+        text.defaultTextFormat = p_textFormat;
+        text.multiline = false;
+        text.autoSize = TextFieldAutoSize.LEFT;
+
+        if (p_filters != null) {
+            text.filters = p_filters;
+        }
+
+        var bitmaps:Array<BitmapData> = new Array<BitmapData>();
+        var ids:Array<String> = new Array<String>();
+        var matrix:Matrix = new Matrix();
+        matrix.translate(p_horizontalPadding, p_verticalPadding);
+
+        for (i in 0...p_chars.length) {
+            text.text = p_chars.charAt(i);
+            var width:Float = (text.width%2 != 0 && p_forceMod2) ? text.width+1 : text.width;
+            var height:Float = (text.height%2 != 0 && p_forceMod2) ? text.height+1 : text.height;
+            var bitmapData:BitmapData = new BitmapData(untyped __int__(width+p_horizontalPadding*2), untyped __int__(height+p_verticalPadding*2), true, 0x0);
+            bitmapData.draw(text, matrix);
+            bitmaps.push(bitmapData);
+
+            untyped ids.push(String(p_chars.charCodeAt(i)));
+        }
+
+        return createFromBitmapDatas(p_id, bitmaps, ids, p_format);
+    }
+    /**/
+    static public function createFromBitmapDataAndFontXml(p_id:String, p_bitmapData:BitmapData, p_fontXml:Xml, p_format:String = "bgra"):GTextureFontAtlas {
+        var textureAtlas:GTextureFontAtlas = new GTextureFontAtlas(g2d_context, p_id, GTextureSourceType.BITMAPDATA, p_bitmapData, p_bitmapData.rect, p_format, null);
+
+        var root:Xml = p_fontXml.firstElement();
+
+        var common:Xml = root.elementsNamed("common").next();
+        textureAtlas.lineHeight = Std.parseInt(common.get("lineHeight"));
+
+        var it:Iterator<Xml> = root.elementsNamed("chars");
+        it = it.next().elements();
+
+        while(it.hasNext()) {
+            var node:Xml = it.next();
+            var w:Int = Std.parseInt(node.get("width"));
+            var h:Int = Std.parseInt(node.get("height"));
+            var region:GRectangle = new GRectangle(Std.parseInt(node.get("x")), Std.parseInt(node.get("y")), w, h);
+
+            var subtexture:GCharTexture = textureAtlas.addSubTexture(node.get("id"), region, -w/2, -h/2);
+            subtexture.xoffset = Std.parseInt(node.get("xoffset"));
+            subtexture.yoffset = Std.parseInt(node.get("yoffset"));
+            subtexture.xadvance = Std.parseInt(node.get("xadvance"));
+        }
+
+        var kernings:Xml = root.elementsNamed("kernings").next();
+        if (kernings != null) {
+            it = kernings.elements();
+            textureAtlas.g2d_kerning = new Map<Int,Map<Int,Int>>();
+
+            while(it.hasNext()) {
+                var node:Xml = it.next();
+                var first:Int = Std.parseInt(node.get("first"));
+                var map:Map<Int,Int> = textureAtlas.g2d_kerning.get(first);
+                if (map == null) {
+                    map = new Map<Int,Int>();
+                    textureAtlas.g2d_kerning.set(first, map);
+                }
+                var second:Int = Std.parseInt(node.get("second"));
+                map.set(second, Std.parseInt("amount"));
+            }
         }
 
         textureAtlas.invalidateNativeTexture(false);

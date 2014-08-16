@@ -31,6 +31,7 @@ class GContextTexture
 {
     static public var g2d_references:Dictionary;
     static public function getContextTextureById(p_id:String):GContextTexture {
+        if (g2d_references == null) return null;
         return untyped g2d_references[p_id];
     }
 
