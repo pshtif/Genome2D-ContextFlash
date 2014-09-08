@@ -316,6 +316,7 @@ class GStage3DContext implements IContext
             } else {
                 g2d_defaultCamera.x = g2d_stageViewRect.width*.5;
                 g2d_defaultCamera.y = g2d_stageViewRect.height*.5;
+                setCamera(g2d_defaultCamera, true);
 
                 g2d_onInvalidated.dispatch();
             }

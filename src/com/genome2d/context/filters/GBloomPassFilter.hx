@@ -8,7 +8,6 @@
  */
 package com.genome2d.context.filters;
 
-import com.genome2d.context.stage3d.GStage3DContext;
 import com.genome2d.textures.GContextTexture;
 import flash.Vector;
 import com.genome2d.textures.GContextTexture;
@@ -45,13 +44,13 @@ class GBloomPassFilter extends GFilter
                                             1.25, 1, 1, 1]);
     }
 
-    override public function bind(p_context:GStage3DContext, p_texture:GContextTexture):Void {
+    override public function bind(p_context:IContext, p_texture:GContextTexture):Void {
         super.bind(p_context, p_texture);
         if (texture == null) new GError("There is no texture set for bloom pass.");
         p_context.getNativeContext().setTextureAt(1, texture.nativeTexture);
     }
 
-    override public function clear(p_context:GStage3DContext):Void {
+    override public function clear(p_context:IContext):Void {
         p_context.getNativeContext().setTextureAt(1, null);
     }
 }

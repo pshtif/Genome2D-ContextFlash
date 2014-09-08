@@ -180,7 +180,7 @@ class GBitmapContext implements IContext
         g2d_activeMaskRect = p_maskRect;
     }
 
-	public function setCamera(p_camera:GContextCamera):Void {
+	public function setCamera(p_camera:GContextCamera, p_forceInvalidate:Bool = false):Void {
         g2d_activeCamera = p_camera;
 
         g2d_activeViewRect.setTo(untyped __int__(g2d_stageViewRect.width*g2d_activeCamera.normalizedViewX),
