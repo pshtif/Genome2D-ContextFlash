@@ -232,7 +232,7 @@ class GQuadTextureShaderRenderer implements IGRenderer
 		g2d_activeTextureId = 0;
 	}
 	
-	inline public function draw(p_x:Float, p_y:Float, p_scaleX:Float, p_scaleY:Float, p_rotation:Float, p_red:Float, p_green:Float, p_blue:Float, p_alpha:Float, p_texture:GContextTexture, p_filter:GFilter, p_overrideSource:Bool, p_sourceX:Float, p_sourceY:Float, p_sourceWidth:Float, p_sourceHeight:Float):Void {
+	inline public function draw(p_x:Float, p_y:Float, p_scaleX:Float, p_scaleY:Float, p_rotation:Float, p_red:Float, p_green:Float, p_blue:Float, p_alpha:Float, p_texture:GContextTexture, p_filter:GFilter, p_overrideSource:Bool, p_sourceX:Float, p_sourceY:Float, p_sourceWidth:Float, p_sourceHeight:Float, p_sourcePivotX:Float, p_sourcePivotY:Float):Void {
 		var notSameTexture:Bool = g2d_activeNativeTexture != p_texture.nativeTexture;
 		var notSameFiltering:Bool = g2d_activeFiltering != p_texture.getFilteringType();
         var notSameRepeat:Bool = g2d_activeRepeat != p_texture.g2d_repeatable;
@@ -291,8 +291,8 @@ class GQuadTextureShaderRenderer implements IGRenderer
             uvsy = p_sourceHeight/p_texture.gpuHeight;
             sx = p_sourceWidth * p_scaleX;
             sy = p_sourceHeight * p_scaleY;
-            px = 0;
-            py = 0;
+            px = p_sourcePivotX * p_scaleX;
+            py = p_sourcePivotY * p_scaleY;
         } else {
             uvx = p_texture.uvX;
             uvy = p_texture.uvY;
@@ -304,7 +304,9 @@ class GQuadTextureShaderRenderer implements IGRenderer
             py = p_texture.pivotY * p_scaleY;
         }
 
-        var notSameTextureId:Bool = (g2d_activeTextureId != p_texture.g2d_contextId) || (g2d_activeTextureWidth != p_texture.width*p_scaleX || g2d_activeTextureHeight != p_texture.height*p_scaleY);
+        var notSameTextureId:Bool = (g2d_activeTextureId != p_texture.g2d_contextId) ||
+                                    (!p_overrideSource && (g2d_activeTextureWidth != p_texture.width*p_scaleX || g2d_activeTextureHeight != p_texture.height*p_scaleY)) ||
+                                    (p_overrideSource && (g2d_activeTextureWidth != p_sourceWidth || g2d_activeTextureHeight != p_sourceHeight));
 		if (notSameTextureId) {
 			g2d_textureIndex -= 2;
 			var textureOffset:Int;

@@ -8,6 +8,8 @@
  */
 package com.genome2d.context.stage3d;
 
+import com.genome2d.textures.GTexture;
+import com.genome2d.context.filters.GColorMatrixFilter;
 import com.genome2d.context.stats.GStats;
 import com.genome2d.context.stage3d.renderers.GCustomRenderer;
 import msignal.Signal.Signal0;
@@ -402,9 +404,7 @@ class GStage3DContext implements IContext
     /**
 	  	Set camera that should be used for all subsequent draws
 	 */
-    public function setCamera(p_camera:GContextCamera, p_forceInvalidate:Bool = false):Void {
-        if (g2d_activeCamera == p_camera && !p_forceInvalidate) return;
-
+    public function setCamera(p_camera:GContextCamera):Void {
         g2d_activeCamera = p_camera;
 
         g2d_activeViewRect.setTo(untyped __int__(g2d_stageViewRect.width*g2d_activeCamera.normalizedViewX),
@@ -493,7 +493,7 @@ class GStage3DContext implements IContext
             setBlendMode(p_blendMode, p_texture.premultiplied);
 			bindRenderer(g2d_quadTextureShaderRenderer);
 
-			g2d_quadTextureShaderRenderer.draw(p_x, p_y, p_scaleX, p_scaleY, p_rotation, p_red, p_green, p_blue, p_alpha, p_texture, p_filter, false, 0, 0, 0, 0);
+			g2d_quadTextureShaderRenderer.draw(p_x, p_y, p_scaleX, p_scaleY, p_rotation, p_red, p_green, p_blue, p_alpha, p_texture, p_filter, false, 0, 0, 0, 0, 0, 0);
 		}
 	}
 
@@ -502,12 +502,12 @@ class GStage3DContext implements IContext
 
        @param p_texture texture to be drawn
      */
-    inline public function drawSource(p_texture:GContextTexture, p_sourceX:Float, p_sourceY:Float, p_sourceWidth:Float, p_sourceHeight:Float, p_x:Float, p_y:Float, p_scaleX:Float = 1, p_scaleY:Float = 1, p_rotation:Float = 0, p_red:Float = 1, p_green:Float = 1, p_blue:Float = 1, p_alpha:Float = 1, p_blendMode:Int = 1, p_filter:GFilter = null):Void {
+    inline public function drawSource(p_texture:GContextTexture, p_sourceX:Float, p_sourceY:Float, p_sourceWidth:Float, p_sourceHeight:Float, p_sourcePivotX:Float, p_sourcePivotY:Float, p_x:Float, p_y:Float, p_scaleX:Float = 1, p_scaleY:Float = 1, p_rotation:Float = 0, p_red:Float = 1, p_green:Float = 1, p_blue:Float = 1, p_alpha:Float = 1, p_blendMode:Int = 1, p_filter:GFilter = null):Void {
         if (p_alpha != 0) {
             setBlendMode(p_blendMode, p_texture.premultiplied);
             bindRenderer(g2d_quadTextureShaderRenderer);
 
-            g2d_quadTextureShaderRenderer.draw(p_x, p_y, p_scaleX, p_scaleY, p_rotation, p_red, p_green, p_blue, p_alpha, p_texture, p_filter, true, p_sourceX, p_sourceY, p_sourceWidth, p_sourceHeight);
+            g2d_quadTextureShaderRenderer.draw(p_x, p_y, p_scaleX, p_scaleY, p_rotation, p_red, p_green, p_blue, p_alpha, p_texture, p_filter, true, p_sourceX, p_sourceY, p_sourceWidth, p_sourceHeight, p_sourcePivotX, p_sourcePivotY);
         }
     }
 
@@ -626,9 +626,11 @@ class GStage3DContext implements IContext
     /****************************************************************************************************
      *  Render target methods
      ****************************************************************************************************/
-    private var g2d_renderTarget:GContextTexture;
     private var g2d_renderTargetMatrix:Matrix3D;
     private var g2d_usedRenderTargets:Int = 0;
+    private var g2d_renderTargetStack:Array<GTexture>;
+    private var g2d_renderTarget:GContextTexture;
+    public var g2d_renderTargetTransform:GMatrix3D;
 
     /**
         Gets the current render target, if null the target is backbuffer
@@ -643,9 +645,9 @@ class GStage3DContext implements IContext
         @param p_texture texture target, if null it will target backbuffer
         @param p_transform additional transformation that should be applied, not applicable to backbuffer target
      */
-	public function setRenderTarget(p_texture:GContextTexture = null, p_transform:GMatrix3D = null):Void {
+	public function setRenderTarget(p_texture:GContextTexture = null, p_transform:GMatrix3D = null, p_clear:Bool = true):Void {
 		if (g2d_renderTarget == p_texture && g2d_usedRenderTargets==0) return;
-		
+
 		if (g2d_activeRenderer != null) g2d_activeRenderer.push();
 
         if (g2d_usedRenderTargets>0) {
@@ -659,19 +661,23 @@ class GStage3DContext implements IContext
 			g2d_nativeContext.setRenderToBackBuffer();
 
             // Reset camera
-            setCamera(g2d_activeCamera, true);
+            setCamera(g2d_activeCamera);
 		} else {
 			g2d_nativeContext.setRenderToTexture(p_texture.nativeTexture, g2d_enableDepthAndStencil, g2d_antiAliasing, 0);
             g2d_nativeContext.setScissorRectangle(null);
-			g2d_nativeContext.clear(0,0,0,0);
+			if (!p_texture.g2d_initializedRenderTarget || p_clear) {
+                p_texture.g2d_initializedRenderTarget = true;
+                g2d_nativeContext.clear(0,0,0,0);
+            }
 
 			g2d_nativeContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 0, GProjectionMatrix.getOrtho(p_texture.width, p_texture.height, p_transform), true);
 		}
-		
+
+        g2d_renderTargetTransform = p_transform;
 		g2d_renderTarget = p_texture;
     }
 
-    public function setRenderTargets(p_textures:Array<GContextTexture>, p_transform:GMatrix3D = null):Void {
+    public function setRenderTargets(p_textures:Array<GContextTexture>, p_transform:GMatrix3D = null, p_clear:Bool = true):Void {
         if (g2d_activeRenderer != null) g2d_activeRenderer.push();
 
         for (i in 0...p_textures.length) {
@@ -679,7 +685,7 @@ class GStage3DContext implements IContext
         }
 
         g2d_nativeContext.setScissorRectangle(null);
-        g2d_nativeContext.clear(0,0,0,0,0);
+        if (p_clear) g2d_nativeContext.clear(0,0,0,0,0);
         g2d_nativeContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 0, GProjectionMatrix.getOrtho(p_textures[0].width, p_textures[0].height, p_transform), true);
 
         g2d_usedRenderTargets = p_textures.length;
