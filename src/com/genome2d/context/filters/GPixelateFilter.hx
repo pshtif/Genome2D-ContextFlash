@@ -7,6 +7,7 @@
 */
 package com.genome2d.context.filters;
 
+import com.genome2d.context.IContext;
 import com.genome2d.textures.GContextTexture;
 import com.genome2d.context.stage3d.GStage3DContext;
 import flash.Vector;
@@ -32,7 +33,7 @@ class GPixelateFilter extends GFilter {
         fragmentConstants = Vector.ofArray([0.0, 0.0, 0.0, 0.0]);
     }
 
-    override public function bind(p_context:GStage3DContext, p_texture:GContextTexture):Void {
+    override public function bind(p_context:IContext, p_texture:GContextTexture):Void {
         fragmentConstants[0] = pixelSize/p_texture.gpuWidth;
         fragmentConstants[1] = pixelSize/p_texture.gpuHeight;
         fragmentConstants[2] = pixelSize/(p_texture.gpuWidth*2);

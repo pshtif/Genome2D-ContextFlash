@@ -180,7 +180,7 @@ class GBitmapContext implements IContext
         g2d_activeMaskRect = p_maskRect;
     }
 
-	public function setCamera(p_camera:GContextCamera, p_forceInvalidate:Bool = false):Void {
+	public function setCamera(p_camera:GContextCamera):Void {
         g2d_activeCamera = p_camera;
 
         g2d_activeViewRect.setTo(untyped __int__(g2d_stageViewRect.width*g2d_activeCamera.normalizedViewX),
@@ -310,7 +310,7 @@ class GBitmapContext implements IContext
         }
 	}
 
-    public function drawSource(p_texture:GContextTexture, p_sourceX:Float, p_sourceY:Float, p_sourceWidth:Float, p_sourceHeight:Float, p_x:Float, p_y:Float, p_scaleX:Float = 1, p_scaleY:Float = 1, p_rotation:Float = 0, p_red:Float = 1, p_green:Float = 1, p_blue:Float = 1, p_alpha:Float = 1, p_blendMode:Int = 1, p_filter:GFilter = null):Void {
+    public function drawSource(p_texture:GContextTexture, p_sourceX:Float, p_sourceY:Float, p_sourceWidth:Float, p_sourceHeight:Float, p_sourcePivotX:Float, p_sourcePivotY:Float, p_x:Float, p_y:Float, p_scaleX:Float = 1, p_scaleY:Float = 1, p_rotation:Float = 0, p_red:Float = 1, p_green:Float = 1, p_blue:Float = 1, p_alpha:Float = 1, p_blendMode:Int = 1, p_filter:GFilter = null):Void {
 
     }
 
@@ -325,7 +325,7 @@ class GBitmapContext implements IContext
         return g2d_renderTarget;
     }
 
-    public function setRenderTarget(p_texture:GContextTexture = null, p_transform:Matrix3D = null):Void {
+    public function setRenderTarget(p_texture:GContextTexture = null, p_transform:Matrix3D = null, p_clean:Bool = true):Void {
         if (g2d_renderTarget == p_texture) return;
 
         g2d_renderTarget = p_texture;
@@ -378,7 +378,7 @@ class GBitmapContext implements IContext
 
     }
 
-    public function setRenderTargets(p_textures:Array<GContextTexture>, p_transform:GMatrix3D = null):Void {
+    public function setRenderTargets(p_textures:Array<GContextTexture>, p_transform:GMatrix3D = null, p_clean:Bool = true):Void {
 
     }
 }
