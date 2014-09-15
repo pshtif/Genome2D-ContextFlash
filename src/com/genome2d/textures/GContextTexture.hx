@@ -59,6 +59,8 @@ class GContextTexture
         return g2d_nativeSource;
     }
 
+    public var g2d_initializedRenderTarget:Bool = false;
+
     public var g2d_sourceType:Int;
     private var g2d_type:Int;
     inline public function getType():Int {
@@ -157,7 +159,7 @@ class GContextTexture
         g2d_nativeSource = p_source;
         g2d_filteringType = defaultFilteringType;
 
-        var useRectangle:Bool = !g2d_repeatable && p_context.hasFeature(GContextFeature.RECTANGLE_TEXTURES);
+        var useRectangle:Bool = !g2d_repeatable && g2d_context.hasFeature(GContextFeature.RECTANGLE_TEXTURES);
         g2d_gpuWidth = useRectangle ? width : GTextureUtils.getNextValidTextureSize(width);
         g2d_gpuHeight = useRectangle ? height : GTextureUtils.getNextValidTextureSize(height);
 
