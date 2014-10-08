@@ -62,6 +62,5 @@ class GAsset
     }
 
     private function g2d_ioErrorHandler(event:IOErrorEvent):Void {
-
     }
 }
