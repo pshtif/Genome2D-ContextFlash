@@ -25,20 +25,20 @@ import flash.display3D.textures.Texture;
 class GTextureFactory {
     static public var g2d_context:IContext;
 
-    static public function createFromEmbedded(p_id:String, p_asset:Class<Bitmap>, p_format:String = "bgra", p_repeatable:Bool = false):GTexture {
+    static public function createFromEmbedded(p_id:String, p_asset:Class<Bitmap>, p_scaleFactor:Float = 1, p_repeatable:Bool = false, p_format:String = "bgra"):GTexture {
         var bitmap:Bitmap = cast Type.createInstance(p_asset, []);
 
-        return new GTexture(g2d_context, p_id, GTextureSourceType.BITMAPDATA, bitmap.bitmapData, bitmap.bitmapData.rect, p_format, p_repeatable, 0, 0, null);
+        return new GTexture(g2d_context, p_id, GTextureSourceType.BITMAPDATA, bitmap.bitmapData, bitmap.bitmapData.rect, p_format, p_repeatable, 0, 0, p_scaleFactor, null);
     }
 
-	static public function createFromBitmapData(p_id:String, p_bitmapData:BitmapData, p_format:String = "bgra", p_repeatable:Bool = false):GTexture {
-		return new GTexture(g2d_context, p_id, GTextureSourceType.BITMAPDATA, p_bitmapData, p_bitmapData.rect, p_format, p_repeatable, 0, 0, null);
+	static public function createFromBitmapData(p_id:String, p_bitmapData:BitmapData, p_scaleFactor:Float = 1, p_repeatable:Bool = false, p_format:String = "bgra"):GTexture {
+		return new GTexture(g2d_context, p_id, GTextureSourceType.BITMAPDATA, p_bitmapData, p_bitmapData.rect, p_format, p_repeatable, 0, 0, p_scaleFactor, null);
 	}
 
-	static public function createFromAsset(p_id:String, p_imageAsset:GImageAsset, p_format:String = "bgra", p_repeatable:Bool = false):GTexture {
+	static public function createFromAsset(p_id:String, p_imageAsset:GImageAsset, p_scaleFactor:Float = 1, p_repeatable:Bool = false, p_format:String = "bgra"):GTexture {
         switch (p_imageAsset.type) {
             case GImageAssetType.BITMAPDATA:
-		        return createFromBitmapData(p_id, p_imageAsset.nativeImage, p_format, p_repeatable);
+		        return createFromBitmapData(p_id, p_imageAsset.nativeImage, p_scaleFactor, p_repeatable, p_format);
             case GImageAssetType.ATF:
                 return createFromATF(p_id, p_imageAsset.bytes);
         }
@@ -50,7 +50,7 @@ class GTextureFactory {
 	//    return new GTexture(g2d_context, p_id, GTextureSourceType.TEXTURE, p_nativeTexture, new GRectangle(0, 0, p_width, p_height), 0, 0, null);
 	//}
 
-    static public function createFromATF(p_id:String, p_atfData:ByteArray, p_uploadCallback:Function = null):GTexture {
+    static public function createFromATF(p_id:String, p_atfData:ByteArray, p_scaleFactor:Float = 1, p_uploadCallback:Function = null):GTexture {
         var atf:String = String.fromCharCode(p_atfData[0]) + String.fromCharCode(p_atfData[1]) + String.fromCharCode(p_atfData[2]);
         if (atf != "ATF") new GError("Invalid ATF data");
         var type:Int = GTextureSourceType.ATF_BGRA;
@@ -67,10 +67,10 @@ class GTextureFactory {
         var width:Float = Math.pow(2, p_atfData[offset+1]);
         var height:Float = Math.pow(2, p_atfData[offset+2]);
 
-        return new GTexture(g2d_context, p_id, type, p_atfData, new GRectangle(0, 0, width, height), "", false, 0, 0, null);
+        return new GTexture(g2d_context, p_id, type, p_atfData, new GRectangle(0, 0, width, height), "", false, 0, 0, p_scaleFactor, null);
     }
 
-    static public function createRenderTexture(p_id:String, p_width:Int, p_height:Int):GTexture {
-        return new GTexture(g2d_context, p_id, GTextureSourceType.RENDER_TARGET, null, new GRectangle(0,0,p_width, p_height), "", false, 0, 0, null);
+    static public function createRenderTexture(p_id:String, p_width:Int, p_height:Int, p_scaleFactor:Float = 1):GTexture {
+        return new GTexture(g2d_context, p_id, GTextureSourceType.RENDER_TARGET, null, new GRectangle(0,0,p_width, p_height), "", false, 0, 0, p_scaleFactor, null);
     }
 }

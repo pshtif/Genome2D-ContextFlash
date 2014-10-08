@@ -9,6 +9,8 @@
 package com.genome2d.textures.factories;
 
 import com.genome2d.textures.GTexture;
+import com.genome2d.textures.GTexture;
+import com.genome2d.textures.GTexture;
 import com.genome2d.geom.GRectangle;
 import com.genome2d.context.IContext;
 import com.genome2d.geom.GRectangle;
@@ -34,12 +36,12 @@ class GTextureAtlasFactory
 {
     static public var g2d_context:IContext;
 
-    static public function createFromEmbedded(p_id:String, p_bitmapAsset:Class<Bitmap>, p_xmlAsset:Class<Dynamic>, p_format:String = "bgra"):GTextureAtlas {
+    static public function createFromEmbedded(p_id:String, p_bitmapAsset:Class<Bitmap>, p_xmlAsset:Class<Dynamic>, p_scaleFactor:Float = 1, p_format:String = "bgra"):GTextureAtlas {
         var bitmap:Bitmap = cast Type.createInstance(p_bitmapAsset, []);
         var data:String = cast Type.createInstance(p_xmlAsset, []);
         var xml:Xml = Xml.parse(data);
 
-        return createFromBitmapDataAndXml(p_id, bitmap.bitmapData, xml, p_format);
+        return createFromBitmapDataAndXml(p_id, bitmap.bitmapData, xml, p_scaleFactor, p_format);
     }
 
 	/**
@@ -49,9 +51,9 @@ class GTextureAtlasFactory
 	 * 	@param p_bitmapData bitmap data
 	 * 	@param p_xml
 	 */	
-	static public function createFromBitmapDataAndXml(p_id:String, p_bitmapData:BitmapData, p_xml:Xml, p_format:String = "bgra"):GTextureAtlas {
+	static public function createFromBitmapDataAndXml(p_id:String, p_bitmapData:BitmapData, p_xml:Xml, p_scaleFactor:Float = 1, p_format:String = "bgra"):GTextureAtlas {
         if (!GTextureUtils.isValidTextureSize(p_bitmapData.width) || !GTextureUtils.isValidTextureSize(p_bitmapData.height)) new GError("Atlas bitmap needs to have power of 2 size.");
-		var textureAtlas:GTextureAtlas = new GTextureAtlas(g2d_context, p_id, GTextureSourceType.BITMAPDATA, p_bitmapData, p_bitmapData.rect, p_format, null);
+		var textureAtlas:GTextureAtlas = new GTextureAtlas(g2d_context, p_id, GTextureSourceType.BITMAPDATA, p_bitmapData, p_bitmapData.rect, p_format, p_scaleFactor, null);
 
 		var root = p_xml.firstElement();
 		var it:Iterator<Xml> = root.elements();
@@ -60,22 +62,23 @@ class GTextureAtlasFactory
 			var node:Xml = it.next();
 			
 			var region:GRectangle = new GRectangle(Std.parseInt(node.get("x")), Std.parseInt(node.get("y")), Std.parseInt(node.get("width")), Std.parseInt(node.get("height")));
-			
-			var pivotX:Float = (node.get("frameX") == null || node.get("frameWidth") == null) ? 0 : (Std.parseInt(node.get("frameWidth"))-region.width)/2 + Std.parseInt(node.get("frameX"));
-			var pivotY:Float = (node.get("frameY") == null || node.get("frameHeight") == null) ? 0 : (Std.parseInt(node.get("frameHeight"))-region.height)/2 + Std.parseInt(node.get("frameY"));
 
-			textureAtlas.addSubTexture(node.get("name"), region, pivotX, pivotY);
+            if (node.get("frameX") != null && node.get("frameWidth") != null && node.get("frameY") != null && node.get("frameHeight") != null) {
+			    textureAtlas.addSubTexture(node.get("name"), region, Std.parseInt(node.get("frameX")), Std.parseInt(node.get("frameY")), Std.parseInt(node.get("frameWidth")), Std.parseInt(node.get("frameHeight")));
+            } else {
+                textureAtlas.addSubTexture(node.get("name"), region, 0, 0, Std.int(region.width), Std.int(region.height));
+            }
 		}
 
 		textureAtlas.invalidateNativeTexture(false);
 		return textureAtlas;
 	}	
 
-	static public function createFromAssets(p_id:String, p_imageAsset:GImageAsset, p_xmlAsset:GXmlAsset, p_format:String = "bgra"):GTextureAtlas {
-		return createFromBitmapDataAndXml(p_id, p_imageAsset.nativeImage, p_xmlAsset.xml, p_format);
+	static public function createFromAssets(p_id:String, p_imageAsset:GImageAsset, p_xmlAsset:GXmlAsset, p_scaleFactor:Float = 1, p_format:String = "bgra"):GTextureAtlas {
+		return createFromBitmapDataAndXml(p_id, p_imageAsset.nativeImage, p_xmlAsset.xml, p_scaleFactor, p_format);
 	}
 
-    static public function createFromBitmapDatas(p_id:String, p_bitmaps:Array<BitmapData>, p_ids:Array<String>, p_format:String = "bgra", p_packer:GMaxRectPacker = null, p_padding:Int = 2):GTextureAtlas {
+    static public function createFromBitmapDatas(p_id:String, p_bitmaps:Array<BitmapData>, p_ids:Array<String>, p_scaleFactor:Float = 1, p_format:String = "bgra", p_packer:GMaxRectPacker = null, p_padding:Int = 2):GTextureAtlas {
         var rectangles:Array<GPackerRectangle> = new Array<GPackerRectangle>();
         var i:Int;
         var rect:GPackerRectangle;
@@ -95,19 +98,21 @@ class GTextureAtlasFactory
         var packed:BitmapData = new BitmapData(p_packer.getWidth(), p_packer.getHeight(), true, 0x0);
         p_packer.draw(packed);
 
-        var textureAtlas:GTextureAtlas = new GTextureAtlas(g2d_context, p_id, GTextureSourceType.BITMAPDATA, packed, packed.rect, p_format, null);
+        var textureAtlas:GTextureAtlas = new GTextureAtlas(g2d_context, p_id, GTextureSourceType.BITMAPDATA, packed, packed.rect, p_format, p_scaleFactor, null);
 
         var count:Int = p_packer.getRectangles().length;
         for (i in 0...count) {
             rect = p_packer.getRectangles()[i];
-            textureAtlas.addSubTexture(rect.id, rect.getRect(), rect.pivotX, rect.pivotY);
+            var texture:GTexture = textureAtlas.addSubTexture(rect.id, rect.getRect(), 0, 0, rect.width, rect.height);
+            texture.pivotX = rect.pivotX;
+            texture.pivotY = rect.pivotY;
         }
 
         textureAtlas.invalidateNativeTexture(false);
         return textureAtlas;
     }
 
-    static public function createFromATFAndXml(p_id:String, p_atfData:ByteArray, p_xml:Xml):GTextureAtlas {
+    static public function createFromATFAndXml(p_id:String, p_atfData:ByteArray, p_xml:Xml, p_scaleFactor:Float = 1):GTextureAtlas {
         var atf:String = String.fromCharCode(p_atfData[0]) + String.fromCharCode(p_atfData[1]) + String.fromCharCode(p_atfData[2]);
         if (atf != "ATF") new GError("Invalid ATF data.");
 
@@ -124,7 +129,7 @@ class GTextureAtlasFactory
         var width:Float = Math.pow(2, p_atfData[offset+1]);
         var height:Float = Math.pow(2, p_atfData[offset+2]);
 
-        var textureAtlas:GTextureAtlas = new GTextureAtlas(g2d_context, p_id, type, p_atfData, new GRectangle(0,0,width,height), "", null);
+        var textureAtlas:GTextureAtlas = new GTextureAtlas(g2d_context, p_id, type, p_atfData, new GRectangle(0,0,width,height), "", p_scaleFactor, null);
 
         var root = p_xml.firstElement();
         var it:Iterator<Xml> = root.elements();
@@ -134,18 +139,19 @@ class GTextureAtlasFactory
 
             var region:GRectangle = new GRectangle(Std.parseInt(node.get("x")), Std.parseInt(node.get("y")), Std.parseInt(node.get("width")), Std.parseInt(node.get("height")));
 
-            var pivotX:Float = (node.get("frameX") == null || node.get("frameWidth") == null) ? 0 : (Std.parseInt(node.get("frameWidth"))-region.width)/2 + Std.parseInt(node.get("frameX"));
-            var pivotY:Float = (node.get("frameY") == null || node.get("frameHeight") == null) ? 0 : (Std.parseInt(node.get("frameHeight"))-region.height)/2 + Std.parseInt(node.get("frameY"));
-
-            textureAtlas.addSubTexture(node.get("name"), region, pivotX, pivotY);
+            if (node.get("frameX") != null && node.get("frameWidth") != null && node.get("frameY") != null && node.get("frameHeight") != null) {
+                textureAtlas.addSubTexture(node.get("name"), region, Std.parseInt(node.get("frameX")), Std.parseInt(node.get("frameY")), Std.parseInt(node.get("frameWidth")), Std.parseInt(node.get("frameHeight")));
+            } else {
+                textureAtlas.addSubTexture(node.get("name"), region, 0, 0, Std.int(region.width), Std.int(region.height));
+            }
         }
 
         textureAtlas.invalidateNativeTexture(false);
         return textureAtlas;
     }
 
-    static public function createFontFromAssets(p_id:String, p_imageAsset:GImageAsset, p_xmlAsset:GXmlAsset, p_format:String = "bgra"):GTextureFontAtlas {
-        return createFromBitmapDataAndFontXml(p_id, p_imageAsset.nativeImage, p_xmlAsset.xml, p_format);
+    static public function createFontFromAssets(p_id:String, p_imageAsset:GImageAsset, p_xmlAsset:GXmlAsset, p_scaleFactor:Float = 1, p_format:String = "bgra"):GTextureFontAtlas {
+        return createFromBitmapDataAndFontXml(p_id, p_imageAsset.nativeImage, p_xmlAsset.xml, p_scaleFactor, p_format);
     }
 
     /*
@@ -179,8 +185,8 @@ class GTextureAtlasFactory
         return createFromBitmapDatas(p_id, bitmaps, ids, p_format);
     }
     /**/
-    static public function createFromBitmapDataAndFontXml(p_id:String, p_bitmapData:BitmapData, p_fontXml:Xml, p_format:String = "bgra"):GTextureFontAtlas {
-        var textureAtlas:GTextureFontAtlas = new GTextureFontAtlas(g2d_context, p_id, GTextureSourceType.BITMAPDATA, p_bitmapData, p_bitmapData.rect, p_format, null);
+    static public function createFromBitmapDataAndFontXml(p_id:String, p_bitmapData:BitmapData, p_fontXml:Xml, p_scaleFactor:Float = 1, p_format:String = "bgra"):GTextureFontAtlas {
+        var textureAtlas:GTextureFontAtlas = new GTextureFontAtlas(g2d_context, p_id, GTextureSourceType.BITMAPDATA, p_bitmapData, p_bitmapData.rect, p_format, p_scaleFactor, null);
 
         var root:Xml = p_fontXml.firstElement();
 
@@ -196,7 +202,9 @@ class GTextureAtlasFactory
             var h:Int = Std.parseInt(node.get("height"));
             var region:GRectangle = new GRectangle(Std.parseInt(node.get("x")), Std.parseInt(node.get("y")), w, h);
 
-            var subtexture:GCharTexture = textureAtlas.addSubTexture(node.get("id"), region, -w/2, -h/2);
+            var subtexture:GCharTexture = textureAtlas.addSubTexture(node.get("id"), region, 0, 0, Std.int(region.width), Std.int(region.height));
+            subtexture.pivotX = -w/2;
+            subtexture.pivotY = -h/2;
             subtexture.xoffset = Std.parseInt(node.get("xoffset"));
             subtexture.yoffset = Std.parseInt(node.get("yoffset"));
             subtexture.xadvance = Std.parseInt(node.get("xadvance"));
