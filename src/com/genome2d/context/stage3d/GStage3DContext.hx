@@ -436,7 +436,8 @@ class GStage3DContext implements IContext
 	/**
 	  	Start the drawing
 	 */
-    public function begin():Void {
+    public function begin():Bool {
+        if (g2d_nativeContext.driverInfo == "Disposed") return false;
         g2d_stats.clear();
         setCamera(g2d_defaultCamera);
 
@@ -454,6 +455,7 @@ class GStage3DContext implements IContext
         g2d_nativeContext.setStencilActions(Context3DTriangleFace.FRONT_AND_BACK, Context3DCompareMode.ALWAYS, Context3DStencilAction.KEEP, Context3DStencilAction.KEEP, Context3DStencilAction.KEEP);
         g2d_nativeContext.setCulling(Context3DTriangleFace.NONE);
 		GBlendMode.setBlendMode(g2d_nativeContext, GBlendMode.NORMAL, g2d_activePremultiply);
+        return true;
 	}
 	
 	/**
