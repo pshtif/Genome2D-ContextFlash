@@ -423,7 +423,7 @@ class GStage3DContext implements IContext
         p_camera.matrix.prependScale(g2d_activeCamera.scaleX, g2d_activeCamera.scaleY, 1);
         p_camera.matrix.prependTranslation(-g2d_activeCamera.x, -g2d_activeCamera.y, 0);
 
-        if (!g2d_activeViewRect.equals(g2d_stageViewRect)) g2d_nativeContext.setScissorRectangle(g2d_activeViewRect);
+        g2d_nativeContext.setScissorRectangle(g2d_activeViewRect);
         g2d_nativeContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 0, g2d_activeCamera.matrix, true);
     }
 
