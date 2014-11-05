@@ -30,6 +30,7 @@ class GAsset
     }
 
 	public var onLoaded:Signal1<GAsset>;
+    public var onFailed:Signal1<GAsset>;
 
     private var g2d_id:String;
     #if swc @:extern #end
@@ -40,7 +41,8 @@ class GAsset
     }
 
 	public function new() {
-        onLoaded = new Signal1();
+        onLoaded = new Signal1(GAsset);
+        onFailed = new Signal1(GAsset);
     }
 
     public function initUrl(p_id:String, p_url:String):Void {
@@ -62,5 +64,6 @@ class GAsset
     }
 
     private function g2d_ioErrorHandler(event:IOErrorEvent):Void {
+        onFailed.dispatch(this);
     }
 }
