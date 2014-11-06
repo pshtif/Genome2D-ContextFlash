@@ -250,13 +250,15 @@ class GBitmapContext implements IContext
         g2d_onResize = null;
 	}
 	
-	public function begin():Void  {
+	public function begin():Bool  {
         g2d_stats.clear();
 
         setCamera(g2d_defaultCamera);
 
         // TODO add correct background color
 		g2d_nativeContext.fillRect(g2d_nativeContext.rect, 0x0);
+
+        return true;
 	}
 	
 	public function end():Void {
