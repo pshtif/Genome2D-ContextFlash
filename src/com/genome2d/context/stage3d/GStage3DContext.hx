@@ -32,7 +32,7 @@ import com.genome2d.context.stage3d.GProjectionMatrix;
 import flash.geom.Vector3D;
 import com.genome2d.textures.GContextTexture;
 import com.genome2d.context.GBlendMode;
-import com.genome2d.context.GContextCamera;
+import com.genome2d.context.GCamera;
 
 import com.genome2d.context.stage3d.renderers.IGRenderer;
 import flash.display.Stage;
@@ -81,8 +81,8 @@ class GStage3DContext implements IContext
         return g2d_nativeStage;
     }
 
-    private var g2d_activeCamera:GContextCamera;
-    public function getActiveCamera():GContextCamera {
+    private var g2d_activeCamera:GCamera;
+    public function getActiveCamera():GCamera {
         return g2d_activeCamera;
     }
     private var g2d_activeViewRect:GRectangle;
@@ -96,8 +96,8 @@ class GStage3DContext implements IContext
     inline public function getStageViewRect():GRectangle {
         return g2d_stageViewRect;
     }
-    private var g2d_defaultCamera:GContextCamera;
-    inline public function getDefaultCamera():GContextCamera {
+    private var g2d_defaultCamera:GCamera;
+    inline public function getDefaultCamera():GCamera {
         return g2d_defaultCamera;
     }
 
@@ -326,7 +326,7 @@ class GStage3DContext implements IContext
     }
 
     private function g2d_initComplete():Void {
-        g2d_defaultCamera = new GContextCamera();
+        g2d_defaultCamera = new GCamera();
         g2d_defaultCamera.x = g2d_stageViewRect.width*.5;
         g2d_defaultCamera.y = g2d_stageViewRect.height*.5;
         g2d_activeViewRect = new GRectangle();
@@ -404,7 +404,7 @@ class GStage3DContext implements IContext
     /**
 	  	Set camera that should be used for all subsequent draws
 	 */
-    public function setCamera(p_camera:GContextCamera):Void {
+    public function setCamera(p_camera:GCamera):Void {
         g2d_activeCamera = p_camera;
 
         g2d_activeViewRect.setTo(untyped __int__(g2d_stageViewRect.width*g2d_activeCamera.normalizedViewX),

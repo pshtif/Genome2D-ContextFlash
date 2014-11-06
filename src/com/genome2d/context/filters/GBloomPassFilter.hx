@@ -11,7 +11,7 @@ package com.genome2d.context.filters;
 import com.genome2d.textures.GContextTexture;
 import flash.Vector;
 import com.genome2d.textures.GContextTexture;
-import com.genome2d.context.GContextCamera;
+import com.genome2d.context.GCamera;
 import com.genome2d.error.GError;
 
 import flash.display3D.Context3D;

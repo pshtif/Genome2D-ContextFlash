@@ -34,7 +34,7 @@ import flash.geom.ColorTransform;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
-import com.genome2d.context.GContextCamera;
+import com.genome2d.context.GCamera;
 import com.genome2d.textures.GContextTexture;
 
 class GBitmapContext implements IContext
@@ -53,8 +53,8 @@ class GBitmapContext implements IContext
     inline public function getStageViewRect():GRectangle {
         return g2d_stageViewRect;
     }
-    public var g2d_defaultCamera:GContextCamera;
-    inline public function getDefaultCamera():GContextCamera {
+    public var g2d_defaultCamera:GCamera;
+    inline public function getDefaultCamera():GCamera {
         return g2d_defaultCamera;
     }
 
@@ -118,7 +118,7 @@ class GBitmapContext implements IContext
     }
 
     private var g2d_stats:GStats;
-    private var g2d_activeCamera:GContextCamera;
+    private var g2d_activeCamera:GCamera;
     private var g2d_activeViewRect:GRectangle;
     private var g2d_activeMaskRect:GRectangle;
     private var g2d_initialized:Bool = false;
@@ -180,7 +180,7 @@ class GBitmapContext implements IContext
         g2d_activeMaskRect = p_maskRect;
     }
 
-	public function setCamera(p_camera:GContextCamera):Void {
+	public function setCamera(p_camera:GCamera):Void {
         g2d_activeCamera = p_camera;
 
         g2d_activeViewRect.setTo(untyped __int__(g2d_stageViewRect.width*g2d_activeCamera.normalizedViewX),
@@ -218,7 +218,7 @@ class GBitmapContext implements IContext
     }
 
     private function initComplete():Void {
-        g2d_defaultCamera = new GContextCamera();
+        g2d_defaultCamera = new GCamera();
         g2d_defaultCamera.x = g2d_stageViewRect.width*.5;
         g2d_defaultCamera.y = g2d_stageViewRect.height*.5;
         g2d_activeViewRect = new GRectangle();

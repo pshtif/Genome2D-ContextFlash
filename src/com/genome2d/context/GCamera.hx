@@ -8,9 +8,10 @@
  */
 package com.genome2d.context;
 
+import com.genome2d.geom.GRectangle;
 import com.genome2d.context.stage3d.GProjectionMatrix;
 
-class GContextCamera {
+class GCamera {
     public var rotation:Float = 0;
     public var scaleX:Float = 1;
     public var scaleY:Float = 1;
