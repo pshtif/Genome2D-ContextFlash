@@ -120,7 +120,7 @@ class GQuadTextureShaderRenderer implements IGRenderer
         BATCH_SIZE = untyped __int__(MAX_CONSTANTS/TRANSFORM_PER_VERTEX);
         BATCH_SIZE_ALPHA = untyped __int__(MAX_CONSTANTS/TRANSFORM_PER_VERTEX_ALPHA);
 
-        g2d_useFastMem = p_useFastMem;
+        g2d_useFastMem = false;//p_useFastMem;
         g2d_fastMemArray = p_fastMemArray;
     }
 	
