@@ -197,6 +197,10 @@ class GBitmapContext implements IContext
 
         g2d_cameraBitmap = new BitmapData(untyped __int__(g2d_stageViewRect.width * g2d_activeCamera.normalizedViewWidth), untyped __int__(g2d_stageViewRect.height * g2d_activeCamera.normalizedViewHeight),true,0x0);
     }
+
+    public function getActiveCamera():GCamera {
+        return g2d_activeCamera;
+    }
 	
 	public function init():Void {
 		g2d_nativeContext = new BitmapData(untyped __int__(g2d_stageViewRect.width), untyped __int__(g2d_stageViewRect.height), false, 0x0);
