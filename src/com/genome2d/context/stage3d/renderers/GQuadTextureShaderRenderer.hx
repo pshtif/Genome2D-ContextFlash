@@ -335,7 +335,7 @@ class GQuadTextureShaderRenderer implements IGRenderer
             g2d_activeTextureHeight = sy;
 		}
 		
-		// Alpha is active and texture uses premultiplied source
+		// Alpha is active and textures uses premultiplied source
 		if (g2d_activeAlpha && p_texture.premultiplied) {
 			p_red*=p_alpha;
 			p_green*=p_alpha;

@@ -46,7 +46,7 @@ class GBloomPassFilter extends GFilter
 
     override public function bind(p_context:IContext, p_texture:GContextTexture):Void {
         super.bind(p_context, p_texture);
-        if (texture == null) new GError("There is no texture set for bloom pass.");
+        if (texture == null) new GError("There is no textures set for bloom pass.");
         p_context.getNativeContext().setTextureAt(1, texture.nativeTexture);
     }
 

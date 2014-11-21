@@ -58,7 +58,7 @@ class GHDRPassFilter extends GFilter
 
     override public function bind(p_context:IContext, p_texture:GContextTexture):Void {
         super.bind(p_context, p_texture);
-        if (texture == null) new GError("There is no texture set for HDR pass.");
+        if (texture == null) new GError("There is no textures set for HDR pass.");
         p_context.getNativeContext().setTextureAt(1, texture.nativeTexture);
     }
 

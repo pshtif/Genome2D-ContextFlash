@@ -272,7 +272,7 @@ class GMatrixQuadTextureShaderRenderer implements IGRenderer
             p_ty = p_ty - px*p_b - py*p_d;
         }
 		
-		// Alpha is active and texture uses premultiplied source
+		// Alpha is active and textures uses premultiplied source
 		if (g2d_activeAlpha && p_texture.premultiplied) {
 			p_red*=p_alpha;
 			p_green*=p_alpha;

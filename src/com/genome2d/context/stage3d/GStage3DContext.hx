@@ -488,7 +488,7 @@ class GStage3DContext implements IContext
     /**
        Draw quad
 
-       @param p_texture texture instance used to drawing
+       @param p_texture textures instance used to drawing
      */
 	inline public function draw(p_texture:GContextTexture, p_x:Float, p_y:Float, p_scaleX:Float = 1, p_scaleY:Float = 1, p_rotation:Float = 0, p_red:Float = 1, p_green:Float = 1, p_blue:Float = 1, p_alpha:Float = 1, p_blendMode:Int = 1, p_filter:GFilter = null):Void {
 		if (p_alpha != 0) {
@@ -502,7 +502,7 @@ class GStage3DContext implements IContext
     /**
        Draw quad using source rectangle
 
-       @param p_texture texture to be drawn
+       @param p_texture textures to be drawn
      */
     inline public function drawSource(p_texture:GContextTexture, p_sourceX:Float, p_sourceY:Float, p_sourceWidth:Float, p_sourceHeight:Float, p_sourcePivotX:Float, p_sourcePivotY:Float, p_x:Float, p_y:Float, p_scaleX:Float = 1, p_scaleY:Float = 1, p_rotation:Float = 0, p_red:Float = 1, p_green:Float = 1, p_blue:Float = 1, p_alpha:Float = 1, p_blendMode:Int = 1, p_filter:GFilter = null):Void {
         if (p_alpha != 0) {
@@ -516,7 +516,7 @@ class GStage3DContext implements IContext
     /**
        Draw quad using 2D matrix raw data
 
-       @param p_texture texture to be drawn
+       @param p_texture textures to be drawn
      */
     inline public function drawMatrix(p_texture:GContextTexture, p_a:Float, p_b:Float, p_c:Float, p_d:Float, p_tx:Float, p_ty:Float, p_red:Float = 1, p_green:Float = 1, p_blue:Float = 1, p_alpha:Float=1, p_blendMode:Int=1, p_filter:GFilter = null):Void {
         if (p_alpha != 0) {
@@ -529,7 +529,7 @@ class GStage3DContext implements IContext
     /**
        Draw quad using 2D matrix raw data
 
-       @param p_texture texture to be drawn
+       @param p_texture textures to be drawn
      */
     inline public function drawMatrixSource(p_texture:GContextTexture, p_sourceX:Float, p_sourceY:Float, p_sourceWidth:Float, p_sourceHeight:Float, p_a:Float, p_b:Float, p_c:Float, p_d:Float, p_tx:Float, p_ty:Float, p_red:Float = 1, p_green:Float = 1, p_blue:Float = 1, p_alpha:Float=1, p_blendMode:Int=1, p_filter:GFilter = null):Void {
         if (p_alpha != 0) {
@@ -543,7 +543,7 @@ class GStage3DContext implements IContext
     /**
         Draw polygon
 
-        @param p_texture texture to be used for fill
+        @param p_texture textures to be used for fill
         @param p_vertices triangulated vertices that define the polygon
         @param p_uvs uvs that correspond to the vertices defined
         @param p_x x translation
@@ -644,7 +644,7 @@ class GStage3DContext implements IContext
     /**
         Sets the render target for all subsequent draw calls
 
-        @param p_texture texture target, if null it will target backbuffer
+        @param p_texture textures target, if null it will target backbuffer
         @param p_transform additional transformation that should be applied, not applicable to backbuffer target
      */
 	public function setRenderTarget(p_texture:GContextTexture = null, p_transform:GMatrix3D = null, p_clear:Bool = true):Void {
