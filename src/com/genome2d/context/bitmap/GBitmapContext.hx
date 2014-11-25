@@ -275,15 +275,16 @@ class GBitmapContext implements IContext
 	}
 	
 	public function draw(p_texture:GContextTexture, p_x:Float, p_y:Float, p_scaleX:Float = 1, p_scaleY:Float = 1, p_rotation:Float = 0, p_red:Float = 1, p_green:Float = 1, p_blue:Float = 1, p_alpha:Float = 1, p_blendMode:Int = 1, p_filter:GFilter = null):Void {
-		if (p_texture.g2d_bitmapData == null) return;
+        var bitmapData:BitmapData = cast p_texture.nativeSource;
+		if (bitmapData == null) return;
 
         if (p_rotation == 0 && p_scaleX == 1 && p_scaleY == 1 && p_red == 1 && p_green == 1 && p_blue == 1 && p_alpha == 1 && g2d_activeCamera.rotation == 0 && g2d_activeCamera.scaleX == 1 && g2d_activeMaskRect == null) {
             g2d_point.x = p_x-p_texture.pivotX-p_texture.width/2 - g2d_activeCamera.x + g2d_activeViewRect.width*.5;
             g2d_point.y = p_y-p_texture.pivotY-p_texture.height/2 - g2d_activeCamera.y + g2d_activeViewRect.height*.5;
-            g2d_cameraBitmap.copyPixels(p_texture.g2d_bitmapData, p_texture.g2d_bitmapData.rect, g2d_point, p_texture.g2d_bitmapData, ZERO_POINT, true);
+            g2d_cameraBitmap.copyPixels(bitmapData, bitmapData.rect, g2d_point, bitmapData, ZERO_POINT, true);
         } else {
             // TODO this looks nasty
-            if (p_texture.width != p_texture.g2d_bitmapData.width) p_scaleX *= p_texture.width/p_texture.g2d_bitmapData.width;
+            if (p_texture.width != bitmapData.width) p_scaleX *= p_texture.width/bitmapData.width;
 
             var sx:Float = p_scaleX*g2d_activeCamera.scaleX;
             var sy:Float = p_scaleY*g2d_activeCamera.scaleY;
@@ -312,7 +313,7 @@ class GBitmapContext implements IContext
             g2d_colorTransform.greenMultiplier = p_green;
             g2d_colorTransform.blueMultiplier = p_blue;
             g2d_colorTransform.alphaMultiplier = p_alpha;
-            g2d_cameraBitmap.draw(p_texture.g2d_bitmapData, g2d_matrix, g2d_colorTransform, null, (g2d_activeMaskRect == null ? null : g2d_activeMaskRect));
+            g2d_cameraBitmap.draw(bitmapData, g2d_matrix, g2d_colorTransform, null, (g2d_activeMaskRect == null ? null : g2d_activeMaskRect));
         }
 	}
 

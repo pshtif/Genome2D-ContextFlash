@@ -8,10 +8,10 @@
  */
 package com.genome2d.context.stage3d;
 
+import com.genome2d.textures.GTextureManager;
 import com.genome2d.textures.GTexture;
 import com.genome2d.context.filters.GColorMatrixFilter;
 import com.genome2d.context.stats.GStats;
-import com.genome2d.context.stage3d.renderers.GCustomRenderer;
 import msignal.Signal.Signal0;
 import msignal.Signal.Signal1;
 import msignal.Signal.Signal2;
@@ -282,7 +282,7 @@ class GStage3DContext implements IContext
 
         g2d_triangleTextureBufferCPURenderer = new GTriangleTextureBufferCPURenderer();
 
-        GContextTexture.invalidateAll(true);
+        GTextureManager.invalidateAll(true);
 
         g2d_invalidate();
 
@@ -348,7 +348,7 @@ class GStage3DContext implements IContext
     }
 
     public function dispose():Void {
-        GContextTexture.disposeAll();
+        GTextureManager.disposeAll();
 
         g2d_onInitialized = null;
         g2d_onFailed = null;
@@ -667,10 +667,7 @@ class GStage3DContext implements IContext
 		} else {
 			g2d_nativeContext.setRenderToTexture(p_texture.nativeTexture, g2d_enableDepthAndStencil, g2d_antiAliasing, 0);
             g2d_nativeContext.setScissorRectangle(null);
-			if (!p_texture.g2d_initializedRenderTarget || p_clear) {
-                p_texture.g2d_initializedRenderTarget = true;
-                g2d_nativeContext.clear(0,0,0,0);
-            }
+            if (p_texture.needClearAsRenderTarget(p_clear)) g2d_nativeContext.clear(0,0,0,0);
 
 			g2d_nativeContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 0, GProjectionMatrix.getOrtho(p_texture.width, p_texture.height, p_transform), true);
 		}

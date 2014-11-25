@@ -26,6 +26,7 @@ import flash.display3D.VertexBuffer3D;
 import flash.display3D.textures.Texture;
 import flash.utils.ByteArray;
 
+@:access(com.genome2d.textures.GContextTexture)
 class GMatrixQuadTextureShaderRenderer implements IGRenderer
 {
 	inline static private var CONSTANTS_OFFSET:Int = 4;
@@ -204,11 +205,11 @@ class GMatrixQuadTextureShaderRenderer implements IGRenderer
 	}
 
     inline public function draw(p_a:Float, p_b:Float, p_c:Float, p_d:Float, p_tx:Float, p_ty:Float, p_red:Float, p_green:Float, p_blue:Float, p_alpha:Float, p_texture:GContextTexture, p_filter:GFilter, p_overrideSource:Bool, p_sourceX:Float, p_sourceY:Float, p_sourceWidth:Float, p_sourceHeight:Float):Void {
-		var notSameTexture:Bool = g2d_activeNativeTexture != p_texture.nativeTexture;
-		var notSameFiltering:Bool = g2d_activeFiltering != p_texture.getFilteringType();
+		var notSameTexture:Bool = g2d_activeNativeTexture != p_texture.g2d_nativeTexture;
+		var notSameFiltering:Bool = g2d_activeFiltering != p_texture.g2d_filteringType;
 		var useAlpha:Bool = !g2d_useSeparatedAlphaPipeline || !(p_red==1 && p_green==1 && p_blue==1 && p_alpha==1);
 		var notSameUseAlpha:Bool = g2d_activeAlpha != useAlpha;
-		var notSameAtf:Bool = g2d_activeAtf != p_texture.atfType;
+		var notSameAtf:Bool = g2d_activeAtf != p_texture.g2d_atfType;
 		var notSameFilter:Bool = g2d_activeFilter != p_filter;
         var notSameRepeat:Bool = g2d_activeRepeat != p_texture.g2d_repeatable;
 
@@ -223,7 +224,7 @@ class GMatrixQuadTextureShaderRenderer implements IGRenderer
 			// Any flag affecting shader has changed
 			if (notSameRepeat || notSameFiltering || notSameUseAlpha || notSameAtf || notSameFilter) {
                 // Set filtering
-				g2d_activeFiltering = p_texture.getFilteringType();
+				g2d_activeFiltering = p_texture.g2d_filteringType;
                 // Set alpha usage
 				g2d_activeAlpha = useAlpha;
                 if (g2d_activeAlpha) g2d_nativeContext.setVertexBufferAt(2, g2d_constantIndexBufferAlpha, 0, Context3DVertexBufferFormat.FLOAT_4);
@@ -257,10 +258,10 @@ class GMatrixQuadTextureShaderRenderer implements IGRenderer
             px = 0;
             py = 0;
         } else {
-            uvx = p_texture.uvX;
-            uvy = p_texture.uvY;
-            uvsx = p_texture.uvScaleX;
-            uvsy = p_texture.uvScaleY;
+            uvx = p_texture.g2d_uvX;
+            uvy = p_texture.g2d_uvY;
+            uvsx = p_texture.g2d_uvScaleX;
+            uvsy = p_texture.g2d_uvScaleY;
             sx = p_texture.width;
             sy = p_texture.height;
             px = p_texture.pivotX;

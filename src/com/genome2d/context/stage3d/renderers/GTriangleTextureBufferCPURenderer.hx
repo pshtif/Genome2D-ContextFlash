@@ -8,6 +8,7 @@
  */
 package com.genome2d.context.stage3d.renderers;
 
+import com.genome2d.textures.GTextureManager;
 import com.genome2d.context.stage3d.GStage3DContext;
 import flash.display3D.textures.TextureBase;
 import flash.utils.Dictionary;
@@ -24,6 +25,7 @@ import flash.display3D.textures.Texture;
 import flash.utils.ByteArray;
 import flash.Vector;
 
+@:access(com.genome2d.textures.GContextTexture)
 class GTriangleTextureBufferCPURenderer implements IGRenderer
 {
     static private inline var BATCH_SIZE:Int = 1200;
@@ -106,7 +108,7 @@ class GTriangleTextureBufferCPURenderer implements IGRenderer
         if (g2d_cachedPrograms==null || (p_reinitialize && !g2d_initializedThisFrame)) initialize(p_context);
         g2d_initializedThisFrame = p_reinitialize;
 
-        g2d_nativeContext.setProgram(getCachedProgram("true",GContextTexture.defaultFilteringType, g2d_activeAlpha, g2d_activeAtf, g2d_activeFilter));
+        g2d_nativeContext.setProgram(getCachedProgram("true",GTextureManager.defaultFilteringType, g2d_activeAlpha, g2d_activeAtf, g2d_activeFilter));
 
         g2d_nativeContext.setProgramConstantsFromVector(Context3DProgramType.VERTEX, 4, Vector.ofArray([1, 0, 0, .5]), 1);
         g2d_nativeContext.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, Vector.ofArray([1.0,1.0,1.0,1.0]), 1);
@@ -149,10 +151,10 @@ class GTriangleTextureBufferCPURenderer implements IGRenderer
         var cos:Float = (p_rotation==0) ? 1 : Math.cos(p_rotation);
         var sin:Float = (p_rotation==0) ? 0 : Math.sin(p_rotation);
 
-        var ux:Float = p_texture.uvX;
-        var usx:Float = p_texture.uvScaleX;
-        var uy:Float = p_texture.uvY;
-        var usy:Float = p_texture.uvScaleY;
+        var ux:Float = p_texture.g2d_uvX;
+        var usx:Float = p_texture.g2d_uvScaleX;
+        var uy:Float = p_texture.g2d_uvY;
+        var usy:Float = p_texture.g2d_uvScaleY;
 
         if (p_texture.premultiplied) {
             p_red*=p_alpha;

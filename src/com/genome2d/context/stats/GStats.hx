@@ -94,8 +94,8 @@ class GStats implements IStats
         }
 
         if (g2d_texture == null) {
-            g2d_texture = new GContextTexture(p_context, "stats_internal", 0, g2d_bitmapData, g2d_bitmapData.rect, "bgra", false, 0, 0, 1);
-            g2d_texture.setFilteringType(GTextureFilteringType.NEAREST);
+            g2d_texture = new GContextTexture("stats_internal", 0, g2d_bitmapData, g2d_bitmapData.rect, "bgra", false, 0, 0, 1);
+            g2d_texture.filteringType = GTextureFilteringType.NEAREST;
             g2d_texture.invalidateNativeTexture(false);
         } else {
             if (g2d_bitmapData.width<g2d_statsField.width && g2d_bitmapData.width<1024) {

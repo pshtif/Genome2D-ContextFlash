@@ -26,6 +26,7 @@ import flash.utils.ByteArray;
 import flash.utils.Dictionary;
 import flash.utils.Endian;
 
+@:access(com.genome2d.textures.GContextTexture)
 class GQuadTextureShaderRenderer implements IGRenderer
 {
 	inline static private var CONSTANTS_OFFSET:Int = 5;
@@ -234,11 +235,11 @@ class GQuadTextureShaderRenderer implements IGRenderer
 	
 	inline public function draw(p_x:Float, p_y:Float, p_scaleX:Float, p_scaleY:Float, p_rotation:Float, p_red:Float, p_green:Float, p_blue:Float, p_alpha:Float, p_texture:GContextTexture, p_filter:GFilter, p_overrideSource:Bool, p_sourceX:Float, p_sourceY:Float, p_sourceWidth:Float, p_sourceHeight:Float, p_sourcePivotX:Float, p_sourcePivotY:Float):Void {
 		var notSameTexture:Bool = g2d_activeNativeTexture != p_texture.nativeTexture;
-		var notSameFiltering:Bool = g2d_activeFiltering != p_texture.getFilteringType();
+		var notSameFiltering:Bool = g2d_activeFiltering != p_texture.filteringType;
         var notSameRepeat:Bool = g2d_activeRepeat != p_texture.g2d_repeatable;
 		var useAlpha:Bool = !g2d_useSeparatedAlphaPipeline || !(p_red == 1 && p_green == 1 && p_blue == 1 && p_alpha == 1);
 		var notSameUseAlpha:Bool = g2d_activeAlpha != useAlpha;
-		var notSameAtf:Bool = g2d_activeAtf != p_texture.atfType;
+		var notSameAtf:Bool = g2d_activeAtf != p_texture.g2d_atfType;
 		var notSameFilter:Bool = g2d_activeFilter != p_filter;
 
 		if (notSameRepeat || notSameTexture || notSameFiltering || notSameUseAlpha || notSameAtf || notSameFilter) {
@@ -252,7 +253,7 @@ class GQuadTextureShaderRenderer implements IGRenderer
 			// Any flag affecting shader has changed
 			if (notSameRepeat || notSameFiltering || notSameUseAlpha || notSameAtf || notSameFilter) {
                 // Set filtering
-				g2d_activeFiltering = p_texture.getFilteringType();
+				g2d_activeFiltering = p_texture.filteringType;
                 // Set alpha usage
 				g2d_activeAlpha = useAlpha;
                 if (g2d_activeAlpha) {
@@ -289,10 +290,10 @@ class GQuadTextureShaderRenderer implements IGRenderer
             px = p_sourcePivotX * p_scaleX;
             py = p_sourcePivotY * p_scaleY;
         } else {
-            uvx = p_texture.uvX;
-            uvy = p_texture.uvY;
-            uvsx = p_texture.uvScaleX;
-            uvsy = p_texture.uvScaleY;
+            uvx = p_texture.g2d_uvX;
+            uvy = p_texture.g2d_uvY;
+            uvsx = p_texture.g2d_uvScaleX;
+            uvsy = p_texture.g2d_uvScaleY;
             sx = p_texture.width * p_scaleX;
             sy = p_texture.height * p_scaleY;
             px = p_texture.pivotX * p_scaleX;
