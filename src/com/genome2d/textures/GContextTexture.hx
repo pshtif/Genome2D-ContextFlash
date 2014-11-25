@@ -128,7 +128,7 @@ class GContextTexture
 
     private var g2d_nativeSourceType:Int;
     #if swc @:extern #end
-    public var nativeSource(get,never):Int;
+    public var nativeSourceType(get,never):Int;
     #if swc @:getter(nativeSourceType) #end
     public function get_nativeSourceType():Int {
         return g2d_nativeSourceType;
@@ -195,7 +195,6 @@ class GContextTexture
     }
 
     private var g2d_frame:GRectangle;
-    private var g2d_parentAtlas:GContextTexture;
     private var g2d_format:String;
 
     private var g2d_uvX:Float;
@@ -243,7 +242,8 @@ class GContextTexture
 
 	static private var g2d_instanceCount:Int = 0;
 
-	public function new(p_id:String, p_sourceType:Int, p_source:Object, p_format:String, p_repeatable:Bool, p_pivotX:Float, p_pivotY:Float, p_scaleFactor:Float) {
+	//public function new(p_id:String, p_source:Object, p_format:String, p_repeatable:Bool, p_pivotX:Float, p_pivotY:Float, p_scaleFactor:Float) {
+    public function new(p_id:String, p_source:Object) {
         g2d_uvX = g2d_uvY = 0;
         g2d_uvScaleX = g2d_uvScaleY = 1;
         g2d_initializedRenderTarget = false;
@@ -251,17 +251,19 @@ class GContextTexture
         g2d_dirty = true;
         g2d_pivotX = g2d_pivotY = 0;
         g2d_gpuWidth = g2d_gpuHeight = 0;
-        g2d_scaleFactor = p_scaleFactor;
+        g2d_scaleFactor = 1//p_scaleFactor;
 
 		g2d_instanceCount++;
 		g2d_contextId = g2d_instanceCount;
-        g2d_format = p_format;
-        g2d_repeatable = p_repeatable;
+        g2d_format = "bgra"//p_format;
+        g2d_repeatable = false;//p_repeatable;
 
         g2d_id = p_id;
         g2d_nativeSourceType = p_sourceType;
         g2d_nativeSource = p_source;
         g2d_filteringType = GTextureManager.defaultFilteringType;
+
+        if (p_source != null) nativeSource = p_source;
 
         g2d_init();
 	}
@@ -376,8 +378,8 @@ class GContextTexture
             }
         } else {
             if (g2d_type == GTextureType.SUBTEXTURE) {
-                g2d_bitmapData = new BitmapData(wi, hi, true, 0x000000);
-                g2d_bitmapData.copyPixels(g2d_parentAtlas.g2d_bitmapData, g2d_region, new Point());//, g2d_parentAtlas.g2d_bitmapData, new Point(), true);
+                //g2d_bitmapData = new BitmapData(wi, hi, true, 0x000000);
+                //g2d_bitmapData.copyPixels(g2d_parentAtlas.g2d_bitmapData, g2d_region, new Point());//, g2d_parentAtlas.g2d_bitmapData, new Point(), true);
             }
         }
     }
