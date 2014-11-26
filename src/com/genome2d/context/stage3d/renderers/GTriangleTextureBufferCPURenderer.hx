@@ -8,13 +8,13 @@
  */
 package com.genome2d.context.stage3d.renderers;
 
+import com.genome2d.textures.GTexture;
 import com.genome2d.textures.GTextureManager;
 import com.genome2d.context.stage3d.GStage3DContext;
 import flash.display3D.textures.TextureBase;
 import flash.utils.Dictionary;
 import com.genome2d.context.filters.GFilter;
 import com.adobe.utils.extended.AGALMiniAssembler;
-import com.genome2d.textures.GContextTexture;
 import flash.display3D.Context3D;
 import flash.display3D.Context3DProgramType;
 import flash.display3D.Context3DVertexBufferFormat;
@@ -25,7 +25,7 @@ import flash.display3D.textures.Texture;
 import flash.utils.ByteArray;
 import flash.Vector;
 
-@:access(com.genome2d.textures.GContextTexture)
+@:access(com.genome2d.textures.GTexture)
 class GTriangleTextureBufferCPURenderer implements IGRenderer
 {
     static private inline var BATCH_SIZE:Int = 1200;
@@ -118,13 +118,13 @@ class GTriangleTextureBufferCPURenderer implements IGRenderer
         g2d_activeFilter = null;
     }
 
-    public function draw(p_vertices:Array<Float>, p_uvs:Array<Float>, p_x:Float, p_y:Float, p_scaleX:Float, p_scaleY:Float, p_rotation:Float, p_red:Float, p_green:Float, p_blue:Float, p_alpha:Float, p_texture:GContextTexture, p_filter:GFilter):Void {
+    public function draw(p_vertices:Array<Float>, p_uvs:Array<Float>, p_x:Float, p_y:Float, p_scaleX:Float, p_scaleY:Float, p_rotation:Float, p_red:Float, p_green:Float, p_blue:Float, p_alpha:Float, p_texture:GTexture, p_filter:GFilter):Void {
         var contextTexture:TextureBase = p_texture.nativeTexture;
         var notSameTexture:Bool = g2d_activeTexture != contextTexture;
         var notSameFiltering:Bool = g2d_activeFiltering != p_texture.g2d_filteringType;
         var useAlpha:Bool = !g2d_useSeparatedAlphaPipeline || !(p_red==1 && p_green==1 && p_blue==1 && p_alpha==1);
         var notSameAlpha:Bool = g2d_activeAlpha != useAlpha;
-        var notSameAtf:Bool = g2d_activeAtf != p_texture.atfType;
+        var notSameAtf:Bool = g2d_activeAtf != p_texture.g2d_atfType;
         var notSameFilter:Bool = g2d_activeFilter != p_filter;
         var notSameRepeat:Bool = g2d_activeRepeat != p_texture.g2d_repeatable;
 
@@ -139,7 +139,7 @@ class GTriangleTextureBufferCPURenderer implements IGRenderer
             if (notSameRepeat || notSameFiltering || notSameAlpha || notSameAtf) {
                 g2d_activeFiltering = p_texture.g2d_filteringType;
                 g2d_activeAlpha = useAlpha;
-                g2d_activeAtf = p_texture.atfType;
+                g2d_activeAtf = p_texture.g2d_atfType;
                 if (g2d_activeFilter != null) g2d_activeFilter.clear(g2d_context);
                 g2d_activeFilter = p_filter;
                 if (g2d_activeFilter != null) g2d_activeFilter.bind(g2d_context, p_texture);
@@ -151,10 +151,10 @@ class GTriangleTextureBufferCPURenderer implements IGRenderer
         var cos:Float = (p_rotation==0) ? 1 : Math.cos(p_rotation);
         var sin:Float = (p_rotation==0) ? 0 : Math.sin(p_rotation);
 
-        var ux:Float = p_texture.g2d_uvX;
-        var usx:Float = p_texture.g2d_uvScaleX;
-        var uy:Float = p_texture.g2d_uvY;
-        var usy:Float = p_texture.g2d_uvScaleY;
+        var ux:Float = p_texture.g2d_u;
+        var usx:Float = p_texture.g2d_uScale;
+        var uy:Float = p_texture.g2d_v;
+        var usy:Float = p_texture.g2d_vScale;
 
         if (p_texture.premultiplied) {
             p_red*=p_alpha;

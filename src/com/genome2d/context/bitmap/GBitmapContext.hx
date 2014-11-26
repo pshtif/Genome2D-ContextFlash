@@ -9,6 +9,7 @@
 package com.genome2d.context.bitmap;
 
 #if !stage3Donly
+import com.genome2d.textures.GTexture;
 import com.genome2d.geom.GMatrix3D;
 import msignal.Signal.Signal0;
 import msignal.Signal.Signal1;
@@ -274,8 +275,8 @@ class GBitmapContext implements IContext
 	    g2d_cameraBitmap = null;
 	}
 	
-	public function draw(p_texture:GContextTexture, p_x:Float, p_y:Float, p_scaleX:Float = 1, p_scaleY:Float = 1, p_rotation:Float = 0, p_red:Float = 1, p_green:Float = 1, p_blue:Float = 1, p_alpha:Float = 1, p_blendMode:Int = 1, p_filter:GFilter = null):Void {
-        var bitmapData:BitmapData = cast p_texture.nativeSource;
+	public function draw(p_texture:GTexture, p_x:Float, p_y:Float, p_scaleX:Float = 1, p_scaleY:Float = 1, p_rotation:Float = 0, p_red:Float = 1, p_green:Float = 1, p_blue:Float = 1, p_alpha:Float = 1, p_blendMode:Int = 1, p_filter:GFilter = null):Void {
+        var bitmapData:BitmapData = cast p_texture.source;
 		if (bitmapData == null) return;
 
         if (p_rotation == 0 && p_scaleX == 1 && p_scaleY == 1 && p_red == 1 && p_green == 1 && p_blue == 1 && p_alpha == 1 && g2d_activeCamera.rotation == 0 && g2d_activeCamera.scaleX == 1 && g2d_activeMaskRect == null) {

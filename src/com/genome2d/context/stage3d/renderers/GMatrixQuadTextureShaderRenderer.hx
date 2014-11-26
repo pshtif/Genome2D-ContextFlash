@@ -8,6 +8,7 @@
  */
 package com.genome2d.context.stage3d.renderers;
 
+import com.genome2d.textures.GTexture;
 import flash.display3D.textures.TextureBase;
 import com.genome2d.textures.GTextureFilteringType;
 import com.genome2d.textures.GContextTexture;
@@ -26,7 +27,7 @@ import flash.display3D.VertexBuffer3D;
 import flash.display3D.textures.Texture;
 import flash.utils.ByteArray;
 
-@:access(com.genome2d.textures.GContextTexture)
+@:access(com.genome2d.textures.GTexture)
 class GMatrixQuadTextureShaderRenderer implements IGRenderer
 {
 	inline static private var CONSTANTS_OFFSET:Int = 4;
@@ -204,7 +205,7 @@ class GMatrixQuadTextureShaderRenderer implements IGRenderer
 		g2d_activeFilter = null;
 	}
 
-    inline public function draw(p_a:Float, p_b:Float, p_c:Float, p_d:Float, p_tx:Float, p_ty:Float, p_red:Float, p_green:Float, p_blue:Float, p_alpha:Float, p_texture:GContextTexture, p_filter:GFilter, p_overrideSource:Bool, p_sourceX:Float, p_sourceY:Float, p_sourceWidth:Float, p_sourceHeight:Float):Void {
+    inline public function draw(p_a:Float, p_b:Float, p_c:Float, p_d:Float, p_tx:Float, p_ty:Float, p_red:Float, p_green:Float, p_blue:Float, p_alpha:Float, p_texture:GTexture, p_filter:GFilter, p_overrideSource:Bool, p_sourceX:Float, p_sourceY:Float, p_sourceWidth:Float, p_sourceHeight:Float):Void {
 		var notSameTexture:Bool = g2d_activeNativeTexture != p_texture.g2d_nativeTexture;
 		var notSameFiltering:Bool = g2d_activeFiltering != p_texture.g2d_filteringType;
 		var useAlpha:Bool = !g2d_useSeparatedAlphaPipeline || !(p_red==1 && p_green==1 && p_blue==1 && p_alpha==1);
@@ -230,7 +231,7 @@ class GMatrixQuadTextureShaderRenderer implements IGRenderer
                 if (g2d_activeAlpha) g2d_nativeContext.setVertexBufferAt(2, g2d_constantIndexBufferAlpha, 0, Context3DVertexBufferFormat.FLOAT_4);
                 else g2d_nativeContext.setVertexBufferAt(2, g2d_constantIndexBuffer, 0, Context3DVertexBufferFormat.FLOAT_3);
                 // Set ATF type
-				g2d_activeAtf = p_texture.atfType;
+				g2d_activeAtf = p_texture.g2d_atfType;
                 // Set filter
 				if (g2d_activeFilter != null) g2d_activeFilter.clear(g2d_context);
 				g2d_activeFilter = p_filter;
@@ -258,10 +259,10 @@ class GMatrixQuadTextureShaderRenderer implements IGRenderer
             px = 0;
             py = 0;
         } else {
-            uvx = p_texture.g2d_uvX;
-            uvy = p_texture.g2d_uvY;
-            uvsx = p_texture.g2d_uvScaleX;
-            uvsy = p_texture.g2d_uvScaleY;
+            uvx = p_texture.g2d_u;
+            uvy = p_texture.g2d_v;
+            uvsx = p_texture.g2d_uScale;
+            uvsy = p_texture.g2d_vScale;
             sx = p_texture.width;
             sy = p_texture.height;
             px = p_texture.pivotX;

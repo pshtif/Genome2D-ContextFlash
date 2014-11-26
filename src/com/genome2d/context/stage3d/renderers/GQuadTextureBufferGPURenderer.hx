@@ -8,6 +8,7 @@
  */
 package com.genome2d.context.stage3d.renderers;
 
+import com.genome2d.textures.GTexture;
 import flash.display3D.textures.TextureBase;
 import com.genome2d.textures.GTextureFilteringType;
 import com.genome2d.context.stats.GStats;
@@ -28,7 +29,7 @@ import flash.Vector;
 import flash.utils.Endian;
 import flash.Memory;
 
-@:access(com.genome2d.textures.GContextTexture)
+@:access(com.genome2d.textures.GTexture)
 class GQuadTextureBufferGPURenderer implements IGRenderer
 {
 	inline static private var BATCH_SIZE:Int = 5000;
@@ -194,13 +195,13 @@ class GQuadTextureBufferGPURenderer implements IGRenderer
 		g2d_activeTexture = null;
 	}
 	
-	inline public function draw(p_x:Float, p_y:Float, p_scaleX:Float, p_scaleY:Float, p_rotation:Float, p_red:Float, p_green:Float, p_blue:Float, p_alpha:Float, p_texture:GContextTexture, p_filter:GFilter):Void {
+	inline public function draw(p_x:Float, p_y:Float, p_scaleX:Float, p_scaleY:Float, p_rotation:Float, p_red:Float, p_green:Float, p_blue:Float, p_alpha:Float, p_texture:GTexture, p_filter:GFilter):Void {
 		var contextTexture:TextureBase = p_texture.nativeTexture;
 		var notSameTexture:Bool = g2d_activeTexture != contextTexture;
 		var notSameFiltering:Bool = g2d_activeFiltering != p_texture.g2d_filteringType;
 		var useAlpha:Bool = g2d_useSeparatedAlphaPipeline && !(p_red==1 && p_green==1 && p_blue==1 && p_alpha==1);
 		var notSameUseAlpha:Bool = g2d_activeAlpha != useAlpha;
-		var notSameAtf:Bool = g2d_activeAtf != p_texture.atfType;
+		var notSameAtf:Bool = g2d_activeAtf != p_texture.g2d_atfType;
 		var notSameFilter:Bool = g2d_activeFilter != p_filter;
         var notSameRepeat:Bool = g2d_activeRepeat != p_texture.g2d_repeatable;
 
@@ -215,7 +216,7 @@ class GQuadTextureBufferGPURenderer implements IGRenderer
 			if (notSameRepeat || notSameFiltering || notSameUseAlpha || notSameAtf || notSameFilter) {
 				g2d_activeFiltering = p_texture.g2d_filteringType;
 				g2d_activeAlpha = useAlpha;
-				g2d_activeAtf = p_texture.atfType;
+				g2d_activeAtf = p_texture.g2d_atfType;
 				if (g2d_activeFilter != null) g2d_activeFilter.clear(g2d_context);
 				g2d_activeFilter = p_filter;
 				if (g2d_activeFilter != null) g2d_activeFilter.bind(g2d_context, p_texture);
@@ -255,8 +256,8 @@ class GQuadTextureBufferGPURenderer implements IGRenderer
 			Memory.setFloat(4 + index, p_y);
 			Memory.setFloat(8 + index, w);
 			Memory.setFloat(12 + index, h);
-			Memory.setFloat(16 + index, p_texture.g2d_uvX);
-			Memory.setFloat(20 + index, p_texture.g2d_uvY + p_texture.g2d_uvScaleY);
+			Memory.setFloat(16 + index, p_texture.g2d_u);
+			Memory.setFloat(20 + index, p_texture.g2d_v + p_texture.g2d_vScale);
 			Memory.setFloat(24 + index, p_rotation);
 			Memory.setFloat(28 + index, px);
 			Memory.setFloat(32 + index, py);
@@ -273,8 +274,8 @@ class GQuadTextureBufferGPURenderer implements IGRenderer
 			Memory.setFloat(4 + index, p_y);
 			Memory.setFloat(8 + index, w);
 			Memory.setFloat(12 + index, h);
-			Memory.setFloat(16 + index, p_texture.g2d_uvX);
-			Memory.setFloat(20 + index, p_texture.g2d_uvY);
+			Memory.setFloat(16 + index, p_texture.g2d_u);
+			Memory.setFloat(20 + index, p_texture.g2d_v);
 			Memory.setFloat(24 + index, p_rotation);
 			Memory.setFloat(28 + index, px);
 			Memory.setFloat(32 + index, py);
@@ -291,8 +292,8 @@ class GQuadTextureBufferGPURenderer implements IGRenderer
 			Memory.setFloat(4 + index, p_y);
 			Memory.setFloat(8 + index, w);
 			Memory.setFloat(12 + index, h);
-			Memory.setFloat(16 + index, p_texture.g2d_uvX + p_texture.g2d_uvScaleX);
-			Memory.setFloat(20 + index, p_texture.g2d_uvY);
+			Memory.setFloat(16 + index, p_texture.g2d_u + p_texture.g2d_uScale);
+			Memory.setFloat(20 + index, p_texture.g2d_v);
 			Memory.setFloat(24 + index, p_rotation);
 			Memory.setFloat(28 + index, px);
 			Memory.setFloat(32 + index, py);
@@ -309,8 +310,8 @@ class GQuadTextureBufferGPURenderer implements IGRenderer
 			Memory.setFloat(4 + index, p_y);
 			Memory.setFloat(8 + index, w);
 			Memory.setFloat(12 + index, h);
-			Memory.setFloat(16 + index, p_texture.g2d_uvX + p_texture.g2d_uvScaleX);
-			Memory.setFloat(20 + index, p_texture.g2d_uvY + p_texture.g2d_uvScaleY);
+			Memory.setFloat(16 + index, p_texture.g2d_u + p_texture.g2d_uScale);
+			Memory.setFloat(20 + index, p_texture.g2d_v + p_texture.g2d_vScale);
 			Memory.setFloat(24 + index, p_rotation);
 			Memory.setFloat(28 + index, px);
 			Memory.setFloat(32 + index, py);
@@ -327,8 +328,8 @@ class GQuadTextureBufferGPURenderer implements IGRenderer
 			g2d_transformVector[index + 1] = p_y;
 			g2d_transformVector[index + 2] = w;
 			g2d_transformVector[index + 3] = h;
-			g2d_transformVector[index + 4] = p_texture.g2d_uvX;
-			g2d_transformVector[index + 5] = p_texture.g2d_uvY+p_texture.g2d_uvScaleY;
+			g2d_transformVector[index + 4] = p_texture.g2d_u;
+			g2d_transformVector[index + 5] = p_texture.g2d_v+p_texture.g2d_vScale;
 			g2d_transformVector[index + 6] = p_rotation;
 			g2d_transformVector[index + 7] = px;
 			g2d_transformVector[index + 8] = py;
@@ -345,8 +346,8 @@ class GQuadTextureBufferGPURenderer implements IGRenderer
 			g2d_transformVector[index + 1] = p_y;
 			g2d_transformVector[index + 2] = w;
 			g2d_transformVector[index + 3] = h;
-			g2d_transformVector[index + 4] = p_texture.g2d_uvX;
-			g2d_transformVector[index + 5] = p_texture.g2d_uvY;
+			g2d_transformVector[index + 4] = p_texture.g2d_u;
+			g2d_transformVector[index + 5] = p_texture.g2d_v;
 			g2d_transformVector[index + 6] = p_rotation;
 			g2d_transformVector[index + 7] = px;
 			g2d_transformVector[index + 8] = py;
@@ -363,8 +364,8 @@ class GQuadTextureBufferGPURenderer implements IGRenderer
 			g2d_transformVector[index + 1] = p_y;
 			g2d_transformVector[index + 2] = w;
 			g2d_transformVector[index + 3] = h;
-			g2d_transformVector[index + 4] = p_texture.g2d_uvX+p_texture.g2d_uvScaleX;
-			g2d_transformVector[index + 5] = p_texture.g2d_uvY;
+			g2d_transformVector[index + 4] = p_texture.g2d_u+p_texture.g2d_uScale;
+			g2d_transformVector[index + 5] = p_texture.g2d_v;
 			g2d_transformVector[index + 6] = p_rotation;
 			g2d_transformVector[index + 7] = px;
 			g2d_transformVector[index + 8] = py;
@@ -381,8 +382,8 @@ class GQuadTextureBufferGPURenderer implements IGRenderer
 			g2d_transformVector[index + 1] = p_y;
 			g2d_transformVector[index + 2] = w;
 			g2d_transformVector[index + 3] = h;
-			g2d_transformVector[index + 4] = p_texture.g2d_uvX+p_texture.g2d_uvScaleX;
-			g2d_transformVector[index + 5] = p_texture.g2d_uvY+p_texture.g2d_uvScaleY;
+			g2d_transformVector[index + 4] = p_texture.g2d_u+p_texture.g2d_uScale;
+			g2d_transformVector[index + 5] = p_texture.g2d_v+p_texture.g2d_vScale;
 			g2d_transformVector[index + 6] = p_rotation;
 			g2d_transformVector[index + 7] = px;
 			g2d_transformVector[index + 8] = py;

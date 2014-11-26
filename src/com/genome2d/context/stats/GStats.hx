@@ -92,7 +92,7 @@ class GStats implements IStats
                 g2d_statsField.htmlText += customStats[i];
             }
         }
-
+        /**
         if (g2d_texture == null) {
             g2d_texture = new GContextTexture("stats_internal", 0, g2d_bitmapData, g2d_bitmapData.rect, "bgra", false, 0, 0, 1);
             g2d_texture.filteringType = GTextureFilteringType.NEAREST;
@@ -115,6 +115,7 @@ class GStats implements IStats
         }
 
         p_context.draw(g2d_texture, (g2d_texture.width*scaleX)/2+x, (g2d_texture.height*scaleY)/2+y, scaleX, scaleY, 0);
+        /**/
     }
 
     public function clear():Void {

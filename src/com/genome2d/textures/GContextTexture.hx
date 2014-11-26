@@ -44,26 +44,18 @@ class GContextTexture
         return g2d_id;
     }
 
-    private var g2d_type:Int;
-    #if swc @:extern #end
-    public var type(get,never):Int;
-    #if swc @:getter(type) #end
-    inline private function get_type():Int {
-        return g2d_type;
-    }
-
     #if swc @:extern #end
     public var width(get, never):Float;
     #if swc @:getter(width) #end
     inline private function get_width():Float {
-        return g2d_region.width/scaleFactor;
+        return g2d_width/scaleFactor;
     }
 
     #if swc @:extern #end
     public var height(get, never):Float;
     #if swc @:getter(height) #end
     inline private function get_height():Float {
-        return g2d_region.height/scaleFactor;
+        return g2d_height/scaleFactor;
     }
 
     private var g2d_gpuWidth:Int;
@@ -82,35 +74,16 @@ class GContextTexture
         return g2d_gpuHeight;
     }
 
-    private var g2d_pivotX:Float;
-    #if swc @:extern #end
-    public var pivotX(get, set):Float;
-    #if swc @:getter(pivotX) #end
-    inline private function get_pivotX():Float {
-        return g2d_pivotX/scaleFactor;
-    }
-    #if swc @:setter(pivotX) #end
-    inline private function set_pivotX(p_value:Float):Float {
-        return g2d_pivotX = p_value*scaleFactor;
-    }
-
-    private var g2d_pivotY:Float;
-    #if swc @:extern #end
-    public var pivotY(get, set):Float;
-    #if swc @:getter(pivotY) #end
-    inline private function get_pivotY():Float {
-        return g2d_pivotY/scaleFactor;
-    }
-    #if swc @:setter(pivotY) #end
-    inline private function set_pivotY(p_value:Float):Float {
-        return g2d_pivotY = p_value*scaleFactor;
-    }
-
     private var g2d_scaleFactor:Float;
     #if swc @:extern #end
-    public var scaleFactor(get, never):Float;
+    public var scaleFactor(get, set):Float;
     #if swc @:getter(scaleFactor) #end
     inline private function get_scaleFactor():Float {
+        return g2d_scaleFactor;
+    }
+    #if swc @:setter(scaleFactor) #end
+    inline private function set_scaleFactor(p_value:Float):Float {
+        g2d_scaleFactor = p_value;
         return g2d_scaleFactor;
     }
 
@@ -126,81 +99,100 @@ class GContextTexture
         return g2d_filteringType = p_value;
     }
 
-    private var g2d_nativeSourceType:Int;
+    private var g2d_sourceType:Int;
     #if swc @:extern #end
-    public var nativeSourceType(get,never):Int;
-    #if swc @:getter(nativeSourceType) #end
-    public function get_nativeSourceType():Int {
-        return g2d_nativeSourceType;
+    public var sourceType(get,never):Int;
+    #if swc @:getter(sourceType) #end
+    public function get_sourceType():Int {
+        return g2d_sourceType;
     }
 
-    private var g2d_nativeSource:Object;
+    private var g2d_source:Object;
     /**
         Get the native source of this texture
     **/
     #if swc @:extern #end
-    public var nativeSource(get,set):Object;
-    #if swc @:getter(nativeSource) #end
-    public function get_nativeSource():Object {
-        return g2d_nativeSource;
+    public var source(get,set):Object;
+    #if swc @:getter(source) #end
+    inline private function get_source():Object {
+        return g2d_source;
     }
-    public function set_nativeSource(p_value:Object):Void {
-        if (g2d_type == GTextureType.SUBTEXTURE) new GError("Can't set source for subtextures!");
-        if (g2d_nativeSource == p_value) return;
-        g2d_nativeSource = p_value;
-        switch (Type.typeof(g2d_nativeSource)) {
-            case TClass(c):
-                switch (c) {
-                    case BitmapData:
-                        g2d_nativeSourceType = GTextureSourceType.BITMAPDATA;
-                        trace("BitmapData");
-                    case ByteArray:
-                        var atf:String = String.fromCharCode(g2d_nativeSource[0]) + String.fromCharCode(g2d_nativeSource[1]) + String.fromCharCode(g2d_nativeSource[2]);
-                        if (atf == "ATF") {
-                            g2d_nativeSourceType = GTextureSourceType.ATF_BGRA;
-                            var offset:Int = g2d_nativeSource[6] == 255 ? 12 : 6;
-                            switch (g2d_nativeSource[offset]) {
-                                case 0,1:
-                                    g2d_nativeSourceType = GTextureSourceType.ATF_BGRA;
-                                case 2,3:
-                                    g2d_nativeSourceType = GTextureSourceType.ATF_COMPRESSED;
-                                case 4,5:
-                                    g2d_nativeSourceType = GTextureSourceType.ATF_COMPRESSEDALPHA;
+    #if swc @:setter(source) #end
+    inline private function set_source(p_value:Object):Object {
+        if (g2d_source != p_value) {
+            g2d_sourceAtlas = null;
+            g2d_sourceByteArray = null;
+            g2d_sourceBitmapData = null;
+            switch (Type.typeof(p_value)) {
+                case TClass(c):
+                    switch (c) {
+                        case BitmapData:
+                            g2d_source = p_value;
+                            g2d_sourceType = GTextureSourceType.BITMAPDATA;
+                            g2d_sourceBitmapData = cast g2d_source;
+                            g2d_width = g2d_sourceBitmapData.width;
+                            g2d_height = g2d_sourceBitmapData.height;
+                            premultiplied = true;
+                        case ByteArray:
+                            g2d_source = p_value;
+                            g2d_sourceByteArray = g2d_source;
+                            var atf:String = String.fromCharCode(g2d_sourceByteArray[0]) + String.fromCharCode(g2d_sourceByteArray[1]) + String.fromCharCode(g2d_sourceByteArray[2]);
+                            if (atf == "ATF") {
+                                g2d_sourceType = GTextureSourceType.ATF_BGRA;
+                                var offset:Int = g2d_sourceByteArray[6] == 255 ? 12 : 6;
+                                switch (g2d_source[offset]) {
+                                    case 0,1:
+                                        g2d_sourceType = GTextureSourceType.ATF_BGRA;
+                                    case 2,3:
+                                        g2d_sourceType = GTextureSourceType.ATF_COMPRESSED;
+                                        g2d_atfType = "dxt1";
+                                    case 4,5:
+                                        g2d_sourceType = GTextureSourceType.ATF_COMPRESSEDALPHA;
+                                        g2d_atfType = "dxt5";
+                                }
+                                g2d_width = untyped __int__(Math.pow(2,g2d_sourceByteArray[offset+1]));
+                                g2d_height = untyped __int__(Math.pow(2,g2d_sourceByteArray[offset+2]));
+                                premultiplied = false;
+                            } else {
+                                //g2d_sourceType = GTextureSourceType.BYTEARRAY;
                             }
-                        } else {
-                            g2d_nativeSourceType = GTextureSourceType.BYTEARRAY;
-                        }
-                        trace("ByteArray");
-                    case Texture:
-                        g2d_nativeSourceType = GTextureSourceType.TEXTURE;
-                    case _:
-                        new GError("Invalid texture source.");
-                }
-            case _:
-                g2d_nativeSourceType = GTextureSourceType.RENDER_TARGET;
+                        case GTextureAtlas:
+                            g2d_source = p_value;
+                            g2d_sourceAtlas = g2d_source;
+                            g2d_sourceType = GTextureSourceType.ATLAS;
+                            g2d_nativeTexture = g2d_sourceAtlas.nativeTexture;
+                        case Texture:
+                            //g2d_sourceType = GTextureSourceType.TEXTURE;
+                        case _:
+                            new GError("Invalid texture source.");
+                    }
+                case _:
+                    //g2d_nativeSourceType = GTextureSourceType.RENDER_TARGET;
+            }
+            g2d_dirty = true;
         }
-        g2d_dirty = true;
+        return g2d_source;
     }
 
-    private var g2d_region:GRectangle;
-    #if swc @:extern #end
-    public var region(get,set):GRectangle;
-    #if swc @:getter(nativeSource) #end
-    public function get_region():GRectangle {
-        return g2d_region;
-    }
-    #if swc @:setter(region) #end
-    public function set_region():Object {
-
-    }
-
-    private var g2d_frame:GRectangle;
     private var g2d_format:String;
+    #if swc @:extern #end
+    public var format(get,set):String;
+    #if swc @:getter(format) #end
+    inline private function get_format():String {
+        return g2d_format;
+    }
+    #if swc @:setter(format) #end
+    inline private function set_format(p_value:String):String {
+        g2d_format = p_value;
+        g2d_dirty = true;
+        return p_value;
+    }
 
-    private var g2d_uvX:Float;
-    private var g2d_uvY:Float;
-    private var g2d_uvScaleX:Float;
-    private var g2d_uvScaleY:Float;
+
+    private var g2d_u:Float;
+    private var g2d_v:Float;
+    private var g2d_uScale:Float;
+    private var g2d_vScale:Float;
 
     private var g2d_repeatable:Bool;
     #if swc @:extern #end
@@ -209,10 +201,10 @@ class GContextTexture
     inline private function get_repeatable():Bool {
         return g2d_repeatable;
     }
-    #if swc @:setter(filteringType) #end
+    #if swc @:setter(repeatable) #end
     inline private function set_repeatable(p_value:Bool):Bool {
         g2d_repeatable = p_value;
-        // TODO invalidate gpu
+        g2d_dirty = true;
         return p_value;
     }
 
@@ -224,82 +216,57 @@ class GContextTexture
         return g2d_nativeTexture;
     }
 
-    public var premultiplied:Bool;
-
     private var g2d_atfType:String = "";
-    #if swc @:extern #end
-    public var atfType(get,never):String;
-    #if swc @:getter(atfType) #end
-    inline private function get_atfType():String {
-        return g2d_atfType;
-    }
 
+    public var premultiplied:Bool;
     private var g2d_initializedRenderTarget:Bool;
 
-    public var g2d_bitmapData:BitmapData;
-    private var g2d_byteArray:ByteArray;
+    private var g2d_sourceBitmapData:BitmapData;
+    private var g2d_sourceByteArray:ByteArray;
+    private var g2d_sourceAtlas:GTextureAtlas;
+
     private var g2d_contextId:Int;
+    private var g2d_width:Int;
+    private var g2d_height:Int;
 
 	static private var g2d_instanceCount:Int = 0;
 
 	//public function new(p_id:String, p_source:Object, p_format:String, p_repeatable:Bool, p_pivotX:Float, p_pivotY:Float, p_scaleFactor:Float) {
     public function new(p_id:String, p_source:Object) {
-        g2d_uvX = g2d_uvY = 0;
-        g2d_uvScaleX = g2d_uvScaleY = 1;
+        g2d_width = g2d_height = 0;
+        g2d_u = g2d_v = 0;
+        g2d_uScale = g2d_vScale = 1;
         g2d_initializedRenderTarget = false;
         premultiplied = true;
         g2d_dirty = true;
-        g2d_pivotX = g2d_pivotY = 0;
         g2d_gpuWidth = g2d_gpuHeight = 0;
-        g2d_scaleFactor = 1//p_scaleFactor;
+        g2d_scaleFactor = 1;//p_scaleFactor;
 
 		g2d_instanceCount++;
 		g2d_contextId = g2d_instanceCount;
-        g2d_format = "bgra"//p_format;
+        g2d_format = "bgra";//p_format;
         g2d_repeatable = false;//p_repeatable;
 
         g2d_id = p_id;
-        g2d_nativeSourceType = p_sourceType;
-        g2d_nativeSource = p_source;
         g2d_filteringType = GTextureManager.defaultFilteringType;
-
-        if (p_source != null) nativeSource = p_source;
-
-        g2d_init();
+        source = p_source;
 	}
 
     private function g2d_init():Void {
         GTextureManager.g2d_addTexture(this);
 
         var useRectangle:Bool = !g2d_repeatable && Genome2D.getInstance().getContext().hasFeature(GContextFeature.RECTANGLE_TEXTURES);
-        g2d_gpuWidth = useRectangle ? untyped __int__(g2d_region.width) : GTextureUtils.getNextValidTextureSize(untyped __int__(g2d_region.width));
-        g2d_gpuHeight = useRectangle ? untyped __int__(g2d_region.height) : GTextureUtils.getNextValidTextureSize(untyped __int__(g2d_region.height));
+        g2d_gpuWidth = useRectangle ? untyped __int__(g2d_width) : GTextureUtils.getNextValidTextureSize(untyped __int__(g2d_width));
+        g2d_gpuHeight = useRectangle ? untyped __int__(g2d_height) : GTextureUtils.getNextValidTextureSize(untyped __int__(g2d_height));
 
-        switch (g2d_nativeSourceType) {
-            case GTextureSourceType.BITMAPDATA:
-                g2d_bitmapData = g2d_nativeSource;
-                premultiplied = true;
-            case GTextureSourceType.ATF_BGRA:
-                g2d_byteArray = g2d_nativeSource;
-                premultiplied = false;
-            case GTextureSourceType.ATF_COMPRESSED:
-                g2d_byteArray = g2d_nativeSource;
-                g2d_atfType = "dxt1";
-                premultiplied = false;
-            case GTextureSourceType.ATF_COMPRESSEDALPHA:
-                g2d_byteArray = g2d_nativeSource;
-                g2d_atfType = "dxt5";
-                premultiplied = false;
-            case GTextureSourceType.BYTEARRAY:
-                g2d_byteArray = g2d_nativeSource;
-                premultiplied = false;
-        }
-
-        if (g2d_nativeSourceType == GTextureSourceType.ATF_COMPRESSEDALPHA || g2d_format == "compressedAlpha") {
+        // TODO support runtime compression
+        /**
+        if (g2d_sourceType == GTextureSourceType.ATF_COMPRESSEDALPHA || g2d_format == "compressedAlpha") {
             g2d_atfType = "dxt5";
-        } else if (g2d_nativeSourceType == GTextureSourceType.ATF_COMPRESSED || g2d_format == "compressed") {
+        } else if (g2d_sourceType == GTextureSourceType.ATF_COMPRESSED || g2d_format == "compressed") {
             g2d_atfType = "dxt1";
         }
+        /**/
     }
 
     public function needClearAsRenderTarget(p_clear:Bool):Bool {
@@ -311,19 +278,24 @@ class GContextTexture
     }
 
     public function invalidateNativeTexture(p_reinitialize:Bool):Void {
-        var wi:Int = untyped __int__(g2d_region.width);
-        var hi:Int = untyped __int__(g2d_region.height);
+        if (!g2d_dirty && !p_reinitialize) return;
+
+        var wi:Int = untyped __int__(g2d_width);
+        var hi:Int = untyped __int__(g2d_height);
 
         if (untyped __is__(Genome2D.getInstance().getContext(), GStage3DContext)) {
             var contextStage3D:GStage3DContext = cast Genome2D.getInstance().getContext();
-            if (g2d_type != GTextureType.SUBTEXTURE && contextStage3D.getNativeContext().driverInfo != "Disposed") {
-                var useRectangle:Bool = !g2d_repeatable && contextStage3D.hasFeature(GContextFeature.RECTANGLE_TEXTURES);
 
-                switch (g2d_nativeSourceType) {
+            if (g2d_sourceType != GTextureSourceType.ATLAS && contextStage3D.getNativeContext().driverInfo != "Disposed") {
+                var useRectangle:Bool = !g2d_repeatable && contextStage3D.hasFeature(GContextFeature.RECTANGLE_TEXTURES);
+                g2d_gpuWidth = useRectangle ? wi : GTextureUtils.getNextValidTextureSize(wi);
+                g2d_gpuHeight = useRectangle ? hi : GTextureUtils.getNextValidTextureSize(hi);
+
+                switch (g2d_sourceType) {
                     case GTextureSourceType.BITMAPDATA:
-                        var resampled:BitmapData = g2d_bitmapData;
+                        var resampled:BitmapData = g2d_sourceBitmapData;
                         if (!useRectangle) {
-                            resampled = GTextureUtils.resampleBitmapData(g2d_bitmapData);
+                            resampled = GTextureUtils.resampleBitmapData(g2d_sourceBitmapData);
                         }
 
                         if (g2d_nativeTexture == null || p_reinitialize || wi != resampled.width || hi != resampled.height) {
@@ -336,6 +308,7 @@ class GContextTexture
                         }
 
                         untyped g2d_nativeTexture["uploadFromBitmapData"](resampled);
+                    /*
                     case GTextureSourceType.BYTEARRAY:
                         if (g2d_nativeTexture == null || p_reinitialize) {
                             if (g2d_nativeTexture != null) g2d_nativeTexture.dispose();
@@ -345,43 +318,48 @@ class GContextTexture
                                 g2d_nativeTexture = contextStage3D.getNativeContext().createTexture(wi, hi, untyped g2d_format, false);
                             }
                         }
-                        untyped g2d_nativeTexture["uploadFromByteArray"](g2d_byteArray, 0);
+                        untyped g2d_nativeTexture["uploadFromByteArray"](g2d_sourceByteArray, 0);
+                    /**/
                     case GTextureSourceType.ATF_BGRA:
                         if (g2d_nativeTexture == null || p_reinitialize) {
                             if (g2d_nativeTexture != null) g2d_nativeTexture.dispose();
                             g2d_nativeTexture = contextStage3D.getNativeContext().createTexture(wi, hi, Context3DTextureFormat.BGRA, false);
                         }
-                        untyped g2d_nativeTexture["uploadCompressedTextureFromByteArray"](g2d_byteArray, 0);
+                        untyped g2d_nativeTexture["uploadCompressedTextureFromByteArray"](g2d_sourceByteArray, 0);
                     case GTextureSourceType.ATF_COMPRESSED:
                         if (g2d_nativeTexture == null || p_reinitialize) {
                             if (g2d_nativeTexture != null) g2d_nativeTexture.dispose();
                             g2d_nativeTexture = contextStage3D.getNativeContext().createTexture(wi, hi, Context3DTextureFormat.COMPRESSED, false);
                         }
-                        untyped g2d_nativeTexture["uploadCompressedTextureFromByteArray"](g2d_byteArray, 0);
+                        untyped g2d_nativeTexture["uploadCompressedTextureFromByteArray"](g2d_sourceByteArray, 0);
                     case GTextureSourceType.ATF_COMPRESSEDALPHA:
                         if (g2d_nativeTexture == null || p_reinitialize) {
                             if (g2d_nativeTexture != null) g2d_nativeTexture.dispose();
                             g2d_nativeTexture = contextStage3D.getNativeContext().createTexture(wi, hi, Context3DTextureFormat.COMPRESSED_ALPHA, false);
                         }
-                        untyped g2d_nativeTexture["uploadCompressedTextureFromByteArray"](g2d_byteArray, 0);
+                        untyped g2d_nativeTexture["uploadCompressedTextureFromByteArray"](g2d_sourceByteArray, 0);
                     case GTextureSourceType.RENDER_TARGET:
-                        var validWidth:Int = GTextureUtils.getNextValidTextureSize(wi);
-                        var validHeight:Int = GTextureUtils.getNextValidTextureSize(hi);
                         if (g2d_nativeTexture == null || p_reinitialize) {
                             if (g2d_nativeTexture != null) g2d_nativeTexture.dispose();
-                            g2d_nativeTexture = contextStage3D.getNativeContext().createTexture(validWidth, validHeight, Context3DTextureFormat.BGRA, true);
+                            g2d_nativeTexture = contextStage3D.getNativeContext().createTexture(g2d_gpuWidth, g2d_gpuHeight, Context3DTextureFormat.BGRA, true);
                         }
                     case GTextureSourceType.TEXTURE:
-                        g2d_nativeTexture = g2d_nativeSource;
+                        g2d_nativeTexture = g2d_source;
                     default:
                 }
+            } else {
+                g2d_nativeTexture = g2d_sourceAtlas.nativeTexture;
+                g2d_gpuWidth = g2d_sourceAtlas.gpuWidth;
+                g2d_gpuHeight = g2d_sourceAtlas.gpuHeight;
             }
         } else {
-            if (g2d_type == GTextureType.SUBTEXTURE) {
+            if (g2d_sourceType == GTextureSourceType.ATLAS) {
                 //g2d_bitmapData = new BitmapData(wi, hi, true, 0x000000);
                 //g2d_bitmapData.copyPixels(g2d_parentAtlas.g2d_bitmapData, g2d_region, new Point());//, g2d_parentAtlas.g2d_bitmapData, new Point(), true);
             }
         }
+
+        g2d_dirty = false;
     }
 
     private function g2d_uploadFromBitmapData(p_bitmapData:BitmapData):Void {
@@ -405,19 +383,19 @@ class GContextTexture
     }
 
     public function dispose():Void {
-        if (g2d_type != GTextureType.SUBTEXTURE) {
-            if (g2d_nativeTexture != null) g2d_nativeTexture.dispose();
-            g2d_bitmapData = null;
-            g2d_byteArray = null;
-            g2d_nativeSource = null;
-            g2d_nativeTexture = null;
-        }
+        if (g2d_sourceType != GTextureSourceType.ATLAS && g2d_nativeTexture != null) g2d_nativeTexture.dispose();
+
+        g2d_sourceBitmapData = null;
+        g2d_sourceByteArray = null;
+        g2d_sourceAtlas = null;
+        g2d_source = null;
+        g2d_nativeTexture = null;
         GTextureManager.g2d_removeTexture(this);
     }
 
     public function getAlphaAtUV(p_u:Float, p_v:Float):Float {
-        if (g2d_bitmapData == null)  return 255;
+        if (g2d_sourceBitmapData == null)  return 255;
 
-        return g2d_bitmapData.getPixel32(untyped __int__(g2d_region.x + p_u*g2d_region.width), untyped __int__(g2d_region.y + p_v*g2d_region.height))>>24&0xFF;
+        return g2d_sourceBitmapData.getPixel32(untyped __int__((g2d_u + p_u)*g2d_width), untyped __int__((g2d_v + p_v)*g2d_height))>>24&0xFF;
     }
 }

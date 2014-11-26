@@ -52,7 +52,7 @@ class GTextureManager {
     static public function disposeAll():Void {
         var textureIds:Array<String> = untyped __keys__(g2d_references);
         for (i in 0...textureIds.length) {
-            untyped if (g2d_references[textureIds[i]]!=null && g2d_references[textureIds[i]].g2d_type != GTextureType.SUBTEXTURE) g2d_references[textureIds[i]].dispose();
+            untyped if (g2d_references[textureIds[i]]!=null && g2d_references[textureIds[i]].sourceType != GTextureSourceType.ATLAS) g2d_references[textureIds[i]].dispose();
         }
     }
 
@@ -70,11 +70,11 @@ class GTextureManager {
     static public function createFromEmbedded(p_id:String, p_asset:Class<Bitmap>, p_scaleFactor:Float = 1, p_repeatable:Bool = false, p_format:String = "bgra"):GTexture {
         var bitmap:Bitmap = cast Type.createInstance(p_asset, []);
 
-        return new GTexture(p_id, GTextureSourceType.BITMAPDATA, bitmap.bitmapData, bitmap.bitmapData.rect, p_format, p_repeatable, 0, 0, p_scaleFactor, null);
+        return new GTexture(p_id, bitmap.bitmapData);
     }
 
     static public function createFromBitmapData(p_id:String, p_bitmapData:BitmapData, p_scaleFactor:Float = 1, p_repeatable:Bool = false, p_format:String = "bgra"):GTexture {
-        return new GTexture(p_id, GTextureSourceType.BITMAPDATA, p_bitmapData, p_bitmapData.rect, p_format, p_repeatable, 0, 0, p_scaleFactor, null);
+        return new GTexture(p_id, p_bitmapData);
     }
 
     static public function createFromAsset(p_id:String, p_imageAsset:GImageAsset, p_scaleFactor:Float = 1, p_repeatable:Bool = false, p_format:String = "bgra"):GTexture {
@@ -105,11 +105,11 @@ class GTextureManager {
         var width:Float = Math.pow(2, p_atfData[offset+1]);
         var height:Float = Math.pow(2, p_atfData[offset+2]);
 
-        return new GTexture(p_id, type, p_atfData, new GRectangle(0, 0, width, height), "", false, 0, 0, p_scaleFactor, null);
+        return new GTexture(p_id, p_atfData);
     }
 
     static public function createRenderTexture(p_id:String, p_width:Int, p_height:Int, p_scaleFactor:Float = 1):GTexture {
-        return new GTexture(p_id, GTextureSourceType.RENDER_TARGET, null, new GRectangle(0,0,p_width, p_height), "", false, 0, 0, p_scaleFactor, null);
+        return new GTexture(p_id, new GRectangle(0,0,p_width, p_height));
     }
 
     //static public function createFromNativeTexture(p_id:String, p_nativeTexture:Texture, p_width:int, p_height:int):GTexture {
@@ -138,7 +138,8 @@ class GTextureManager {
 	 */
     static public function createAtlasFromBitmapDataAndXml(p_id:String, p_bitmapData:BitmapData, p_xml:Xml, p_scaleFactor:Float = 1, p_format:String = "bgra"):GTextureAtlas {
         if (!GTextureUtils.isValidTextureSize(p_bitmapData.width) || !GTextureUtils.isValidTextureSize(p_bitmapData.height)) new GError("Atlas bitmap needs to have power of 2 size.");
-        var textureAtlas:GTextureAtlas = new GTextureAtlas(p_id, GTextureSourceType.BITMAPDATA, p_bitmapData, p_bitmapData.rect, p_format, p_scaleFactor, null);
+        var textureAtlas:GTextureAtlas = new GTextureAtlas(p_id, p_bitmapData);
+        textureAtlas.scaleFactor = p_scaleFactor;
 
         var root = p_xml.firstElement();
         var it:Iterator<Xml> = root.elements();
@@ -184,7 +185,7 @@ class GTextureManager {
         var packed:BitmapData = new BitmapData(p_packer.getWidth(), p_packer.getHeight(), true, 0x0);
         p_packer.draw(packed);
 
-        var textureAtlas:GTextureAtlas = new GTextureAtlas(p_id, GTextureSourceType.BITMAPDATA, packed, packed.rect, p_format, p_scaleFactor, null);
+        var textureAtlas:GTextureAtlas = new GTextureAtlas(p_id, packed);
 
         var count:Int = p_packer.getRectangles().length;
         for (i in 0...count) {
@@ -202,20 +203,7 @@ class GTextureManager {
         var atf:String = String.fromCharCode(p_atfData[0]) + String.fromCharCode(p_atfData[1]) + String.fromCharCode(p_atfData[2]);
         if (atf != "ATF") new GError("Invalid ATF data.");
 
-        var type:Int = GTextureSourceType.ATF_BGRA;
-        var offset:Int = p_atfData[6] == 255 ? 12 : 6;
-        switch (p_atfData[offset]) {
-            case 0,1:
-                type = GTextureSourceType.ATF_BGRA;
-            case 2,3:
-                type = GTextureSourceType.ATF_COMPRESSED;
-            case 4,5:
-                type = GTextureSourceType.ATF_COMPRESSEDALPHA;
-        }
-        var width:Float = Math.pow(2, p_atfData[offset+1]);
-        var height:Float = Math.pow(2, p_atfData[offset+2]);
-
-        var textureAtlas:GTextureAtlas = new GTextureAtlas(p_id, type, p_atfData, new GRectangle(0,0,width,height), "", p_scaleFactor, null);
+        var textureAtlas:GTextureAtlas = new GTextureAtlas(p_id, p_atfData);
 
         var root = p_xml.firstElement();
         var it:Iterator<Xml> = root.elements();
@@ -274,7 +262,7 @@ class GTextureManager {
     /**/
 
     static public function createFontAtlasFromBitmapDataAndXml(p_id:String, p_bitmapData:BitmapData, p_fontXml:Xml, p_scaleFactor:Float = 1, p_format:String = "bgra"):GTextureFontAtlas {
-        var textureAtlas:GTextureFontAtlas = new GTextureFontAtlas(p_id, GTextureSourceType.BITMAPDATA, p_bitmapData, p_bitmapData.rect, p_format, p_scaleFactor, null);
+        var textureAtlas:GTextureFontAtlas = new GTextureFontAtlas(p_id, p_bitmapData);
 
         var root:Xml = p_fontXml.firstElement();
 

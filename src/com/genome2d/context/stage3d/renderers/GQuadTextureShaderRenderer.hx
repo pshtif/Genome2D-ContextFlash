@@ -8,6 +8,7 @@
  */
 package com.genome2d.context.stage3d.renderers;
 
+import com.genome2d.textures.GTexture;
 import flash.display3D.textures.TextureBase;
 import com.genome2d.textures.GTextureFilteringType;
 import com.genome2d.textures.GContextTexture;
@@ -26,7 +27,7 @@ import flash.utils.ByteArray;
 import flash.utils.Dictionary;
 import flash.utils.Endian;
 
-@:access(com.genome2d.textures.GContextTexture)
+@:access(com.genome2d.textures.GTexture)
 class GQuadTextureShaderRenderer implements IGRenderer
 {
 	inline static private var CONSTANTS_OFFSET:Int = 5;
@@ -233,7 +234,7 @@ class GQuadTextureShaderRenderer implements IGRenderer
 		g2d_activeTextureId = 0;
 	}
 	
-	inline public function draw(p_x:Float, p_y:Float, p_scaleX:Float, p_scaleY:Float, p_rotation:Float, p_red:Float, p_green:Float, p_blue:Float, p_alpha:Float, p_texture:GContextTexture, p_filter:GFilter, p_overrideSource:Bool, p_sourceX:Float, p_sourceY:Float, p_sourceWidth:Float, p_sourceHeight:Float, p_sourcePivotX:Float, p_sourcePivotY:Float):Void {
+	inline public function draw(p_x:Float, p_y:Float, p_scaleX:Float, p_scaleY:Float, p_rotation:Float, p_red:Float, p_green:Float, p_blue:Float, p_alpha:Float, p_texture:GTexture, p_filter:GFilter, p_overrideSource:Bool, p_sourceX:Float, p_sourceY:Float, p_sourceWidth:Float, p_sourceHeight:Float, p_sourcePivotX:Float, p_sourcePivotY:Float):Void {
 		var notSameTexture:Bool = g2d_activeNativeTexture != p_texture.nativeTexture;
 		var notSameFiltering:Bool = g2d_activeFiltering != p_texture.filteringType;
         var notSameRepeat:Bool = g2d_activeRepeat != p_texture.g2d_repeatable;
@@ -262,7 +263,7 @@ class GQuadTextureShaderRenderer implements IGRenderer
                     g2d_nativeContext.setVertexBufferAt(2, g2d_constantIndexBuffer, 0, Context3DVertexBufferFormat.FLOAT_1);
                 }
                 // Set ATF type
-				g2d_activeAtf = p_texture.atfType;
+				g2d_activeAtf = p_texture.g2d_atfType;
                 // Set filter
 				if (g2d_activeFilter != null) g2d_activeFilter.clear(g2d_context);
 				g2d_activeFilter = p_filter;
@@ -272,34 +273,34 @@ class GQuadTextureShaderRenderer implements IGRenderer
 			}
 		}
 
-        var uvx:Float;
-        var uvy:Float;
-        var uvsx:Float;
-        var uvsy:Float;
+        var u:Float;
+        var v:Float;
+        var us:Float;
+        var vs:Float;
         var sx:Float;
         var sy:Float;
         var px:Float;
         var py:Float;
         if (p_overrideSource) {
-            uvx = p_sourceX/p_texture.gpuWidth;
-            uvy = p_sourceY/p_texture.gpuHeight;
-            uvsx = p_sourceWidth/p_texture.gpuWidth;
-            uvsy = p_sourceHeight/p_texture.gpuHeight;
+            u = p_sourceX/p_texture.gpuWidth;
+            v = p_sourceY/p_texture.gpuHeight;
+            us = p_sourceWidth/p_texture.gpuWidth;
+            vs = p_sourceHeight/p_texture.gpuHeight;
             sx = p_sourceWidth * p_scaleX;
             sy = p_sourceHeight * p_scaleY;
             px = p_sourcePivotX * p_scaleX;
             py = p_sourcePivotY * p_scaleY;
         } else {
-            uvx = p_texture.g2d_uvX;
-            uvy = p_texture.g2d_uvY;
-            uvsx = p_texture.g2d_uvScaleX;
-            uvsy = p_texture.g2d_uvScaleY;
+            u = p_texture.g2d_u;
+            v = p_texture.g2d_v;
+            us = p_texture.g2d_uScale;
+            vs = p_texture.g2d_vScale;
             sx = p_texture.width * p_scaleX;
             sy = p_texture.height * p_scaleY;
             px = p_texture.pivotX * p_scaleX;
             py = p_texture.pivotY * p_scaleY;
         }
-
+        trace(p_texture.pivotX, p_texture.pivotY);
         var notSameTextureId:Bool = (g2d_activeTextureId != p_texture.g2d_contextId) ||
                                     (!p_overrideSource && (g2d_activeTextureWidth != p_texture.width*p_scaleX || g2d_activeTextureHeight != p_texture.height*p_scaleY)) ||
                                     (p_overrideSource && (g2d_activeTextureWidth != p_sourceWidth || g2d_activeTextureHeight != p_sourceHeight));
@@ -309,10 +310,10 @@ class GQuadTextureShaderRenderer implements IGRenderer
 			if (g2d_useFastMem) {
 				textureOffset = g2d_textureIndex * 16;
 
-				Memory.setFloat(textureOffset, uvx);
-			    Memory.setFloat(textureOffset + 4, uvy);
-				Memory.setFloat(textureOffset + 8, uvsx);
-				Memory.setFloat(textureOffset + 12, uvsy);
+				Memory.setFloat(textureOffset, u);
+			    Memory.setFloat(textureOffset + 4, v);
+				Memory.setFloat(textureOffset + 8, us);
+				Memory.setFloat(textureOffset + 12, vs);
 				
 				Memory.setFloat(textureOffset + 16, sx);
 			    Memory.setFloat(textureOffset + 20, sy);
@@ -321,10 +322,10 @@ class GQuadTextureShaderRenderer implements IGRenderer
 			} else {
 				textureOffset = g2d_textureIndex * 4;
 				
-				g2d_vertexConstants[textureOffset] = uvx;
-				g2d_vertexConstants[textureOffset + 1] = uvy;
-				g2d_vertexConstants[textureOffset + 2] = uvsx;
-				g2d_vertexConstants[textureOffset + 3] = uvsy;
+				g2d_vertexConstants[textureOffset] = u;
+				g2d_vertexConstants[textureOffset + 1] = v;
+				g2d_vertexConstants[textureOffset + 2] = us;
+				g2d_vertexConstants[textureOffset + 3] = vs;
 				
 				g2d_vertexConstants[textureOffset + 4] = sx;
 				g2d_vertexConstants[textureOffset + 5] = sy;
