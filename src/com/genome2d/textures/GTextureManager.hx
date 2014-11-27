@@ -15,6 +15,8 @@ import flash.display.BitmapData;
 import com.genome2d.assets.GImageAsset;
 import flash.display.Bitmap;
 import com.genome2d.context.IContext;
+
+@:access(com.genome2d.textures.GContextTexture)
 class GTextureManager {
     static public function init():Void {
         g2d_references = new Dictionary(false);
@@ -24,6 +26,7 @@ class GTextureManager {
 
     static public var g2d_references:Dictionary;
     static private function g2d_addTexture(p_texture:GContextTexture):Void {
+        trace(p_texture.id);
         if (p_texture.id == null || p_texture.id.length == 0) new GError("Invalid textures id");
         if (untyped g2d_references[p_texture.id] != null) new GError("Duplicate textures id: "+p_texture.id);
         untyped g2d_references[p_texture.id] = p_texture;
@@ -38,15 +41,15 @@ class GTextureManager {
     }
 
     static public function getTextureById(p_id:String):GTexture {
-        return cast getContextTextureById(p_id);
+        return untyped g2d_references[p_id];
     }
 
-    static public function getTextureAtlasById(p_id:String):GTextureAtlas {
-        return cast getContextTextureById(p_id);
+    static public function getAtlasById(p_id:String):GTextureAtlas {
+        return untyped g2d_references[p_id];
     }
 
-    static public function getTextureFontAtlasById(p_id:String):GTextureFontAtlas {
-        return cast getContextTextureById(p_id);
+    static public function getFontAtlasById(p_id:String):GTextureFontAtlas {
+        return untyped g2d_references[p_id];
     }
 
     static public function disposeAll():Void {
@@ -186,13 +189,14 @@ class GTextureManager {
         p_packer.draw(packed);
 
         var textureAtlas:GTextureAtlas = new GTextureAtlas(p_id, packed);
+        textureAtlas.scaleFactor = p_scaleFactor;
 
         var count:Int = p_packer.getRectangles().length;
         for (i in 0...count) {
             rect = p_packer.getRectangles()[i];
             var texture:GTexture = textureAtlas.addSubTexture(rect.id, rect.getRect(), null);
-            texture.pivotX = rect.pivotX;
-            texture.pivotY = rect.pivotY;
+            texture.g2d_pivotX = rect.pivotX;
+            texture.g2d_pivotY = rect.pivotY;
         }
 
         textureAtlas.invalidateNativeTexture(false);
@@ -204,6 +208,7 @@ class GTextureManager {
         if (atf != "ATF") new GError("Invalid ATF data.");
 
         var textureAtlas:GTextureAtlas = new GTextureAtlas(p_id, p_atfData);
+        textureAtlas.scaleFactor = p_scaleFactor;
 
         var root = p_xml.firstElement();
         var it:Iterator<Xml> = root.elements();
@@ -263,6 +268,7 @@ class GTextureManager {
 
     static public function createFontAtlasFromBitmapDataAndXml(p_id:String, p_bitmapData:BitmapData, p_fontXml:Xml, p_scaleFactor:Float = 1, p_format:String = "bgra"):GTextureFontAtlas {
         var textureAtlas:GTextureFontAtlas = new GTextureFontAtlas(p_id, p_bitmapData);
+        textureAtlas.scaleFactor = p_scaleFactor;
 
         var root:Xml = p_fontXml.firstElement();
 
@@ -279,11 +285,11 @@ class GTextureManager {
             var region:GRectangle = new GRectangle(Std.parseInt(node.get("x")), Std.parseInt(node.get("y")), w, h);
 
             var subtexture:GCharTexture = textureAtlas.addSubTexture(node.get("id"), region, null);
-            subtexture.pivotX = -w/2;
-            subtexture.pivotY = -h/2;
-            subtexture.xoffset = Std.parseInt(node.get("xoffset"));
-            subtexture.yoffset = Std.parseInt(node.get("yoffset"));
-            subtexture.xadvance = Std.parseInt(node.get("xadvance"));
+            subtexture.g2d_pivotX = -w/2;
+            subtexture.g2d_pivotY = -h/2;
+            subtexture.g2d_xoffset = Std.parseFloat(node.get("xoffset"));
+            subtexture.g2d_yoffset = Std.parseFloat(node.get("yoffset"));
+            subtexture.g2d_xadvance = Std.parseFloat(node.get("xadvance"));
         }
 
         var kernings:Xml = root.elementsNamed("kernings").next();

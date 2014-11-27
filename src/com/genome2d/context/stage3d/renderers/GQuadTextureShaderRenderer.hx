@@ -300,7 +300,7 @@ class GQuadTextureShaderRenderer implements IGRenderer
             px = p_texture.pivotX * p_scaleX;
             py = p_texture.pivotY * p_scaleY;
         }
-        trace(p_texture.pivotX, p_texture.pivotY);
+
         var notSameTextureId:Bool = (g2d_activeTextureId != p_texture.g2d_contextId) ||
                                     (!p_overrideSource && (g2d_activeTextureWidth != p_texture.width*p_scaleX || g2d_activeTextureHeight != p_texture.height*p_scaleY)) ||
                                     (p_overrideSource && (g2d_activeTextureWidth != p_sourceWidth || g2d_activeTextureHeight != p_sourceHeight));

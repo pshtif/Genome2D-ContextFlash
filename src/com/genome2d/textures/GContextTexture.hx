@@ -48,14 +48,14 @@ class GContextTexture
     public var width(get, never):Float;
     #if swc @:getter(width) #end
     inline private function get_width():Float {
-        return g2d_width/scaleFactor;
+        return g2d_width*scaleFactor;
     }
 
     #if swc @:extern #end
     public var height(get, never):Float;
     #if swc @:getter(height) #end
     inline private function get_height():Float {
-        return g2d_height/scaleFactor;
+        return g2d_height*scaleFactor;
     }
 
     private var g2d_gpuWidth:Int;
@@ -156,15 +156,17 @@ class GContextTexture
                             } else {
                                 //g2d_sourceType = GTextureSourceType.BYTEARRAY;
                             }
-                        case GTextureAtlas:
-                            g2d_source = p_value;
-                            g2d_sourceAtlas = g2d_source;
-                            g2d_sourceType = GTextureSourceType.ATLAS;
-                            g2d_nativeTexture = g2d_sourceAtlas.nativeTexture;
                         case Texture:
                             //g2d_sourceType = GTextureSourceType.TEXTURE;
                         case _:
-                            new GError("Invalid texture source.");
+                            if (Std.is(p_value,GTextureAtlas)) {
+                                g2d_source = p_value;
+                                g2d_sourceAtlas = g2d_source;
+                                g2d_sourceType = GTextureSourceType.ATLAS;
+                                g2d_nativeTexture = g2d_sourceAtlas.nativeTexture;
+                            } else {
+                                new GError("Invalid texture source.");
+                            }
                     }
                 case _:
                     //g2d_nativeSourceType = GTextureSourceType.RENDER_TARGET;
@@ -252,12 +254,15 @@ class GContextTexture
         source = p_source;
 	}
 
+    inline public function usesRectangle():Bool {
+        return !g2d_repeatable && Genome2D.getInstance().getContext().hasFeature(GContextFeature.RECTANGLE_TEXTURES);
+    }
+
     private function g2d_init():Void {
         GTextureManager.g2d_addTexture(this);
 
-        var useRectangle:Bool = !g2d_repeatable && Genome2D.getInstance().getContext().hasFeature(GContextFeature.RECTANGLE_TEXTURES);
-        g2d_gpuWidth = useRectangle ? untyped __int__(g2d_width) : GTextureUtils.getNextValidTextureSize(untyped __int__(g2d_width));
-        g2d_gpuHeight = useRectangle ? untyped __int__(g2d_height) : GTextureUtils.getNextValidTextureSize(untyped __int__(g2d_height));
+        g2d_gpuWidth = usesRectangle() ? untyped __int__(g2d_width) : GTextureUtils.getNextValidTextureSize(untyped __int__(g2d_width));
+        g2d_gpuHeight = usesRectangle() ? untyped __int__(g2d_height) : GTextureUtils.getNextValidTextureSize(untyped __int__(g2d_height));
 
         // TODO support runtime compression
         /**
@@ -287,20 +292,19 @@ class GContextTexture
             var contextStage3D:GStage3DContext = cast Genome2D.getInstance().getContext();
 
             if (g2d_sourceType != GTextureSourceType.ATLAS && contextStage3D.getNativeContext().driverInfo != "Disposed") {
-                var useRectangle:Bool = !g2d_repeatable && contextStage3D.hasFeature(GContextFeature.RECTANGLE_TEXTURES);
-                g2d_gpuWidth = useRectangle ? wi : GTextureUtils.getNextValidTextureSize(wi);
-                g2d_gpuHeight = useRectangle ? hi : GTextureUtils.getNextValidTextureSize(hi);
+                g2d_gpuWidth = usesRectangle() ? wi : GTextureUtils.getNextValidTextureSize(wi);
+                g2d_gpuHeight = usesRectangle() ? hi : GTextureUtils.getNextValidTextureSize(hi);
 
                 switch (g2d_sourceType) {
                     case GTextureSourceType.BITMAPDATA:
                         var resampled:BitmapData = g2d_sourceBitmapData;
-                        if (!useRectangle) {
+                        if (!usesRectangle()) {
                             resampled = GTextureUtils.resampleBitmapData(g2d_sourceBitmapData);
                         }
 
                         if (g2d_nativeTexture == null || p_reinitialize || wi != resampled.width || hi != resampled.height) {
                             if (g2d_nativeTexture != null) g2d_nativeTexture.dispose();
-                            if (useRectangle) {
+                            if (usesRectangle()) {
                                 g2d_nativeTexture = untyped contextStage3D.getNativeContext()["createRectangleTexture"](resampled.width, resampled.height, untyped g2d_format, false);
                             } else {
                                 g2d_nativeTexture = contextStage3D.getNativeContext().createTexture(resampled.width, resampled.height, untyped g2d_format, false);
