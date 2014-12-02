@@ -26,7 +26,6 @@ class GTextureManager {
 
     static public var g2d_references:Dictionary;
     static private function g2d_addTexture(p_texture:GContextTexture):Void {
-        trace(p_texture.id);
         if (p_texture.id == null || p_texture.id.length == 0) new GError("Invalid textures id");
         if (untyped g2d_references[p_texture.id] != null) new GError("Duplicate textures id: "+p_texture.id);
         untyped g2d_references[p_texture.id] = p_texture;
