@@ -1,4 +1,5 @@
 package com.genome2d.textures;
+import com.genome2d.assets.GAssetManager;
 import com.genome2d.geom.GRectangle;
 import com.genome2d.geom.GRectangle;
 import com.genome2d.geom.GRectangle;
@@ -82,12 +83,16 @@ class GTextureManager {
     static public function createFromAsset(p_id:String, p_imageAsset:GImageAsset, p_scaleFactor:Float = 1, p_repeatable:Bool = false, p_format:String = "bgra"):GTexture {
         switch (p_imageAsset.type) {
             case GImageAssetType.BITMAPDATA:
-                return createFromBitmapData(p_id, p_imageAsset.nativeImage, p_scaleFactor, p_repeatable, p_format);
+                return createFromBitmapData(p_id, p_imageAsset.bitmapData, p_scaleFactor, p_repeatable, p_format);
             case GImageAssetType.ATF:
                 return createFromATF(p_id, p_imageAsset.bytes);
         }
 
         return null;
+    }
+
+    static public function createFromAssetId(p_id:String, p_imageAssetId:String, p_scaleFactor:Float = 1, p_repeatable:Bool = false, p_format:String = "bgra"):GTexture {
+        return createFromAsset(p_id, GAssetManager.getImageAssetById(p_imageAssetId), p_scaleFactor, p_repeatable, p_format);
     }
 
     static public function createFromATF(p_id:String, p_atfData:ByteArray, p_scaleFactor:Float = 1, p_uploadCallback:Function = null):GTexture {
@@ -164,7 +169,11 @@ class GTextureManager {
     }
 
     static public function createAtlasFromAssets(p_id:String, p_imageAsset:GImageAsset, p_xmlAsset:GXmlAsset, p_scaleFactor:Float = 1, p_format:String = "bgra"):GTextureAtlas {
-        return createAtlasFromBitmapDataAndXml(p_id, p_imageAsset.nativeImage, p_xmlAsset.xml, p_scaleFactor, p_format);
+        return createAtlasFromBitmapDataAndXml(p_id, p_imageAsset.bitmapData, p_xmlAsset.xml, p_scaleFactor, p_format);
+    }
+
+    static public function createAtlasFromAssetIds(p_id:String, p_imageAssetId:String, p_xmlAssetId:String, p_scaleFactor:Float = 1, p_format:String = "bgra"):GTextureAtlas {
+        return createAtlasFromAssets(p_id, GAssetManager.getImageAssetById(p_imageAssetId), GAssetManager.getXmlAssetById(p_xmlAssetId), p_scaleFactor, p_format);
     }
 
     static public function createAtlasFromBitmapDatas(p_id:String, p_bitmaps:Array<BitmapData>, p_ids:Array<String>, p_scaleFactor:Float = 1, p_format:String = "bgra", p_packer:GMaxRectPacker = null, p_padding:Int = 2):GTextureAtlas {
@@ -230,7 +239,11 @@ class GTextureManager {
     }
 
     static public function createFontAtlasFromAssets(p_id:String, p_imageAsset:GImageAsset, p_xmlAsset:GXmlAsset, p_scaleFactor:Float = 1, p_format:String = "bgra"):GTextureFontAtlas {
-        return createFontAtlasFromBitmapDataAndXml(p_id, p_imageAsset.nativeImage, p_xmlAsset.xml, p_scaleFactor, p_format);
+        return createFontAtlasFromBitmapDataAndXml(p_id, p_imageAsset.bitmapData, p_xmlAsset.xml, p_scaleFactor, p_format);
+    }
+
+    static public function createFontAtlasFromAssetIds(p_id:String, p_imageAssetId:String, p_xmlAssetId:String, p_scaleFactor:Float = 1, p_format:String = "bgra"):GTextureAtlas {
+        return createFontAtlasFromAssets(p_id, GAssetManager.getImageAssetById(p_imageAssetId), GAssetManager.getXmlAssetById(p_xmlAssetId), p_scaleFactor, p_format);
     }
 
 /*

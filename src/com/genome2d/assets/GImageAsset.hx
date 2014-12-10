@@ -29,12 +29,12 @@ class GImageAsset extends GAsset {
         return g2d_bytes;
     }
 
-    private var g2d_nativeImage:BitmapData;
+    private var g2d_bitmapData:BitmapData;
     #if swc @:extern #end
-    public var nativeImage(get,never):BitmapData;
-    #if swc @:getter(nativeImage) #end
-    inline private function get_nativeImage():BitmapData {
-        return g2d_nativeImage;
+    public var bitmapData(get,never):BitmapData;
+    #if swc @:getter(bitmapData) #end
+    inline private function get_bitmapData():BitmapData {
+        return g2d_bitmapData;
     }
 
     private var g2d_type:Int;
@@ -45,13 +45,9 @@ class GImageAsset extends GAsset {
         return g2d_type;
     }
 
-    override public function load():Void {
-        super.load();
-    }
-
     public function initBitmapData(p_id:String, p_image:BitmapData):Void {
         g2d_id = p_id;
-        g2d_nativeImage = p_image;
+        g2d_bitmapData = p_image;
         g2d_loaded = true;
         g2d_type = GImageAssetType.BITMAPDATA;
     }
@@ -77,7 +73,7 @@ class GImageAsset extends GAsset {
 
     private function g2d_bytesComplete(event:Event):Void {
         g2d_type = GImageAssetType.BITMAPDATA;
-        g2d_nativeImage = cast (event.target.loader.content,Bitmap).bitmapData;
+        g2d_bitmapData = cast (event.target.loader.content,Bitmap).bitmapData;
         onLoaded.dispatch(this);
     }
 }
