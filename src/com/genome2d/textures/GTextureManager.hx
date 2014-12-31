@@ -1,4 +1,5 @@
 package com.genome2d.textures;
+import com.genome2d.textures.GTexture;
 import com.genome2d.assets.GAssetManager;
 import com.genome2d.geom.GRectangle;
 import com.genome2d.geom.GRectangle;
@@ -70,32 +71,38 @@ class GTextureManager {
                                                 TEXTURE STUFF
      ****************************************************************************************************/
 
-    static public function createFromEmbedded(p_id:String, p_asset:Class<Bitmap>, p_scaleFactor:Float = 1, p_repeatable:Bool = false, p_format:String = "bgra"):GTexture {
+    static public function createTextureFromEmbedded(p_id:String, p_asset:Class<Bitmap>, p_scaleFactor:Float = 1, p_repeatable:Bool = false, p_format:String = "bgra"):GTexture {
         var bitmap:Bitmap = cast Type.createInstance(p_asset, []);
+        var texture:GTexture = new GTexture(p_id, bitmap.bitmapData);
+        texture.scaleFactor = p_scaleFactor;
+        texture.invalidateNativeTexture(false);
 
-        return new GTexture(p_id, bitmap.bitmapData);
+        return texture;
     }
 
-    static public function createFromBitmapData(p_id:String, p_bitmapData:BitmapData, p_scaleFactor:Float = 1, p_repeatable:Bool = false, p_format:String = "bgra"):GTexture {
-        return new GTexture(p_id, p_bitmapData);
+    static public function createTextureFromBitmapData(p_id:String, p_bitmapData:BitmapData, p_scaleFactor:Float = 1, p_repeatable:Bool = false, p_format:String = "bgra"):GTexture {
+        var texture:GTexture = new GTexture(p_id, p_bitmapData);
+        texture.scaleFactor = p_scaleFactor;
+        texture.invalidateNativeTexture(false);
+        return texture;
     }
 
-    static public function createFromAsset(p_id:String, p_imageAsset:GImageAsset, p_scaleFactor:Float = 1, p_repeatable:Bool = false, p_format:String = "bgra"):GTexture {
+    static public function createTextureFromAsset(p_id:String, p_imageAsset:GImageAsset, p_scaleFactor:Float = 1, p_repeatable:Bool = false, p_format:String = "bgra"):GTexture {
         switch (p_imageAsset.type) {
             case GImageAssetType.BITMAPDATA:
-                return createFromBitmapData(p_id, p_imageAsset.bitmapData, p_scaleFactor, p_repeatable, p_format);
+                return createTextureFromBitmapData(p_id, p_imageAsset.bitmapData, p_scaleFactor, p_repeatable, p_format);
             case GImageAssetType.ATF:
-                return createFromATF(p_id, p_imageAsset.bytes);
+                return createTextureFromATF(p_id, p_imageAsset.bytes);
         }
 
         return null;
     }
 
-    static public function createFromAssetId(p_id:String, p_imageAssetId:String, p_scaleFactor:Float = 1, p_repeatable:Bool = false, p_format:String = "bgra"):GTexture {
-        return createFromAsset(p_id, GAssetManager.getImageAssetById(p_imageAssetId), p_scaleFactor, p_repeatable, p_format);
+    static public function createTextureFromAssetId(p_id:String, p_imageAssetId:String, p_scaleFactor:Float = 1, p_repeatable:Bool = false, p_format:String = "bgra"):GTexture {
+        return createTextureFromAsset(p_id, GAssetManager.getImageAssetById(p_imageAssetId), p_scaleFactor, p_repeatable, p_format);
     }
 
-    static public function createFromATF(p_id:String, p_atfData:ByteArray, p_scaleFactor:Float = 1, p_uploadCallback:Function = null):GTexture {
+    static public function createTextureFromATF(p_id:String, p_atfData:ByteArray, p_scaleFactor:Float = 1, p_uploadCallback:Function = null):GTexture {
         var atf:String = String.fromCharCode(p_atfData[0]) + String.fromCharCode(p_atfData[1]) + String.fromCharCode(p_atfData[2]);
         if (atf != "ATF") new GError("Invalid ATF data");
         var type:Int = GTextureSourceType.ATF_BGRA;
@@ -112,7 +119,10 @@ class GTextureManager {
         var width:Float = Math.pow(2, p_atfData[offset+1]);
         var height:Float = Math.pow(2, p_atfData[offset+2]);
 
-        return new GTexture(p_id, p_atfData);
+        var texture = new GTexture(p_id, p_atfData);
+        texture.scaleFactor = p_scaleFactor;
+        texture.invalidateNativeTexture(false);
+        return texture;
     }
 
     static public function createRenderTexture(p_id:String, p_width:Int, p_height:Int, p_scaleFactor:Float = 1):GTexture {

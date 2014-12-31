@@ -67,7 +67,7 @@ class GStats implements IStats
     public function render(p_context:IContext):Void {
         if (!visible) return;
 
-        p_context.setCamera(p_context.getDefaultCamera());
+        p_context.setActiveCamera(p_context.getDefaultCamera());
 
         var time:Int = untyped __global__["flash.utils.getTimer"]();
 
