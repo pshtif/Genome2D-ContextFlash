@@ -261,7 +261,7 @@ class GStage3DContext implements IContext
 
     private function g2d_contextInitializedHandler(event:Event):Void {
         g2d_nativeContext = g2d_nativeStage3D.context3D;
-        g2d_nativeContext.enableErrorChecking = false;
+        g2d_nativeContext.enableErrorChecking = true;
 
         if (g2d_useFastMem) {
             g2d_fastMemArray = new ByteArray();
@@ -652,12 +652,10 @@ class GStage3DContext implements IContext
 
 		if (g2d_activeRenderer != null) g2d_activeRenderer.push();
 
-        if (g2d_usedRenderTargets>0) {
-            for (i in 1...g2d_usedRenderTargets) {
-                g2d_nativeContext.setRenderToTexture(null, g2d_enableDepthAndStencil, g2d_antiAliasing, 0, i);
-            }
-            g2d_usedRenderTargets = 0;
+        for (i in 1...g2d_usedRenderTargets) {
+            g2d_nativeContext.setRenderToTexture(null, g2d_enableDepthAndStencil, g2d_antiAliasing, 0, i);
         }
+        g2d_usedRenderTargets = 0;
 
 		if (p_texture == null) {
 			g2d_nativeContext.setRenderToBackBuffer();

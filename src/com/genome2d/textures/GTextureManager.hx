@@ -126,7 +126,9 @@ class GTextureManager {
     }
 
     static public function createRenderTexture(p_id:String, p_width:Int, p_height:Int, p_scaleFactor:Float = 1):GTexture {
-        return new GTexture(p_id, new GRectangle(0,0,p_width, p_height));
+        var texture:GTexture = new GTexture(p_id, new GRectangle(0,0,p_width, p_height));
+        texture.invalidateNativeTexture(false);
+        return texture;
     }
 
     //static public function createFromNativeTexture(p_id:String, p_nativeTexture:Texture, p_width:int, p_height:int):GTexture {

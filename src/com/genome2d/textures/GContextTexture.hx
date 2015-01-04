@@ -156,6 +156,11 @@ class GContextTexture
                             } else {
                                 //g2d_sourceType = GTextureSourceType.BYTEARRAY;
                             }
+                        case GRectangle:
+                            g2d_source = p_value;
+                            g2d_sourceType = GTextureSourceType.RENDER_TARGET;
+                            g2d_width = p_value.width;
+                            g2d_height = p_value.height;
                         case Texture:
                             //g2d_sourceType = GTextureSourceType.TEXTURE;
                         case _:
@@ -345,7 +350,11 @@ class GContextTexture
                     case GTextureSourceType.RENDER_TARGET:
                         if (g2d_nativeTexture == null || p_reinitialize) {
                             if (g2d_nativeTexture != null) g2d_nativeTexture.dispose();
-                            g2d_nativeTexture = contextStage3D.getNativeContext().createTexture(g2d_gpuWidth, g2d_gpuHeight, Context3DTextureFormat.BGRA, true);
+                            if (usesRectangle()) {
+                                g2d_nativeTexture = untyped contextStage3D.getNativeContext()["createRectangleTexture"](g2d_gpuWidth, g2d_gpuHeight, Context3DTextureFormat.BGRA, true);
+                            } else {
+                                g2d_nativeTexture = contextStage3D.getNativeContext().createTexture(g2d_gpuWidth, g2d_gpuHeight, Context3DTextureFormat.BGRA, true);
+                            }
                         }
                     case GTextureSourceType.TEXTURE:
                         g2d_nativeTexture = g2d_source;

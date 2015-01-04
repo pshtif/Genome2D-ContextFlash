@@ -181,7 +181,7 @@ class GBitmapContext implements IContext
         g2d_activeMaskRect = p_maskRect;
     }
 
-	public function setCamera(p_camera:GCamera):Void {
+	public function setActiveCamera(p_camera:GCamera):Void {
         g2d_activeCamera = p_camera;
 
         g2d_activeViewRect.setTo(untyped __int__(g2d_stageViewRect.width*g2d_activeCamera.normalizedViewX),
@@ -258,7 +258,7 @@ class GBitmapContext implements IContext
 	public function begin():Bool  {
         g2d_stats.clear();
 
-        setCamera(g2d_defaultCamera);
+        setActiveCamera(g2d_defaultCamera);
 
         // TODO add correct background color
 		g2d_nativeContext.fillRect(g2d_nativeContext.rect, 0x0);
