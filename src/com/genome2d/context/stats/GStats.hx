@@ -8,6 +8,8 @@
  */
 package com.genome2d.context.stats;
 
+import com.genome2d.textures.GTextureManager;
+import com.genome2d.textures.GTexture;
 import com.genome2d.textures.GTextureFilteringType;
 import com.genome2d.context.stage3d.GStage3DContext;
 import com.genome2d.geom.GRectangle;
@@ -46,7 +48,7 @@ class GStats implements IStats
     private var g2d_mem:Int;
     private var g2d_memMax:Int;
     private var g2d_bitmapData:BitmapData;
-    private var g2d_texture:GContextTexture;
+    private var g2d_texture:GTexture;
 
     public function new() {
         var dtf:TextFormat = new TextFormat("_sans", 9, 0xFFFFFF);
@@ -67,7 +69,7 @@ class GStats implements IStats
     public function render(p_context:IContext):Void {
         if (!visible) return;
 
-        p_context.setCamera(p_context.getDefaultCamera());
+        p_context.setActiveCamera(p_context.getDefaultCamera());
 
         var time:Int = untyped __global__["flash.utils.getTimer"]();
 
@@ -92,9 +94,9 @@ class GStats implements IStats
                 g2d_statsField.htmlText += customStats[i];
             }
         }
-        /**
+
         if (g2d_texture == null) {
-            g2d_texture = new GContextTexture("stats_internal", 0, g2d_bitmapData, g2d_bitmapData.rect, "bgra", false, 0, 0, 1);
+            g2d_texture = GTextureManager.createTextureFromBitmapData("stats_internal", g2d_bitmapData);
             g2d_texture.filteringType = GTextureFilteringType.NEAREST;
             g2d_texture.invalidateNativeTexture(false);
         } else {
@@ -103,8 +105,7 @@ class GStats implements IStats
                 var w:Int = untyped __int__(g2d_statsField.width);
                 if (w>1024) w = 1024;
                 g2d_bitmapData = new BitmapData(GTextureUtils.getNextValidTextureSize(w),16, true, 0x0);
-                g2d_texture.g2d_bitmapData = g2d_bitmapData;
-                g2d_texture.g2d_region = new GRectangle(0,0,g2d_bitmapData.width,16);
+                g2d_texture.source = g2d_bitmapData;
                 g2d_bitmapData.draw(g2d_statsField);
                 g2d_texture.invalidateNativeTexture(true);
             } else {
@@ -115,10 +116,9 @@ class GStats implements IStats
         }
 
         p_context.draw(g2d_texture, (g2d_texture.width*scaleX)/2+x, (g2d_texture.height*scaleY)/2+y, scaleX, scaleY, 0);
-        /**/
     }
 
     public function clear():Void {
-        drawCalls = 1;
+        drawCalls = 0;
     }
 }

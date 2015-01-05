@@ -29,7 +29,10 @@ class GAsset implements IGPrototypable
     public var onLoaded:Signal1<GAsset>;
     public var onFailed:Signal1<GAsset>;
 
-    private var g2d_id:String;
+    private var g2d_id:String = "";
+    /**
+        Asset id
+    **/
     #if swc @:extern #end
     @prototype public var id(get, set):String;
     #if swc @:getter(id) #end
@@ -39,7 +42,6 @@ class GAsset implements IGPrototypable
     #if swc @:setter(id) #end
     inline private function set_id(p_value:String):String {
         if (p_value != g2d_id && p_value.length>0) {
-            if (GAssetManager.g2d_references == null) GAssetManager.g2d_references = new Map<String, GAsset>();
             if (GAssetManager.g2d_references.get(p_value) != null) new GError("Duplicate asset id: "+p_value);
             GAssetManager.g2d_references.set(p_value,this);
 
@@ -50,6 +52,9 @@ class GAsset implements IGPrototypable
     }
 
     private var g2d_url:String;
+    /**
+        Asset url path
+    **/
     #if swc @:extern #end
     @prototype public var url(get, set):String;
     #if swc @:getter(url) #end
@@ -66,6 +71,9 @@ class GAsset implements IGPrototypable
     }
 
     private var g2d_loaded:Bool = false;
+    /**
+        Check if asset is already loaded
+    **/
     public function isLoaded():Bool {
         return g2d_loaded;
     }
@@ -78,6 +86,9 @@ class GAsset implements IGPrototypable
         url = p_url;
     }
 
+    /**
+        Load the asset
+    **/
     public function load():Void {
         if (g2d_url != null) {
             var urlLoader:URLLoader = new URLLoader();

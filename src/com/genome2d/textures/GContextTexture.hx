@@ -31,7 +31,7 @@ import flash.utils.ByteArray;
 @:access(com.genome2d.textures.GTextureManager)
 class GContextTexture
 {
-    private var g2d_dirty:Bool;
+    private var g2d_dirty:Bool = true;
     inline public function isDirty():Bool {
         return g2d_dirty;
     }
@@ -120,6 +120,7 @@ class GContextTexture
     #if swc @:setter(source) #end
     inline private function set_source(p_value:Object):Object {
         if (g2d_source != p_value) {
+            g2d_dirty = true;
             g2d_sourceAtlas = null;
             g2d_sourceByteArray = null;
             g2d_sourceBitmapData = null;
@@ -156,6 +157,11 @@ class GContextTexture
                             } else {
                                 //g2d_sourceType = GTextureSourceType.BYTEARRAY;
                             }
+                        case GRectangle:
+                            g2d_source = p_value;
+                            g2d_sourceType = GTextureSourceType.RENDER_TARGET;
+                            g2d_width = p_value.width;
+                            g2d_height = p_value.height;
                         case Texture:
                             //g2d_sourceType = GTextureSourceType.TEXTURE;
                         case _:
@@ -233,7 +239,6 @@ class GContextTexture
 
 	static private var g2d_instanceCount:Int = 0;
 
-	//public function new(p_id:String, p_source:Object, p_format:String, p_repeatable:Bool, p_pivotX:Float, p_pivotY:Float, p_scaleFactor:Float) {
     public function new(p_id:String, p_source:Object) {
         g2d_width = g2d_height = 0;
         g2d_u = g2d_v = 0;
@@ -242,12 +247,12 @@ class GContextTexture
         premultiplied = true;
         g2d_dirty = true;
         g2d_gpuWidth = g2d_gpuHeight = 0;
-        g2d_scaleFactor = 1;//p_scaleFactor;
+        g2d_scaleFactor = 1;
 
 		g2d_instanceCount++;
 		g2d_contextId = g2d_instanceCount;
-        g2d_format = "bgra";//p_format;
-        g2d_repeatable = false;//p_repeatable;
+        g2d_format = "bgra";
+        g2d_repeatable = false;
 
         g2d_id = p_id;
         g2d_filteringType = GTextureManager.defaultFilteringType;
@@ -283,8 +288,6 @@ class GContextTexture
     }
 
     public function invalidateNativeTexture(p_reinitialize:Bool):Void {
-        if (!g2d_dirty && !p_reinitialize) return;
-
         var wi:Int = untyped __int__(g2d_width);
         var hi:Int = untyped __int__(g2d_height);
 
@@ -345,7 +348,11 @@ class GContextTexture
                     case GTextureSourceType.RENDER_TARGET:
                         if (g2d_nativeTexture == null || p_reinitialize) {
                             if (g2d_nativeTexture != null) g2d_nativeTexture.dispose();
-                            g2d_nativeTexture = contextStage3D.getNativeContext().createTexture(g2d_gpuWidth, g2d_gpuHeight, Context3DTextureFormat.BGRA, true);
+                            if (usesRectangle()) {
+                                g2d_nativeTexture = untyped contextStage3D.getNativeContext()["createRectangleTexture"](g2d_gpuWidth, g2d_gpuHeight, Context3DTextureFormat.BGRA, true);
+                            } else {
+                                g2d_nativeTexture = contextStage3D.getNativeContext().createTexture(g2d_gpuWidth, g2d_gpuHeight, Context3DTextureFormat.BGRA, true);
+                            }
                         }
                     case GTextureSourceType.TEXTURE:
                         g2d_nativeTexture = g2d_source;

@@ -261,7 +261,7 @@ class GStage3DContext implements IContext
 
     private function g2d_contextInitializedHandler(event:Event):Void {
         g2d_nativeContext = g2d_nativeStage3D.context3D;
-        g2d_nativeContext.enableErrorChecking = false;
+        g2d_nativeContext.enableErrorChecking = true;
 
         if (g2d_useFastMem) {
             g2d_fastMemArray = new ByteArray();
@@ -318,7 +318,7 @@ class GStage3DContext implements IContext
             } else {
                 g2d_defaultCamera.x = g2d_stageViewRect.width*.5;
                 g2d_defaultCamera.y = g2d_stageViewRect.height*.5;
-                setCamera(g2d_defaultCamera);
+                setActiveCamera(g2d_defaultCamera);
 
                 g2d_onInvalidated.dispatch();
             }
@@ -404,7 +404,7 @@ class GStage3DContext implements IContext
     /**
 	  	Set camera that should be used for all subsequent draws
 	 */
-    public function setCamera(p_camera:GCamera):Void {
+    public function setActiveCamera(p_camera:GCamera):Void {
         g2d_activeCamera = p_camera;
 
         g2d_activeViewRect.setTo(untyped __int__(g2d_stageViewRect.width*g2d_activeCamera.normalizedViewX),
@@ -439,7 +439,7 @@ class GStage3DContext implements IContext
     public function begin():Bool {
         if (g2d_nativeContext.driverInfo == "Disposed") return false;
         g2d_stats.clear();
-        setCamera(g2d_defaultCamera);
+        setActiveCamera(g2d_defaultCamera);
 
 		g2d_renderTarget = null;
 		g2d_activeRenderer = null;
@@ -652,18 +652,16 @@ class GStage3DContext implements IContext
 
 		if (g2d_activeRenderer != null) g2d_activeRenderer.push();
 
-        if (g2d_usedRenderTargets>0) {
-            for (i in 1...g2d_usedRenderTargets) {
-                g2d_nativeContext.setRenderToTexture(null, g2d_enableDepthAndStencil, g2d_antiAliasing, 0, i);
-            }
-            g2d_usedRenderTargets = 0;
+        for (i in 1...g2d_usedRenderTargets) {
+            g2d_nativeContext.setRenderToTexture(null, g2d_enableDepthAndStencil, g2d_antiAliasing, 0, i);
         }
+        g2d_usedRenderTargets = 0;
 
 		if (p_texture == null) {
 			g2d_nativeContext.setRenderToBackBuffer();
 
             // Reset camera
-            setCamera(g2d_activeCamera);
+            setActiveCamera(g2d_activeCamera);
 		} else {
 			g2d_nativeContext.setRenderToTexture(p_texture.nativeTexture, g2d_enableDepthAndStencil, g2d_antiAliasing, 0);
             g2d_nativeContext.setScissorRectangle(null);
