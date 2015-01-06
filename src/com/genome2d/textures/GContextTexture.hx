@@ -141,6 +141,7 @@ class GContextTexture
                             if (atf == "ATF") {
                                 g2d_sourceType = GTextureSourceType.ATF_BGRA;
                                 var offset:Int = g2d_sourceByteArray[6] == 255 ? 12 : 6;
+
                                 switch (g2d_source[offset]) {
                                     case 0,1:
                                         g2d_sourceType = GTextureSourceType.ATF_BGRA;

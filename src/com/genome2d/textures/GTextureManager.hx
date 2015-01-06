@@ -105,6 +105,7 @@ class GTextureManager {
     static public function createTextureFromATF(p_id:String, p_atfData:ByteArray, p_scaleFactor:Float = 1, p_uploadCallback:Function = null):GTexture {
         var atf:String = String.fromCharCode(p_atfData[0]) + String.fromCharCode(p_atfData[1]) + String.fromCharCode(p_atfData[2]);
         if (atf != "ATF") new GError("Invalid ATF data");
+        /*
         var type:Int = GTextureSourceType.ATF_BGRA;
         var offset:Int = p_atfData[6] == 255 ? 12 : 6;
         switch (p_atfData[offset]) {
@@ -115,10 +116,9 @@ class GTextureManager {
             case 4,5:
                 type = GTextureSourceType.ATF_COMPRESSEDALPHA;
         }
-
         var width:Float = Math.pow(2, p_atfData[offset+1]);
         var height:Float = Math.pow(2, p_atfData[offset+2]);
-
+        /**/
         var texture = new GTexture(p_id, p_atfData);
         texture.scaleFactor = p_scaleFactor;
         texture.invalidateNativeTexture(false);
@@ -181,7 +181,13 @@ class GTextureManager {
     }
 
     static public function createAtlasFromAssets(p_id:String, p_imageAsset:GImageAsset, p_xmlAsset:GXmlAsset, p_scaleFactor:Float = 1, p_format:String = "bgra"):GTextureAtlas {
-        return createAtlasFromBitmapDataAndXml(p_id, p_imageAsset.bitmapData, p_xmlAsset.xml, p_scaleFactor, p_format);
+        switch (p_imageAsset.type) {
+            case GImageAssetType.BITMAPDATA:
+                return createAtlasFromBitmapDataAndXml(p_id, p_imageAsset.bitmapData, p_xmlAsset.xml, p_scaleFactor, p_format);
+            case GImageAssetType.ATF:
+                return createAtlasFromATFAndXml(p_id, p_imageAsset.bytes, p_xmlAsset.xml, p_scaleFactor);
+        }
+        return null;
     }
 
     static public function createAtlasFromAssetIds(p_id:String, p_imageAssetId:String, p_xmlAssetId:String, p_scaleFactor:Float = 1, p_format:String = "bgra"):GTextureAtlas {
@@ -247,6 +253,7 @@ class GTextureManager {
         }
 
         textureAtlas.invalidateNativeTexture(false);
+
         return textureAtlas;
     }
 

@@ -282,14 +282,14 @@ class GQuadTextureShaderRenderer implements IGRenderer
         var px:Float;
         var py:Float;
         if (p_overrideSource) {
-            u = p_sourceX/p_texture.gpuWidth;
-            v = p_sourceY/p_texture.gpuHeight;
-            us = p_sourceWidth/p_texture.gpuWidth;
-            vs = p_sourceHeight/p_texture.gpuHeight;
-            sx = p_sourceWidth * p_scaleX;
-            sy = p_sourceHeight * p_scaleY;
-            px = p_sourcePivotX * p_scaleX;
-            py = p_sourcePivotY * p_scaleY;
+            u = p_sourceX / p_texture.gpuWidth;
+            v = p_sourceY / p_texture.gpuHeight;
+            us = p_sourceWidth / p_texture.gpuWidth;
+            vs = p_sourceHeight / p_texture.gpuHeight;
+            sx = p_sourceWidth * p_texture.scaleFactor * p_scaleX;
+            sy = p_sourceHeight * p_texture.scaleFactor * p_scaleY;
+            px = p_sourcePivotX * p_texture.scaleFactor * p_scaleX;
+            py = p_sourcePivotY * p_texture.scaleFactor * p_scaleY;
         } else {
             u = p_texture.g2d_u;
             v = p_texture.g2d_v;
