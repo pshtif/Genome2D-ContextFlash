@@ -40,6 +40,8 @@ class GViewPort {
     public var screenRight:Float;
     public var screenBottom:Float;
 
+    public var aspect:Float;
+
     private var g2d_cameraController:GCameraController;
 
     public function new(p_cameraController:GCameraController, p_viewWidth:Int, p_viewHeight:Int, p_autoResize:Bool = true) {
@@ -64,7 +66,7 @@ class GViewPort {
         var aw:Float = p_width/viewRight;
         var ah:Float = p_height/viewBottom;
 
-        var aspect:Float = Math.min(aw, ah);
+        aspect = Math.min(aw, ah);
         g2d_cameraController.zoom = aspect;
 
         if (aw<ah) {
