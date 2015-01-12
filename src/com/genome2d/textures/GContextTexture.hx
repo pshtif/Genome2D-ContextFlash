@@ -8,6 +8,7 @@
  */
 package com.genome2d.textures;
 
+import flash.display.Bitmap;
 import com.genome2d.textures.GTextureManager;
 import com.genome2d.context.GContextFeature;
 import flash.display3D.textures.TextureBase;
@@ -124,59 +125,49 @@ class GContextTexture
             g2d_sourceAtlas = null;
             g2d_sourceByteArray = null;
             g2d_sourceBitmapData = null;
-            switch (Type.typeof(p_value)) {
-                case TClass(c):
-                    switch (c) {
-                        case BitmapData:
-                            g2d_source = p_value;
-                            g2d_sourceType = GTextureSourceType.BITMAPDATA;
-                            g2d_sourceBitmapData = cast g2d_source;
-                            g2d_width = g2d_sourceBitmapData.width;
-                            g2d_height = g2d_sourceBitmapData.height;
-                            premultiplied = true;
-                        case ByteArray:
-                            g2d_source = p_value;
-                            g2d_sourceByteArray = g2d_source;
-                            var atf:String = String.fromCharCode(g2d_sourceByteArray[0]) + String.fromCharCode(g2d_sourceByteArray[1]) + String.fromCharCode(g2d_sourceByteArray[2]);
-                            if (atf == "ATF") {
-                                g2d_sourceType = GTextureSourceType.ATF_BGRA;
-                                var offset:Int = g2d_sourceByteArray[6] == 255 ? 12 : 6;
+            if (Std.is(p_value,BitmapData)) {
+                g2d_source = p_value;
+                g2d_sourceType = GTextureSourceType.BITMAPDATA;
+                g2d_sourceBitmapData = cast g2d_source;
+                g2d_width = g2d_sourceBitmapData.width;
+                g2d_height = g2d_sourceBitmapData.height;
+                premultiplied = true;
+            } else if (Std.is(p_value,ByteArray)) {
+                g2d_source = p_value;
+                g2d_sourceByteArray = g2d_source;
+                var atf:String = String.fromCharCode(g2d_sourceByteArray[0]) + String.fromCharCode(g2d_sourceByteArray[1]) + String.fromCharCode(g2d_sourceByteArray[2]);
+                if (atf == "ATF") {
+                    g2d_sourceType = GTextureSourceType.ATF_BGRA;
+                    var offset:Int = g2d_sourceByteArray[6] == 255 ? 12 : 6;
 
-                                switch (g2d_source[offset]) {
-                                    case 0,1:
-                                        g2d_sourceType = GTextureSourceType.ATF_BGRA;
-                                    case 2,3:
-                                        g2d_sourceType = GTextureSourceType.ATF_COMPRESSED;
-                                        g2d_atfType = "dxt1";
-                                    case 4,5:
-                                        g2d_sourceType = GTextureSourceType.ATF_COMPRESSEDALPHA;
-                                        g2d_atfType = "dxt5";
-                                }
-                                g2d_width = untyped __int__(Math.pow(2,g2d_sourceByteArray[offset+1]));
-                                g2d_height = untyped __int__(Math.pow(2,g2d_sourceByteArray[offset+2]));
-                                premultiplied = false;
-                            } else {
-                                //g2d_sourceType = GTextureSourceType.BYTEARRAY;
-                            }
-                        case GRectangle:
-                            g2d_source = p_value;
-                            g2d_sourceType = GTextureSourceType.RENDER_TARGET;
-                            g2d_width = p_value.width;
-                            g2d_height = p_value.height;
-                        case Texture:
-                            //g2d_sourceType = GTextureSourceType.TEXTURE;
-                        case _:
-                            if (Std.is(p_value,GTextureAtlas)) {
-                                g2d_source = p_value;
-                                g2d_sourceAtlas = g2d_source;
-                                g2d_sourceType = GTextureSourceType.ATLAS;
-                                g2d_nativeTexture = g2d_sourceAtlas.nativeTexture;
-                            } else {
-                                new GError("Invalid texture source.");
-                            }
+                    switch (g2d_source[offset]) {
+                        case 0,1:
+                            g2d_sourceType = GTextureSourceType.ATF_BGRA;
+                        case 2,3:
+                            g2d_sourceType = GTextureSourceType.ATF_COMPRESSED;
+                            g2d_atfType = "dxt1";
+                        case 4,5:
+                            g2d_sourceType = GTextureSourceType.ATF_COMPRESSEDALPHA;
+                            g2d_atfType = "dxt5";
                     }
-                case _:
-                    //g2d_nativeSourceType = GTextureSourceType.RENDER_TARGET;
+                    g2d_width = untyped __int__(Math.pow(2,g2d_sourceByteArray[offset+1]));
+                    g2d_height = untyped __int__(Math.pow(2,g2d_sourceByteArray[offset+2]));
+                    premultiplied = false;
+                } else {
+                    //g2d_sourceType = GTextureSourceType.BYTEARRAY;
+                }
+            } else if (Std.is(p_value,GRectangle)) {
+                g2d_source = p_value;
+                g2d_sourceType = GTextureSourceType.RENDER_TARGET;
+                g2d_width = p_value.width;
+                g2d_height = p_value.height;
+            } else if (Std.is(p_value,GTextureAtlas)) {
+                g2d_source = p_value;
+                g2d_sourceAtlas = g2d_source;
+                g2d_sourceType = GTextureSourceType.ATLAS;
+                g2d_nativeTexture = g2d_sourceAtlas.nativeTexture;
+            } else {
+                new GError("Invalid texture source.");
             }
             g2d_dirty = true;
         }
