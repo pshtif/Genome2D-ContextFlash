@@ -4,7 +4,7 @@ import com.genome2d.Genome2D;
 import com.genome2d.geom.GRectangle;
 import com.genome2d.utils.GHAlignType;
 import com.genome2d.utils.GVAlignType;
-class GViewPort {
+class GViewport {
 
     private var g2d_vAlign:Int = GVAlignType.MIDDLE;
     #if swc @:extern #end
@@ -40,7 +40,8 @@ class GViewPort {
     public var screenRight:Float;
     public var screenBottom:Float;
 
-    public var aspect:Float;
+    public var zoom:Float;
+    public var aspectRatio:Float;
 
     private var g2d_cameraController:GCameraController;
 
@@ -66,40 +67,41 @@ class GViewPort {
         var aw:Float = p_width/viewRight;
         var ah:Float = p_height/viewBottom;
 
-        aspect = Math.min(aw, ah);
-        g2d_cameraController.zoom = aspect;
+        aspectRatio = p_width/p_height;
+        zoom = Math.min(aw, ah);
+        g2d_cameraController.zoom = zoom;
 
         if (aw<ah) {
             screenLeft = 0;
             screenRight = viewRight;
             switch (vAlign) {
                 case GVAlignType.MIDDLE:
-                    screenTop = (viewBottom*aspect-p_height)/(2*aspect);
-                    screenBottom = viewBottom+(p_height-aspect*viewBottom)/(2*aspect);
+                    screenTop = (viewBottom*zoom-p_height)/(2*zoom);
+                    screenBottom = viewBottom+(p_height-zoom*viewBottom)/(2*zoom);
                     g2d_cameraController.node.transform.setPosition(viewRight*.5, viewBottom*.5);
                 case GVAlignType.TOP:
                     screenTop = 0;
-                    screenBottom = viewBottom+(p_height-aspect*viewBottom)/aspect;
-                    g2d_cameraController.node.transform.setPosition(viewRight*.5, viewBottom*.5 + (p_height-aspect*viewBottom)/(2*aspect));
+                    screenBottom = viewBottom+(p_height-zoom*viewBottom)/zoom;
+                    g2d_cameraController.node.transform.setPosition(viewRight*.5, viewBottom*.5 + (p_height-zoom*viewBottom)/(2*zoom));
                 case GVAlignType.BOTTOM:
-                    screenTop = (viewBottom*aspect-p_height)/aspect;
+                    screenTop = (viewBottom*zoom-p_height)/zoom;
                     screenBottom = p_height;
-                    g2d_cameraController.node.transform.setPosition(viewRight*.5, viewBottom*.5 - (p_height-aspect*viewBottom)/(2*aspect));
+                    g2d_cameraController.node.transform.setPosition(viewRight*.5, viewBottom*.5 - (p_height-zoom*viewBottom)/(2*zoom));
             }
         } else {
             switch (hAlign) {
                 case GHAlignType.CENTER:
-                    screenLeft = (aspect*viewRight-p_width)/(2*aspect);
-                    screenRight = viewRight+(p_width-aspect*viewRight)/(2*aspect);
+                    screenLeft = (zoom*viewRight-p_width)/(2*zoom);
+                    screenRight = viewRight+(p_width-zoom*viewRight)/(2*zoom);
                     g2d_cameraController.node.transform.setPosition(viewRight*.5, viewBottom*.5);
                 case GHAlignType.LEFT:
                     screenLeft = 0;
-                    screenRight = viewRight+(p_width-aspect*viewRight)/aspect;
-                    g2d_cameraController.node.transform.setPosition(viewRight*.5 + (p_width-aspect*viewRight)/(2*aspect), viewBottom*.5);
+                    screenRight = viewRight+(p_width-zoom*viewRight)/zoom;
+                    g2d_cameraController.node.transform.setPosition(viewRight*.5 + (p_width-zoom*viewRight)/(2*zoom), viewBottom*.5);
                 case GHAlignType.RIGHT:
-                    screenLeft = (aspect*viewRight-p_width)/aspect;
+                    screenLeft = (zoom*viewRight-p_width)/zoom;
                     screenRight = p_width;
-                    g2d_cameraController.node.transform.setPosition(viewRight*.5 - (p_width-aspect*viewRight)/(2*aspect), viewBottom*.5);
+                    g2d_cameraController.node.transform.setPosition(viewRight*.5 - (p_width-zoom*viewRight)/(2*zoom), viewBottom*.5);
             }
             screenTop = 0;
             screenBottom = viewBottom;
