@@ -105,20 +105,7 @@ class GTextureManager {
     static public function createTextureFromATF(p_id:String, p_atfData:ByteArray, p_scaleFactor:Float = 1, p_uploadCallback:Function = null):GTexture {
         var atf:String = String.fromCharCode(p_atfData[0]) + String.fromCharCode(p_atfData[1]) + String.fromCharCode(p_atfData[2]);
         if (atf != "ATF") new GError("Invalid ATF data");
-        /*
-        var type:Int = GTextureSourceType.ATF_BGRA;
-        var offset:Int = p_atfData[6] == 255 ? 12 : 6;
-        switch (p_atfData[offset]) {
-            case 0,1:
-                type = GTextureSourceType.ATF_BGRA;
-            case 2,3:
-                type = GTextureSourceType.ATF_COMPRESSED;
-            case 4,5:
-                type = GTextureSourceType.ATF_COMPRESSEDALPHA;
-        }
-        var width:Float = Math.pow(2, p_atfData[offset+1]);
-        var height:Float = Math.pow(2, p_atfData[offset+2]);
-        /**/
+
         var texture = new GTexture(p_id, p_atfData);
         texture.scaleFactor = p_scaleFactor;
         texture.invalidateNativeTexture(false);
@@ -130,10 +117,6 @@ class GTextureManager {
         texture.invalidateNativeTexture(false);
         return texture;
     }
-
-    //static public function createFromNativeTexture(p_id:String, p_nativeTexture:Texture, p_width:int, p_height:int):GTexture {
-    //    return new GTexture(g2d_context, p_id, GTextureSourceType.TEXTURE, p_nativeTexture, new GRectangle(0, 0, p_width, p_height), 0, 0, null);
-    //}
 
 
     /****************************************************************************************************
