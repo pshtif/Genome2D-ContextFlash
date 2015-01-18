@@ -254,7 +254,7 @@ class GStage3DContext implements IContext
             if (autoDetectAvailable && multipleProfiles) {
                 untyped g2d_nativeStage3D["requestContext3DMatchingProfiles"](g2d_profile);
             } else {
-                g2d_nativeStage3D.requestContext3D(g2d_renderMode, (multipleProfiles) ? g2d_profile[untyped __int__(g2d_profile.length-1)] : g2d_profile);
+                g2d_nativeStage3D.requestContext3D(untyped g2d_renderMode, (multipleProfiles) ? g2d_profile[untyped __int__(g2d_profile.length-1)] : g2d_profile);
             }
         }
 	}
