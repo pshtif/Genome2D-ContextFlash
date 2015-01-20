@@ -9,8 +9,6 @@
 package com.genome2d.assets;
 
 import flash.events.Event;
-import flash.net.URLLoader;
-import flash.net.URLRequest;
 
 /**
  * ...
@@ -25,14 +23,9 @@ class GXmlAsset extends GAsset {
         return g2d_xml;
     }
 
-    public function initXml(p_id:String, p_xml:Xml):Void {
-        g2d_id = p_id;
-        g2d_xml = p_xml;
-        g2d_loaded = true;
-    }
-
 	override private function g2d_completeHandler(p_event:Event):Void {
 		g2d_xml = Xml.parse(p_event.target.data);
+        g2d_loading = false;
         g2d_loaded = true;
 		onLoaded.dispatch(this);
 	}

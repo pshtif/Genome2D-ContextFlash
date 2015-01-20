@@ -14,7 +14,7 @@ import com.genome2d.context.GContextFeature;
 import flash.display3D.textures.TextureBase;
 import com.genome2d.context.GContextConfig;
 import com.genome2d.context.stage3d.GStage3DContext;
-import com.genome2d.error.GError;
+import com.genome2d.debug.GDebug;
 import com.genome2d.geom.GRectangle;
 import flash.utils.Object;
 import com.genome2d.context.IContext;
@@ -174,7 +174,7 @@ class GContextTexture
                 g2d_sourceType = GTextureSourceType.ATLAS;
                 g2d_nativeTexture = g2d_sourceAtlas.nativeTexture;
             } else {
-                new GError("Invalid texture source.");
+                GDebug.error("Invalid texture source.");
             }
             g2d_dirty = true;
         }

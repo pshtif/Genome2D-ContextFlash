@@ -64,14 +64,20 @@ class GImageAsset extends GAsset {
                 loader.contentLoaderInfo.addEventListener(Event.COMPLETE, g2d_bytesComplete);
                 loader.loadBytes(g2d_bytes, loaderContext);
             case _:
+                g2d_loading = false;
+                g2d_loaded = true;
                 if (String.fromCharCode(g2d_bytes[0])+String.fromCharCode(g2d_bytes[1])+String.fromCharCode(g2d_bytes[2]) == "ATF") {
                     g2d_type = GImageAssetType.ATF;
                     onLoaded.dispatch(this);
+                } else {
+                    onFailed.dispatch(this);
                 }
         }
     }
 
     private function g2d_bytesComplete(event:Event):Void {
+        g2d_loading = false;
+        g2d_loaded = true;
         g2d_type = GImageAssetType.BITMAPDATA;
         g2d_bitmapData = cast (event.target.loader.content,Bitmap).bitmapData;
         onLoaded.dispatch(this);

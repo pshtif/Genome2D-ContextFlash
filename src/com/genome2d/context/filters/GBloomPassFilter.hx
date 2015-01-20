@@ -12,7 +12,7 @@ import com.genome2d.textures.GContextTexture;
 import flash.Vector;
 import com.genome2d.textures.GContextTexture;
 import com.genome2d.context.GCamera;
-import com.genome2d.error.GError;
+import com.genome2d.debug.GDebug;
 
 import flash.display3D.Context3D;
 
@@ -46,7 +46,7 @@ class GBloomPassFilter extends GFilter
 
     override public function bind(p_context:IContext, p_texture:GContextTexture):Void {
         super.bind(p_context, p_texture);
-        if (texture == null) new GError("There is no textures set for bloom pass.");
+        if (texture == null) GDebug.error("There is no texture set for bloom pass.");
         p_context.getNativeContext().setTextureAt(1, texture.nativeTexture);
     }
 

@@ -20,7 +20,7 @@ import flash.utils.Object;
 import com.genome2d.context.stage3d.renderers.GRenderersCommon;
 import com.genome2d.context.stats.IStats;
 import flash.Vector;
-import com.genome2d.error.GError;
+import com.genome2d.debug.GDebug;
 import com.genome2d.geom.GRectangle;
 import com.genome2d.context.stage3d.renderers.GMatrixQuadTextureShaderRenderer;
 import flash.display3D.Context3DTriangleFace;
@@ -210,7 +210,7 @@ class GStage3DContext implements IContext
      *  CONSTRUCTOR
      **/
     public function new(p_config:GContextConfig) {
-        if (p_config.nativeStage == null) new GError("You need to specify nativeStage in the config");
+        if (p_config.nativeStage == null) GDebug.error("You need to specify nativeStage in the config");
 
         NORMALIZED_VECTOR = new Vector3D();
 

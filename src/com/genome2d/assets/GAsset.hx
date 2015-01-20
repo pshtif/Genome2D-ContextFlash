@@ -8,7 +8,8 @@
  */
 package com.genome2d.assets;
 
-import com.genome2d.error.GError;
+import com.genome2d.debug.GDebug;
+import com.genome2d.debug.GDebug;
 import com.genome2d.proto.IGPrototypable;
 import flash.net.URLRequest;
 import flash.events.IOErrorEvent;
@@ -42,7 +43,7 @@ class GAsset implements IGPrototypable
     #if swc @:setter(id) #end
     inline private function set_id(p_value:String):String {
         if (p_value != g2d_id && p_value.length>0) {
-            if (GAssetManager.g2d_references.get(p_value) != null) new GError("Duplicate asset id: "+p_value);
+            if (GAssetManager.g2d_references.get(p_value) != null) GDebug.critical("Duplicate asset id: "+p_value);
             GAssetManager.g2d_references.set(p_value,this);
 
             if (GAssetManager.g2d_references.get(g2d_id) != null) GAssetManager.g2d_references.remove(g2d_id);
@@ -66,8 +67,18 @@ class GAsset implements IGPrototypable
         if (!isLoaded()) {
             g2d_url = p_value;
             if (g2d_id == "") id = g2d_url;
+        } else {
+            GDebug.warning("Asset already loaded " + id);
         }
         return g2d_url;
+    }
+
+    private var g2d_loading:Bool = false;
+    /**
+        Check if asset is currently loading
+    **/
+    public function isLoading():Bool {
+        return g2d_loading;
     }
 
     private var g2d_loaded:Bool = false;
@@ -90,12 +101,15 @@ class GAsset implements IGPrototypable
         Load the asset
     **/
     public function load():Void {
-        if (g2d_url != null) {
+        if (!g2d_loaded && !g2d_loading && g2d_url != null) {
+            g2d_loading = true;
             var urlLoader:URLLoader = new URLLoader();
             urlLoader.dataFormat = URLLoaderDataFormat.BINARY;
             urlLoader.addEventListener(Event.COMPLETE, g2d_completeHandler);
             urlLoader.addEventListener(IOErrorEvent.IO_ERROR, g2d_ioErrorHandler);
             urlLoader.load(new URLRequest(g2d_url));
+        } else {
+            GDebug.warning("Asset already loading, was loaded or invalid url specified.");
         }
     }
 
@@ -103,6 +117,7 @@ class GAsset implements IGPrototypable
     }
 
     private function g2d_ioErrorHandler(event:IOErrorEvent):Void {
+        g2d_loading = false;
         onFailed.dispatch(this);
     }
 }

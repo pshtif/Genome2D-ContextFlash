@@ -10,7 +10,7 @@ package com.genome2d.context.filters;
 
 import com.genome2d.textures.GContextTexture;
 import flash.Vector;
-import com.genome2d.error.GError;
+import com.genome2d.debug.GDebug;
 
 import flash.display3D.Context3D;
 
@@ -58,7 +58,7 @@ class GHDRPassFilter extends GFilter
 
     override public function bind(p_context:IContext, p_texture:GContextTexture):Void {
         super.bind(p_context, p_texture);
-        if (texture == null) new GError("There is no textures set for HDR pass.");
+        if (texture == null) GDebug.error("There is no texture set for HDR pass.");
         p_context.getNativeContext().setTextureAt(1, texture.nativeTexture);
     }
 

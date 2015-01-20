@@ -10,7 +10,7 @@ import com.genome2d.utils.GPackerRectangle;
 import flash.utils.Dictionary;
 import com.genome2d.geom.GRectangle;
 import flash.utils.ByteArray;
-import com.genome2d.error.GError;
+import com.genome2d.debug.GDebug;
 import flash.utils.Function;
 import com.genome2d.assets.GImageAssetType;
 import flash.display.BitmapData;
@@ -28,8 +28,8 @@ class GTextureManager {
 
     static public var g2d_references:Dictionary;
     static private function g2d_addTexture(p_texture:GContextTexture):Void {
-        if (p_texture.id == null || p_texture.id.length == 0) new GError("Invalid textures id");
-        if (untyped g2d_references[p_texture.id] != null) new GError("Duplicate textures id: "+p_texture.id);
+        if (p_texture.id == null || p_texture.id.length == 0) GDebug.error("Invalid texture id");
+        if (untyped g2d_references[p_texture.id] != null) GDebug.error("Duplicate textures id: "+p_texture.id);
         untyped g2d_references[p_texture.id] = p_texture;
     }
 
@@ -104,7 +104,7 @@ class GTextureManager {
 
     static public function createTextureFromATF(p_id:String, p_atfData:ByteArray, p_scaleFactor:Float = 1, p_uploadCallback:Function = null):GTexture {
         var atf:String = String.fromCharCode(p_atfData[0]) + String.fromCharCode(p_atfData[1]) + String.fromCharCode(p_atfData[2]);
-        if (atf != "ATF") new GError("Invalid ATF data");
+        if (atf != "ATF") GDebug.error("Invalid ATF data");
 
         var texture = new GTexture(p_id, p_atfData);
         texture.scaleFactor = p_scaleFactor;
@@ -139,7 +139,7 @@ class GTextureManager {
 	 * 	@param p_xml
 	 */
     static public function createAtlasFromBitmapDataAndXml(p_id:String, p_bitmapData:BitmapData, p_xml:Xml, p_scaleFactor:Float = 1, p_format:String = "bgra"):GTextureAtlas {
-        if (!GTextureUtils.isValidTextureSize(p_bitmapData.width) || !GTextureUtils.isValidTextureSize(p_bitmapData.height)) new GError("Atlas bitmap needs to have power of 2 size.");
+        if (!GTextureUtils.isValidTextureSize(p_bitmapData.width) || !GTextureUtils.isValidTextureSize(p_bitmapData.height)) GDebug.error("Atlas bitmap needs to have power of 2 size.");
         var textureAtlas:GTextureAtlas = new GTextureAtlas(p_id, p_bitmapData);
         textureAtlas.scaleFactor = p_scaleFactor;
 
@@ -214,7 +214,7 @@ class GTextureManager {
 
     static public function createAtlasFromATFAndXml(p_id:String, p_atfData:ByteArray, p_xml:Xml, p_scaleFactor:Float = 1):GTextureAtlas {
         var atf:String = String.fromCharCode(p_atfData[0]) + String.fromCharCode(p_atfData[1]) + String.fromCharCode(p_atfData[2]);
-        if (atf != "ATF") new GError("Invalid ATF data.");
+        if (atf != "ATF") GDebug.error("Invalid ATF data.");
 
         var textureAtlas:GTextureAtlas = new GTextureAtlas(p_id, p_atfData);
         textureAtlas.scaleFactor = p_scaleFactor;
