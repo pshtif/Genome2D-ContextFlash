@@ -44,6 +44,13 @@ class GContextTexture
     inline private function get_id():String {
         return g2d_id;
     }
+    #if swc @:setter(id) #end
+    inline private function set_id(p_value:String):String {
+        GTextureManager.g2d_removeTexture(this);
+        g2d_id = p_value;
+        GTextureManager.g2d_addTexture(this);
+        return g2d_id;
+    }
 
     #if swc @:extern #end
     public var width(get, never):Float;
