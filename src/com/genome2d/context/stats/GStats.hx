@@ -8,6 +8,8 @@
  */
 package com.genome2d.context.stats;
 
+import com.genome2d.context.stage3d.renderers.GQuadTextureShaderRenderer;
+import com.genome2d.context.stage3d.renderers.GQuadTextureShaderRenderer;
 import com.genome2d.textures.GTextureManager;
 import com.genome2d.textures.GTexture;
 import com.genome2d.textures.GTextureFilteringType;

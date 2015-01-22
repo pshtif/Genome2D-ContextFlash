@@ -235,8 +235,8 @@ class GQuadTextureShaderRenderer implements IGRenderer
 	}
 	
 	inline public function draw(p_x:Float, p_y:Float, p_scaleX:Float, p_scaleY:Float, p_rotation:Float, p_red:Float, p_green:Float, p_blue:Float, p_alpha:Float, p_texture:GTexture, p_filter:GFilter, p_overrideSource:Bool, p_sourceX:Float, p_sourceY:Float, p_sourceWidth:Float, p_sourceHeight:Float, p_sourcePivotX:Float, p_sourcePivotY:Float):Void {
-		var notSameTexture:Bool = g2d_activeNativeTexture != p_texture.nativeTexture;
-		var notSameFiltering:Bool = g2d_activeFiltering != p_texture.filteringType;
+		var notSameTexture:Bool = g2d_activeNativeTexture != p_texture.g2d_nativeTexture;
+		var notSameFiltering:Bool = g2d_activeFiltering != p_texture.g2d_filteringType;
         var notSameRepeat:Bool = g2d_activeRepeat != p_texture.g2d_repeatable;
 		var useAlpha:Bool = !g2d_useSeparatedAlphaPipeline || !(p_red == 1 && p_green == 1 && p_blue == 1 && p_alpha == 1);
 		var notSameUseAlpha:Bool = g2d_activeAlpha != useAlpha;
@@ -248,13 +248,13 @@ class GQuadTextureShaderRenderer implements IGRenderer
 			if (g2d_activeNativeTexture != null) push();
 			// Texture has changed
 			if (notSameTexture) {
-				g2d_activeNativeTexture = p_texture.nativeTexture;
-				g2d_nativeContext.setTextureAt(0, p_texture.nativeTexture);
+				g2d_activeNativeTexture = p_texture.g2d_nativeTexture;
+				g2d_nativeContext.setTextureAt(0, p_texture.g2d_nativeTexture);
 			}
 			// Any flag affecting shader has changed
 			if (notSameRepeat || notSameFiltering || notSameUseAlpha || notSameAtf || notSameFilter) {
                 // Set filtering
-				g2d_activeFiltering = p_texture.filteringType;
+				g2d_activeFiltering = p_texture.g2d_filteringType;
                 // Set alpha usage
 				g2d_activeAlpha = useAlpha;
                 if (g2d_activeAlpha) {
@@ -282,14 +282,14 @@ class GQuadTextureShaderRenderer implements IGRenderer
         var px:Float;
         var py:Float;
         if (p_overrideSource) {
-            u = p_sourceX / p_texture.gpuWidth;
-            v = p_sourceY / p_texture.gpuHeight;
-            us = p_sourceWidth / p_texture.gpuWidth;
-            vs = p_sourceHeight / p_texture.gpuHeight;
-            sx = p_sourceWidth * p_texture.scaleFactor * p_scaleX;
-            sy = p_sourceHeight * p_texture.scaleFactor * p_scaleY;
-            px = p_sourcePivotX * p_texture.scaleFactor * p_scaleX;
-            py = p_sourcePivotY * p_texture.scaleFactor * p_scaleY;
+            u = p_sourceX / p_texture.g2d_gpuWidth;
+            v = p_sourceY / p_texture.g2d_gpuHeight;
+            us = p_sourceWidth / p_texture.g2d_gpuWidth;
+            vs = p_sourceHeight / p_texture.g2d_gpuHeight;
+            sx = p_sourceWidth * p_texture.g2d_scaleFactor * p_scaleX;
+            sy = p_sourceHeight * p_texture.g2d_scaleFactor * p_scaleY;
+            px = p_sourcePivotX * p_texture.g2d_scaleFactor * p_scaleX;
+            py = p_sourcePivotY * p_texture.g2d_scaleFactor * p_scaleY;
         } else {
             u = p_texture.g2d_u;
             v = p_texture.g2d_v;
@@ -301,14 +301,16 @@ class GQuadTextureShaderRenderer implements IGRenderer
             py = p_texture.pivotY * p_scaleY;
         }
 
-        var notSameTextureId:Bool = (g2d_activeTextureId != p_texture.g2d_contextId) ||
+        var notSameTextureId:Bool = (g2d_activeTextureId != p_texture.g2d_contextId);
+        /*||
                                     (!p_overrideSource && (g2d_activeTextureWidth != p_texture.width*p_scaleX || g2d_activeTextureHeight != p_texture.height*p_scaleY)) ||
                                     (p_overrideSource && (g2d_activeTextureWidth != p_sourceWidth || g2d_activeTextureHeight != p_sourceHeight));
+                                    /**/
 		if (notSameTextureId) {
 			g2d_textureIndex -= 2;
 			var textureOffset:Int;
 			if (g2d_useFastMem) {
-				textureOffset = g2d_textureIndex * 16;
+				textureOffset = g2d_textureIndex << 4;
 
 				Memory.setFloat(textureOffset, u);
 			    Memory.setFloat(textureOffset + 4, v);
@@ -320,7 +322,7 @@ class GQuadTextureShaderRenderer implements IGRenderer
 				Memory.setFloat(textureOffset + 24, px);
 				Memory.setFloat(textureOffset + 28, py);
 			} else {
-				textureOffset = g2d_textureIndex * 4;
+				textureOffset = g2d_textureIndex << 2;
 				
 				g2d_vertexConstants[textureOffset] = u;
 				g2d_vertexConstants[textureOffset + 1] = v;
@@ -345,7 +347,7 @@ class GQuadTextureShaderRenderer implements IGRenderer
 		}
 
         if (g2d_useFastMem) {
-		    g2d_constantOffset = g2d_quadCount * (g2d_activeAlpha ? 32 : 16);
+		    g2d_constantOffset = g2d_quadCount << (g2d_activeAlpha ? 5 : 4);
 
             Memory.setFloat(g2d_constantOffset, p_x);
             Memory.setFloat(4 + g2d_constantOffset, p_y);
@@ -377,21 +379,21 @@ class GQuadTextureShaderRenderer implements IGRenderer
 		++g2d_quadCount;
 
         // Check if there is place for maximum information about the next quad
-		if (g2d_quadCount >= untyped __int__((g2d_textureIndex - 2) / (g2d_activeAlpha ? TRANSFORM_PER_VERTEX_ALPHA : TRANSFORM_PER_VERTEX))) push();
+        if (g2d_quadCount >= untyped __int__((g2d_textureIndex - 2) / (g2d_activeAlpha ? TRANSFORM_PER_VERTEX_ALPHA : TRANSFORM_PER_VERTEX))) push();
 	}
 	
 	inline public function push():Void {
-		if (g2d_quadCount > 0) {
-            GStats.drawCalls++;
+		if (g2d_quadCount != 0) {
+            ++GStats.drawCalls;
             if (g2d_useFastMem) {
                 g2d_nativeContext.setProgramConstantsFromByteArray(Context3DProgramType.VERTEX, CONSTANTS_OFFSET, MAX_CONSTANTS, g2d_fastMemArray, 0);
             } else {
 			    g2d_nativeContext.setProgramConstantsFromVector(Context3DProgramType.VERTEX, CONSTANTS_OFFSET, g2d_vertexConstants, MAX_CONSTANTS);
             }
-			g2d_nativeContext.drawTriangles(g2d_indexBuffer, 0, g2d_quadCount * 2);
+			g2d_nativeContext.drawTriangles(g2d_indexBuffer, 0, g2d_quadCount << 1);
 			g2d_quadCount = 0;
 			g2d_textureIndex = MAX_CONSTANTS;
-			g2d_activeTextureId = 0;
+            g2d_activeTextureId = 0;
 		}
 	}
 

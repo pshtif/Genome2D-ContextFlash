@@ -472,6 +472,7 @@ class GStage3DContext implements IContext
         if (!g2d_usingExternalContext) {
 		    g2d_nativeContext.present();
         }
+
 		g2d_reinitialize = false;
 	}
 
