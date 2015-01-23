@@ -43,7 +43,7 @@ class GAsset implements IGPrototypable
     #if swc @:setter(id) #end
     inline private function set_id(p_value:String):String {
         if (p_value != g2d_id && p_value.length>0) {
-            if (GAssetManager.g2d_references.get(p_value) != null) GDebug.critical("Duplicate asset id: "+p_value);
+            if (GAssetManager.g2d_references.get(p_value) != null) GDebug.error("Duplicate asset id: "+p_value);
             GAssetManager.g2d_references.set(p_value,this);
 
             if (GAssetManager.g2d_references.get(g2d_id) != null) GAssetManager.g2d_references.remove(g2d_id);

@@ -1,4 +1,5 @@
 package com.genome2d.context;
+import com.genome2d.debug.GDebug;
 import com.genome2d.components.GCameraController;
 import com.genome2d.Genome2D;
 import com.genome2d.geom.GRectangle;
@@ -53,12 +54,12 @@ class GViewport {
         viewRight = p_viewWidth;
         viewBottom = p_viewHeight;
 
-        if (p_autoResize) {
-            Genome2D.getInstance().getContext().onResize.add(resizeHandler);
-        }
-
         var rect:GRectangle = Genome2D.getInstance().getContext().getStageViewRect();
         resizeHandler(rect.width, rect.height);
+
+        if (p_autoResize) {
+            Genome2D.getInstance().getContext().onResize.addWithPriority(resizeHandler,100);
+        }
     }
 
     private var g2d_previousZoom:Int = 1;

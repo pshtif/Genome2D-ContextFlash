@@ -21,49 +21,53 @@ import com.genome2d.context.IContext;
 @:access(com.genome2d.textures.GContextTexture)
 class GTextureManager {
     static public function init():Void {
-        g2d_references = new Dictionary(false);
+        g2d_textures = new Dictionary(false);
     }
 
     static public var defaultFilteringType:Int = 1;
 
-    static public var g2d_references:Dictionary;
+    static private var g2d_textures:Dictionary;
+    static public function getTextures():Dictionary {
+        return g2d_textures;
+    }
+
     static private function g2d_addTexture(p_texture:GContextTexture):Void {
         if (p_texture.id == null || p_texture.id.length == 0) GDebug.error("Invalid texture id");
-        if (untyped g2d_references[p_texture.id] != null) GDebug.error("Duplicate textures id: "+p_texture.id);
-        untyped g2d_references[p_texture.id] = p_texture;
+        if (untyped g2d_textures[p_texture.id] != null) GDebug.error("Duplicate textures id: "+p_texture.id);
+        untyped g2d_textures[p_texture.id] = p_texture;
     }
 
     static private function g2d_removeTexture(p_texture:GContextTexture):Void {
-        untyped __delete__(g2d_references, p_texture.id);
+        untyped __delete__(g2d_textures, p_texture.id);
     }
 
     static public function getContextTextureById(p_id:String):GContextTexture {
-        return untyped g2d_references[p_id];
+        return untyped g2d_textures[p_id];
     }
 
     static public function getTextureById(p_id:String):GTexture {
-        return untyped g2d_references[p_id];
+        return untyped g2d_textures[p_id];
     }
 
     static public function getAtlasById(p_id:String):GTextureAtlas {
-        return untyped g2d_references[p_id];
+        return untyped g2d_textures[p_id];
     }
 
     static public function getFontAtlasById(p_id:String):GTextureFontAtlas {
-        return untyped g2d_references[p_id];
+        return untyped g2d_textures[p_id];
     }
 
     static public function disposeAll():Void {
-        var textureIds:Array<String> = untyped __keys__(g2d_references);
+        var textureIds:Array<String> = untyped __keys__(g2d_textures);
         for (i in 0...textureIds.length) {
-            untyped if (g2d_references[textureIds[i]]!=null && g2d_references[textureIds[i]].sourceType != GTextureSourceType.ATLAS) g2d_references[textureIds[i]].dispose();
+            untyped if (g2d_textures[textureIds[i]]!=null && g2d_textures[textureIds[i]].sourceType != GTextureSourceType.ATLAS) g2d_textures[textureIds[i]].dispose();
         }
     }
 
     static public function invalidateAll(p_force:Bool):Void {
-        var textureIds:Array<String> = untyped __keys__(g2d_references);
+        var textureIds:Array<String> = untyped __keys__(g2d_textures);
         for (i in 0...textureIds.length) {
-            untyped g2d_references[textureIds[i]].invalidateNativeTexture(p_force);
+            untyped g2d_textures[textureIds[i]].invalidateNativeTexture(p_force);
         }
     }
 
