@@ -258,6 +258,10 @@ class GContextTexture
         source = p_source;
 	}
 
+    public function hasSameGPUTexture(p_texture:GContextTexture):Bool {
+        return p_texture.nativeTexture == nativeTexture;
+    }
+
     inline public function usesRectangle():Bool {
         return !g2d_repeatable && Genome2D.getInstance().getContext().hasFeature(GContextFeature.RECTANGLE_TEXTURES);
     }
