@@ -8,6 +8,9 @@
  */
 package com.genome2d.context.stage3d.renderers;
 
+import com.genome2d.context.stats.GStats;
+import flash.display3D.Context3DTriangleFace;
+import flash.display3D.Context3DCompareMode;
 import com.genome2d.textures.GTexture;
 import com.genome2d.textures.GTextureFilteringType;
 import flash.display3D.textures.TextureBase;
@@ -85,7 +88,7 @@ class GCustomRenderer implements IGRenderer
         g2d_vertexShaderCode = agal.agalcode;
 
         g2d_program = g2d_context.getNativeContext().createProgram();
-        g2d_program.upload(g2d_vertexShaderCode, GRenderersCommon.getTexturedShaderCode(false, GTextureFilteringType.LINEAR, false, "", null));
+        g2d_program.upload(g2d_vertexShaderCode, GRenderersCommon.getTexturedShaderCode(false, GTextureFilteringType.LINEAR, 2, "", null));
 
         var contextWidth:Float = p_context.getStageViewRect().width;
         var contextHeight:Float = p_context.getStageViewRect().height;
@@ -136,13 +139,21 @@ class GCustomRenderer implements IGRenderer
         if (g2d_program==null || (p_reinitialize && !g2d_initializedThisFrame)) initialize(p_context);
         g2d_initializedThisFrame = p_reinitialize;
 
+        g2d_context.getNativeContext().setDepthTest(true, Context3DCompareMode.LESS);
         g2d_context.getNativeContext().setProgram(g2d_program);
     }
 
-    public function draw(p_texture:GTexture):Void {
+    public function draw(p_texture:GTexture, p_cull:Int = 0):Void {
+        GStats.drawCalls++;
+
+        if (p_cull == 2) g2d_context.getNativeContext().setCulling(Context3DTriangleFace.FRONT);
+        else if (p_cull == 1) g2d_context.getNativeContext().setCulling(Context3DTriangleFace.BACK);
+        else g2d_context.getNativeContext().setCulling(Context3DTriangleFace.NONE);
+
         var nativeContext:Context3D = g2d_context.getNativeContext();
 
         if (projectionMatrix != null) nativeContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 0, projectionMatrix, true);
+        nativeContext.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, Vector.ofArray([(p_cull==2)?.2:1,(p_cull==2)?.2:1,(p_cull==2)?.2:1,(p_cull==2)?.2:1]), 1);
 
         nativeContext.setTextureAt(0, p_texture.nativeTexture);
 
@@ -163,6 +174,9 @@ class GCustomRenderer implements IGRenderer
 
         g2d_context.getNativeContext().setVertexBufferAt(0, null);
         g2d_context.getNativeContext().setVertexBufferAt(1, null);
+
+        g2d_context.getNativeContext().setDepthTest(false, Context3DCompareMode.ALWAYS);
+        g2d_context.getNativeContext().setCulling(Context3DTriangleFace.NONE);
 
         if (projectionMatrix != null) g2d_context.getNativeContext().setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 0, g2d_context.getActiveCamera().matrix, true);
     }

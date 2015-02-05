@@ -450,8 +450,7 @@ class GStage3DContext implements IContext
 		    g2d_nativeContext.clear(g2d_backgroundRed, g2d_backgroundGreen, g2d_backgroundBlue, g2d_backgroundAlpha, 1);
         }
 
-		//g2d_nativeContext.setDepthTest(false, Context3DCompareMode.ALWAYS);
-        g2d_nativeContext.setDepthTest(true, Context3DCompareMode.LESS_EQUAL);
+		g2d_nativeContext.setDepthTest(false, Context3DCompareMode.ALWAYS);
         g2d_nativeContext.setStencilActions(Context3DTriangleFace.FRONT_AND_BACK, Context3DCompareMode.ALWAYS, Context3DStencilAction.KEEP, Context3DStencilAction.KEEP, Context3DStencilAction.KEEP);
         g2d_nativeContext.setCulling(Context3DTriangleFace.NONE);
 		GBlendMode.setBlendMode(g2d_nativeContext, GBlendMode.NORMAL, g2d_activePremultiply);

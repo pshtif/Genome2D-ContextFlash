@@ -124,7 +124,7 @@ class GQuadTextureBufferGPURenderer implements IGRenderer
         var program:Program3D = untyped g2d_cachedPrograms[programId];
         if (program == null) {
             program = g2d_nativeContext.createProgram();
-            program.upload((p_alpha) ? g2d_vertexShaderAlphaCode : g2d_vertexShaderCode, GRenderersCommon.getTexturedShaderCode(p_repeat, p_filtering, p_alpha, p_atf, p_filter));
+            program.upload((p_alpha) ? g2d_vertexShaderAlphaCode : g2d_vertexShaderCode, GRenderersCommon.getTexturedShaderCode(p_repeat, p_filtering, p_alpha?1:0, p_atf, p_filter));
             untyped g2d_cachedPrograms[programId] = program;
         }
 

@@ -23,7 +23,7 @@ class GProjectionMatrix extends Matrix3D
         super(v);
         g2d_vector = Vector.ofArray([2.0, 0.0, 0.0, 0.0,
                                      0.0, -2.0, 0.0, 0.0,
-                                     0.0, 0.0, 0,0,//1/(FAR-NEAR), -NEAR/(FAR-NEAR),
+                                     0.0, 0.0, 1/(FAR-NEAR), -NEAR/(FAR-NEAR),
                                      -1.0, 1.0, 0, 1.0
                                     ]);
     }
