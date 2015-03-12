@@ -153,7 +153,8 @@ class GCustomRenderer implements IGRenderer
         var nativeContext:Context3D = g2d_context.getNativeContext();
 
         if (projectionMatrix != null) nativeContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 0, projectionMatrix, true);
-        nativeContext.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, Vector.ofArray([(p_cull==2)?.2:1,(p_cull==2)?.2:1,(p_cull==2)?.2:1,(p_cull==2)?.2:1]), 1);
+        //nativeContext.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, Vector.ofArray([(p_cull==2)?.2:1,(p_cull==2)?.2:1,(p_cull==2)?.2:1,(p_cull==2)?.2:1]), 1);
+        nativeContext.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, Vector.ofArray([1.0,1,1,1]), 1);
 
         nativeContext.setTextureAt(0, p_texture.nativeTexture);
 
