@@ -17,6 +17,7 @@ class GMouseSignal {
     public var shiftKey:Bool = false;
     public var type:String;
     public var nativeCaptured:Bool = false;
+    public var delta:Int = 0;
 
     public function new(p_type:String, p_x:Float, p_y:Float, p_nativeCaptured:Bool) {
         type = p_type;
