@@ -653,22 +653,25 @@ class GStage3DContext implements IContext
 
 		if (g2d_activeRenderer != null) g2d_activeRenderer.push();
 
+        // Clear MRT
         for (i in 1...g2d_usedRenderTargets) {
             g2d_nativeContext.setRenderToTexture(null, g2d_enableDepthAndStencil, g2d_antiAliasing, 0, i);
         }
         g2d_usedRenderTargets = 0;
 
+        // If the target is null its a backbuffer
 		if (p_texture == null) {
 			g2d_nativeContext.setRenderToBackBuffer();
 
             // Reset camera
             setActiveCamera(g2d_activeCamera);
+        // Otherwise its a render texture
 		} else {
 			g2d_nativeContext.setRenderToTexture(p_texture.nativeTexture, g2d_enableDepthAndStencil, g2d_antiAliasing, 0);
             g2d_nativeContext.setScissorRectangle(null);
             if (p_texture.needClearAsRenderTarget(p_clear)) g2d_nativeContext.clear(0,0,0,0);
 
-			g2d_nativeContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 0, GProjectionMatrix.getOrtho(p_texture.width, p_texture.height, p_transform), true);
+			g2d_nativeContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 0, GProjectionMatrix.getOrtho(p_texture.gpuWidth, p_texture.gpuHeight, p_transform), true);
 		}
 
         g2d_renderTargetTransform = p_transform;

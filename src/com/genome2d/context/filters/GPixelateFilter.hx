@@ -12,6 +12,7 @@ import com.genome2d.textures.GContextTexture;
 import com.genome2d.context.stage3d.GStage3DContext;
 import flash.Vector;
 import com.genome2d.context.filters.GFilter;
+
 class GPixelateFilter extends GFilter {
     public var pixelSize:Int = 1;
 
