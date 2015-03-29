@@ -8,6 +8,7 @@
  */
 package com.genome2d.context.stage3d.renderers;
 
+import test.Showcase;
 import flash.geom.Vector3D;
 import test.Custom;
 import com.genome2d.context.stats.GStats;
@@ -299,13 +300,13 @@ class GCustomRenderer implements IGRenderer
                 // UV
                 nativeContext.setProgramConstantsFromVector(Context3DProgramType.VERTEX, 16, Vector.ofArray([p_texture.g2d_u, p_texture.g2d_v, p_texture.g2d_uScale, p_texture.g2d_vScale]), 1);
                 // Light position
-                nativeContext.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, Vector.ofArray([Custom.updatedLight.x,Custom.updatedLight.y,Custom.updatedLight.z,1.0]), 1);
+                nativeContext.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, Vector.ofArray([Showcase.updatedLight.x,Showcase.updatedLight.y,Showcase.updatedLight.z,1.0]), 1);
                 // Ambient color
-                nativeContext.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 2, Vector.ofArray([Custom.ambientLightRed,Custom.ambientLightGreen,Custom.ambientLightBlue,1.0]), 1);
+                nativeContext.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 2, Vector.ofArray([Showcase.ambientLightRed,Showcase.ambientLightGreen,Showcase.ambientLightBlue,1.0]), 1);
                 nativeContext.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 3, Vector.ofArray([tintAlpha,tintAlpha,tintAlpha,tintAlpha]), 1);
             // Shadows
             case 2:
-                var light:Vector3D = new Vector3D(Custom.updatedLight.x,Custom.updatedLight.y,Custom.lightVector.z);
+                var light:Vector3D = new Vector3D(Showcase.updatedLight.x,Showcase.updatedLight.y,Showcase.lightVector.z);
                 light.normalize();
                 var plane:Vector3D = new Vector3D(0,0,1);
                 plane.normalize();

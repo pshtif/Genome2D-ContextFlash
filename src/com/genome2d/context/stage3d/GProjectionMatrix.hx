@@ -14,7 +14,7 @@ import flash.Vector;
 class GProjectionMatrix extends Matrix3D
 {
     static private var NEAR:Int = 0;
-    static private var FAR:Int = 600;
+    static private var FAR:Int = 1000;
 	static private var g2d_instance:GProjectionMatrix;
 
     private var g2d_vector:Vector<Float>;
