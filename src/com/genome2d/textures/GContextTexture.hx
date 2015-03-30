@@ -251,7 +251,7 @@ class GContextTexture
 		g2d_instanceCount++;
 		g2d_contextId = g2d_instanceCount;
         g2d_format = "bgra";
-        g2d_repeatable = true;
+        g2d_repeatable = false;
 
         g2d_id = p_id;
         g2d_filteringType = GTextureManager.defaultFilteringType;

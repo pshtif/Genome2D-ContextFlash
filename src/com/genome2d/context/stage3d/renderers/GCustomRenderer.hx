@@ -8,27 +8,26 @@
  */
 package com.genome2d.context.stage3d.renderers;
 
-import test.Showcase;
-import flash.geom.Vector3D;
-import test.Custom;
+import com.genome2d.geom.GFloat3;
+import com.genome2d.geom.GFloat4;
 import com.genome2d.context.stats.GStats;
-import flash.display3D.Context3DTriangleFace;
-import flash.display3D.Context3DCompareMode;
 import com.genome2d.textures.GTexture;
 import com.genome2d.textures.GTextureFilteringType;
-import flash.display3D.textures.TextureBase;
-import com.genome2d.context.stage3d.GStage3DContext;
-import com.genome2d.context.stage3d.GStage3DContext;
 import com.genome2d.context.stage3d.GStage3DContext;
 import com.genome2d.geom.GMatrix3D;
-import com.genome2d.textures.GContextTexture;
+
 import com.adobe.utils.extended.AGALMiniAssembler;
+
+import flash.display3D.Context3DTriangleFace;
+import flash.display3D.Context3DCompareMode;
+import flash.display3D.textures.TextureBase;
 import flash.display3D.Context3D;
 import flash.display3D.Context3DProgramType;
 import flash.display3D.Context3DVertexBufferFormat;
 import flash.display3D.IndexBuffer3D;
 import flash.display3D.Program3D;
 import flash.display3D.VertexBuffer3D;
+import flash.geom.Vector3D;
 import flash.utils.ByteArray;
 import flash.Vector;
 
@@ -72,7 +71,7 @@ class GCustomRenderer implements IGRenderer
             "mov v1, vt1";
 
     static private inline var FRAGMENT_SHADER_CODE_NORMALS:String =
-            "tex ft0, v0, fs0 <2d,repeat,linear> \n" +
+            "tex ft0, v0, fs0 <2d,clamp,linear> \n" +
             "dp3 ft1, v1, fc1 \n" +
             "neg ft1, ft1 \n" +
             // Saturate to 0,1
@@ -135,9 +134,17 @@ class GCustomRenderer implements IGRenderer
     public var projectionMatrix:GProjectionMatrix;
     public var shadowMatrix:GMatrix3D;
 
+    public var lightPos:GFloat4;
+    public var ambientColor:GFloat4;
+    public var tintColor:GFloat4;
+
     public function new(p_vertices:Array<Float>, p_uvs:Array<Float>, p_indices:Array<UInt> = null, p_normals:Array<Float>, p_generatePerspectiveMatrix:Bool = false) {
         modelMatrix = new GMatrix3D();
         cameraMatrix = new GMatrix3D();
+
+        lightPos = new GFloat4(1,1,1);
+        ambientColor = new GFloat4(1,1,1,1);
+        tintColor = new GFloat4(1,1,1,1);
 
         if (p_generatePerspectiveMatrix) {
             projectionMatrix = new GProjectionMatrix();
@@ -300,19 +307,17 @@ class GCustomRenderer implements IGRenderer
                 // UV
                 nativeContext.setProgramConstantsFromVector(Context3DProgramType.VERTEX, 16, Vector.ofArray([p_texture.g2d_u, p_texture.g2d_v, p_texture.g2d_uScale, p_texture.g2d_vScale]), 1);
                 // Light position
-                nativeContext.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, Vector.ofArray([Showcase.updatedLight.x,Showcase.updatedLight.y,Showcase.updatedLight.z,1.0]), 1);
+                nativeContext.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, Vector.ofArray([lightPos.x,lightPos.y,lightPos.z,1.0]), 1);
                 // Ambient color
-                nativeContext.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 2, Vector.ofArray([Showcase.ambientLightRed,Showcase.ambientLightGreen,Showcase.ambientLightBlue,1.0]), 1);
-                nativeContext.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 3, Vector.ofArray([tintAlpha,tintAlpha,tintAlpha,tintAlpha]), 1);
+                nativeContext.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 2, Vector.ofArray([ambientColor.x,ambientColor.y,ambientColor.z,ambientColor.w]), 1);
+                nativeContext.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 3, Vector.ofArray([tintColor.x,tintColor.y,tintColor.z,tintColor.w]), 1);
             // Shadows
             case 2:
-                var light:Vector3D = new Vector3D(Showcase.updatedLight.x,Showcase.updatedLight.y,Showcase.lightVector.z);
-                light.normalize();
                 var plane:Vector3D = new Vector3D(0,0,1);
                 plane.normalize();
                 var point:Vector3D = new Vector3D(0,0,0);
                 point.normalize();
-                var shadowProjection:Vector<Float> = makeShadowProjection(plane, point, light);
+                var shadowProjection:Vector<Float> = makeShadowProjection(plane, point, lightPos);
                 nativeContext.setProgramConstantsFromVector(Context3DProgramType.VERTEX, 12, shadowProjection, 4);
                 nativeContext.setProgramConstantsFromVector(Context3DProgramType.VERTEX, 16, Vector.ofArray([0,0,0,0.0]), 1);
                 nativeContext.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, Vector.ofArray([0,0,0,1.0]), 1);
@@ -338,22 +343,22 @@ class GCustomRenderer implements IGRenderer
         if (projectionMatrix != null) g2d_context.getNativeContext().setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 0, g2d_context.getActiveCamera().matrix, true);
     }
 
-    private function makeShadowProjection(n:Vector3D, r:Vector3D, L:Vector3D):Vector<Float> {
-        var nL:Float = n.dotProduct(L);
-        var nr:Float = n.dotProduct(r);
+    private function makeShadowProjection(p_plane:GFloat4, p_point:GFloat4, p_light:GFloat4):Vector<Float> {
+        var nL:Float = p_plane.dotProduct(p_light);
+        var nr:Float = p_plane.dotProduct(p_point);
         var proj:Vector<Float> = new Vector<Float>();
-        proj.push(nL - n.x * L.x);
-        proj.push(-n.y * L.x);
-        proj.push(-n.z * L.x);
-        proj.push(nr * L.x);
-        proj.push(-n.x * L.y);
-        proj.push(nL - n.y * L.y);
-        proj.push(-n.z * L.y);
-        proj.push(nr * L.y);
-        proj.push(-n.x * L.z);
-        proj.push(-n.y * L.z);
-        proj.push(nL - n.z * L.z);
-        proj.push(nr * L.z);
+        proj.push(nL - p_plane.x * p_light.x);
+        proj.push(-p_plane.y * p_light.x);
+        proj.push(-p_plane.z * p_light.x);
+        proj.push(nr * p_light.x);
+        proj.push(-p_plane.x * p_light.y);
+        proj.push(nL - p_plane.y * p_light.y);
+        proj.push(-p_plane.z * p_light.y);
+        proj.push(nr * p_light.y);
+        proj.push(-p_plane.x * p_light.z);
+        proj.push(-p_plane.y * p_light.z);
+        proj.push(nL - p_plane.z * p_light.z);
+        proj.push(nr * p_light.z);
         proj.push(0);
         proj.push(0);
         proj.push(0);
