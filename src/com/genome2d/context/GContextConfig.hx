@@ -55,7 +55,7 @@ class GContextConfig
 		renderMode = "auto";
         contextClass = GStage3DContext;
         statsClass = GStats;
-        #if !stage3Donly
+        #if !genome_stage3donly
         fallbackContextClass = GBitmapContext;
         #end
 	}

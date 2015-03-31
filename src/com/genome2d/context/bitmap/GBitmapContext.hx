@@ -8,7 +8,7 @@
  */
 package com.genome2d.context.bitmap;
 
-#if !stage3Donly
+#if !genome_stage3donly
 import com.genome2d.textures.GTexture;
 import com.genome2d.geom.GMatrix3D;
 import msignal.Signal.Signal0;
