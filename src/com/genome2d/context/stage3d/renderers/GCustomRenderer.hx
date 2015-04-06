@@ -78,6 +78,8 @@ class GCustomRenderer implements IGRenderer
             "sat ft1, ft1 \n" +
             // Light amount
             "mul ft1.xyz, ft0.xyz, ft1.xyz \n" +
+            // Light color
+            "mul ft1, ft1, fc4 \n" +
             // Multiply with ambient
             "mul ft0, ft0, fc2 \n" +
             // Add diffuse + ambient
@@ -127,7 +129,6 @@ class GCustomRenderer implements IGRenderer
     private var g2d_indices:Array<UInt>;
 
     public var renderType:Int = 0;
-    public var tintAlpha:Float = 1;
 
     public var modelMatrix:GMatrix3D;
     public var cameraMatrix:GMatrix3D;
@@ -137,6 +138,7 @@ class GCustomRenderer implements IGRenderer
     public var lightPos:GFloat4;
     public var ambientColor:GFloat4;
     public var tintColor:GFloat4;
+    public var lightColor:GFloat4;
 
     public function new(p_vertices:Array<Float>, p_uvs:Array<Float>, p_indices:Array<UInt> = null, p_normals:Array<Float>, p_generatePerspectiveMatrix:Bool = false) {
         modelMatrix = new GMatrix3D();
@@ -145,6 +147,7 @@ class GCustomRenderer implements IGRenderer
         lightPos = new GFloat4(1,1,1);
         ambientColor = new GFloat4(1,1,1,1);
         tintColor = new GFloat4(1,1,1,1);
+        lightColor = new GFloat4(1,1,1,1);
 
         if (p_generatePerspectiveMatrix) {
             projectionMatrix = new GProjectionMatrix();
@@ -311,6 +314,7 @@ class GCustomRenderer implements IGRenderer
                 // Ambient color
                 nativeContext.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 2, Vector.ofArray([ambientColor.x,ambientColor.y,ambientColor.z,ambientColor.w]), 1);
                 nativeContext.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 3, Vector.ofArray([tintColor.x,tintColor.y,tintColor.z,tintColor.w]), 1);
+                nativeContext.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 4, Vector.ofArray([lightColor.x,lightColor.y,lightColor.z,lightColor.w]), 1);
             // Shadows
             case 2:
                 var plane:Vector3D = new Vector3D(0,0,1);

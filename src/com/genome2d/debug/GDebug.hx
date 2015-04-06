@@ -7,7 +7,7 @@ import msignal.Signal.Signal1;
 
 class GDebug {
     static private var g2d_console:String = "";
-    static public var priority:Int = 0;
+    static public var showPriority:Int = 1;
     static public var useNativeTrace:Bool = true;
     static public var stackTrace:Bool = true;
 
@@ -47,35 +47,35 @@ class GDebug {
     }
 
     inline static public function debug(p_priority:Int, ?p_arg1:Dynamic, ?p_arg2:Dynamic, ?p_arg3:Dynamic, ?p_arg4:Dynamic, ?p_arg5:Dynamic, ?p_arg6:Dynamic, ?p_arg7:Dynamic, ?p_arg8:Dynamic, ?p_arg9:Dynamic, ?p_arg10:Dynamic, ?p_arg11:Dynamic, ?p_arg12:Dynamic, ?p_arg13:Dynamic, ?p_arg14:Dynamic, ?p_arg15:Dynamic, ?p_arg16:Dynamic, ?p_arg17:Dynamic, ?p_arg18:Dynamic, ?p_arg19:Dynamic, ?p_arg20:Dynamic, ?pos:PosInfos):Void {
-        if (priority <= p_priority) {
+        if (showPriority <= p_priority) {
             g2d_internal(p_priority, pos, p_arg1, p_arg2, p_arg3, p_arg4, p_arg5, p_arg6, p_arg7, p_arg8, p_arg9, p_arg10, p_arg11, p_arg12, p_arg13, p_arg14, p_arg15, p_arg16, p_arg17, p_arg18, p_arg19, p_arg20);
         }
     }
 
     inline static public function dump(?p_arg1:Dynamic, ?p_arg2:Dynamic, ?p_arg3:Dynamic, ?p_arg4:Dynamic, ?p_arg5:Dynamic, ?p_arg6:Dynamic, ?p_arg7:Dynamic, ?p_arg8:Dynamic, ?p_arg9:Dynamic, ?p_arg10:Dynamic, ?p_arg11:Dynamic, ?p_arg12:Dynamic, ?p_arg13:Dynamic, ?p_arg14:Dynamic, ?p_arg15:Dynamic, ?p_arg16:Dynamic, ?p_arg17:Dynamic, ?p_arg18:Dynamic, ?p_arg19:Dynamic, ?p_arg20:Dynamic, ?pos:PosInfos):Void {
         #if genome_debug
-        if (priority <= GDebugPriority.DUMP) {
+        if (showPriority <= GDebugPriority.DUMP) {
             g2d_internal(GDebugPriority.DUMP, pos, p_arg1, p_arg2, p_arg3, p_arg4, p_arg5, p_arg6, p_arg7, p_arg8, p_arg9, p_arg10, p_arg11, p_arg12, p_arg13, p_arg14, p_arg15, p_arg16, p_arg17, p_arg18, p_arg19, p_arg20);
         }
         #end
     }
 
     inline static public function dump_args(p_args:Array<Dynamic>, ?pos:PosInfos):Void {
-        if (priority <= GDebugPriority.DUMP) {
+        if (showPriority <= GDebugPriority.DUMP) {
             g2d_internal_args(GDebugPriority.DUMP, pos, p_args);
         }
     }
 
     inline static public function info(?p_arg1:Dynamic, ?p_arg2:Dynamic, ?p_arg3:Dynamic, ?p_arg4:Dynamic, ?p_arg5:Dynamic, ?p_arg6:Dynamic, ?p_arg7:Dynamic, ?p_arg8:Dynamic, ?p_arg9:Dynamic, ?p_arg10:Dynamic, ?p_arg11:Dynamic, ?p_arg12:Dynamic, ?p_arg13:Dynamic, ?p_arg14:Dynamic, ?p_arg15:Dynamic, ?p_arg16:Dynamic, ?p_arg17:Dynamic, ?p_arg18:Dynamic, ?p_arg19:Dynamic, ?p_arg20:Dynamic, ?pos:PosInfos):Void {
         #if genome_debug
-        if (priority <= GDebugPriority.INFO) {
+        if (showPriority <= GDebugPriority.INFO) {
             g2d_internal(GDebugPriority.INFO, pos, p_arg1, p_arg2, p_arg3, p_arg4, p_arg5, p_arg6, p_arg7, p_arg8, p_arg9, p_arg10, p_arg11, p_arg12, p_arg13, p_arg14, p_arg15, p_arg16, p_arg17, p_arg18, p_arg19, p_arg20);
         }
         #end
     }
 
     inline static public function warning(?p_arg1:Dynamic, ?p_arg2:Dynamic, ?p_arg3:Dynamic, ?p_arg4:Dynamic, ?p_arg5:Dynamic, ?p_arg6:Dynamic, ?p_arg7:Dynamic, ?p_arg8:Dynamic, ?p_arg9:Dynamic, ?p_arg10:Dynamic, ?p_arg11:Dynamic, ?p_arg12:Dynamic, ?p_arg13:Dynamic, ?p_arg14:Dynamic, ?p_arg15:Dynamic, ?p_arg16:Dynamic, ?p_arg17:Dynamic, ?p_arg18:Dynamic, ?p_arg19:Dynamic, ?p_arg20:Dynamic, ?pos:PosInfos):Void {
-        if (priority <= GDebugPriority.WARNING) {
+        if (showPriority <= GDebugPriority.WARNING) {
             g2d_internal(GDebugPriority.WARNING, pos, p_arg1, p_arg2, p_arg3, p_arg4, p_arg5, p_arg6, p_arg7, p_arg8, p_arg9, p_arg10, p_arg11, p_arg12, p_arg13, p_arg14, p_arg15, p_arg16, p_arg17, p_arg18, p_arg19, p_arg20);
         }
     }
@@ -94,6 +94,8 @@ class GDebug {
 
     inline static private function g2d_internal_args(p_priority:Int, p_pos:PosInfos, p_args:Array<Dynamic>):Void {
         var msg:String = switch (p_priority) {
+            case GDebugPriority.INTERNAL_DUMP:
+                "INTERNAL_DUMP: ";
             case GDebugPriority.AUTO_DUMP:
                 "AUTO_DUMP: ";
             case GDebugPriority.DUMP:
@@ -114,7 +116,7 @@ class GDebug {
     }
 
     inline static public function trace(p_msg:String):Void {
-        g2d_console+=p_msg;
+        g2d_console += p_msg;
         if (useNativeTrace) untyped __global__["trace"](p_msg);
         if (g2d_onDebug != null) g2d_onDebug.dispatch(p_msg);
     }

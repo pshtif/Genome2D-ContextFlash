@@ -11,9 +11,10 @@ import flash.display3D.Context3DProgramType;
 class GDisplacementFilter extends GFilter {
 
     private var g2d_matrix:GMatrix3D;
+    private var g2d_offset:Float = 0;
+
     public var displacementMap:GContextTexture;
     public var alphaMap:GContextTexture;
-    private var g2d_offset:Float = 0;
     public var alpha:Float = 1;
 
 
@@ -30,14 +31,14 @@ class GDisplacementFilter extends GFilter {
         fragmentCode =
             "mov ft0, v0                                    \n" +
             "add ft0.y, v0.y, fc5.x                         \n" +
-            "tex ft0, ft0, fs1 <2d,linear,mipnone,clamp>    \n" +
+            "tex ft0, ft0, fs1 <2d,linear,mipnone,repeat>    \n" +
             "sub ft0, ft0, fc0.zzzz                         \n" +
             "m44 ft0, ft0, fc1                              \n" +
             "add ft0, v0, ft0                               \n" +
             "tex ft1, ft0, fs0 <2d,linear,mipnone,clamp>    \n" +
-            "mul oc, ft1, fc6";
-            //"tex ft2, v0, fs2 <2d,linear,mipnone,clamp>    \n" +
-            //"mul oc, ft1, ft2.wwww";
+            "mul ft1, ft1, fc6                              \n" +
+            "tex ft2, v0, fs2 <2d,linear,mipnone,clamp>     \n" +
+            "mul oc, ft1, ft2.wwww";
     }
 
     override public function bind(p_context:GStage3DContext, p_defaultTexture:GContextTexture):Void {
@@ -46,7 +47,7 @@ class GDisplacementFilter extends GFilter {
         g2d_offset += .0003;
 
         p_context.getNativeContext().setTextureAt(1, displacementMap.nativeTexture);
-        //p_context.getNativeContext().setTextureAt(2, alphaMap.nativeTexture);
+        p_context.getNativeContext().setTextureAt(2, alphaMap.nativeTexture);
     }
 
     override public function clear(p_context:GStage3DContext):Void {

@@ -8,6 +8,7 @@
  */
 package com.genome2d.context.stage3d;
 
+import com.genome2d.debug.IGDebuggableInternal;
 import com.genome2d.macros.MGDebug;
 import msignal.Signal.Signal0;
 import msignal.Signal.Signal1;
@@ -20,7 +21,6 @@ import com.genome2d.context.stats.GStats;
 import com.genome2d.geom.GMatrix3D;
 import com.genome2d.context.stage3d.renderers.GRenderersCommon;
 import com.genome2d.context.stats.IStats;
-import com.genome2d.debug.GDebug;
 import com.genome2d.geom.GRectangle;
 import com.genome2d.context.stage3d.renderers.GMatrixQuadTextureShaderRenderer;
 import com.genome2d.context.stage3d.renderers.GTriangleTextureBufferCPURenderer;
@@ -60,9 +60,9 @@ import flash.events.MouseEvent;
 
 #if genome_stage3donly
 @:native("com.genome2d.context.IContext")
-class GStage3DContext
+class GStage3DContext implements IGDebuggableInternal
 #else
-class GStage3DContext implements IContext
+class GStage3DContext implements IContext implements IGDebuggableInternal
 #end
 {
     private var NORMALIZED_VECTOR:Vector3D;
@@ -201,9 +201,8 @@ class GStage3DContext implements IContext
      *  CONSTRUCTOR
      **/
     public function new(p_config:GContextConfig) {
-        MGDebug.DUMP(p_config);
 
-        if (p_config.nativeStage == null) GDebug.error("You need to specify nativeStage in the config");
+        if (p_config.nativeStage == null) MGDebug.ERROR("You need to specify nativeStage in the config");
 
         NORMALIZED_VECTOR = new Vector3D();
 
@@ -250,8 +249,6 @@ class GStage3DContext implements IContext
 	 * 	Initialize the context
 	 */
     public function init():Void {
-        MGDebug.DUMP();
-
         if (g2d_usingExternalContext) {
             g2d_contextInitialized_handler(null);
             g2d_nativeStage3D.addEventListener(Event.CONTEXT3D_CREATE, g2d_contextInitialized_handler);
@@ -271,8 +268,6 @@ class GStage3DContext implements IContext
 	}
 
     private function g2d_contextInitialized_handler(event:Event):Void {
-        MGDebug.DUMP(event);
-
         g2d_nativeContext = g2d_nativeStage3D.context3D;
         g2d_nativeContext.enableErrorChecking = true;
 
@@ -303,8 +298,6 @@ class GStage3DContext implements IContext
     }
 
     private function g2d_invalidate():Void {
-        MGDebug.DUMP();
-
         if (g2d_nativeContext.driverInfo == "Disposed") return;
         g2d_nativeStage3D.x = g2d_stageViewRect.x;
         g2d_nativeStage3D.y = g2d_stageViewRect.y;
@@ -341,8 +334,6 @@ class GStage3DContext implements IContext
     }
 
     private function g2d_initComplete():Void {
-        MGDebug.DUMP();
-
         g2d_defaultCamera = new GCamera();
         g2d_defaultCamera.x = g2d_stageViewRect.width*.5;
         g2d_defaultCamera.y = g2d_stageViewRect.height*.5;
@@ -366,8 +357,6 @@ class GStage3DContext implements IContext
     }
 
     public function dispose():Void {
-        MGDebug.DUMP();
-
         GTextureManager.disposeAll();
 
         g2d_onInitialized = null;
@@ -383,8 +372,6 @@ class GStage3DContext implements IContext
 	}
 
     public function resize(p_rect:GRectangle):Void {
-        MGDebug.DUMP(p_rect);
-
         g2d_stageViewRect = p_rect;
         g2d_invalidate();
         g2d_onResize.dispatch(untyped __int__(g2d_stageViewRect.width), untyped __int__(g2d_stageViewRect.height));
@@ -410,8 +397,6 @@ class GStage3DContext implements IContext
 	  	@param p_maskRect AABB rectangle that defines masking
 	 */
     inline public function setMaskRect(p_maskRect:GRectangle):Void {
-        MGDebug.DUMP(p_maskRect);
-
         if (p_maskRect != g2d_activeMaskRect) {
             if (g2d_activeRenderer != null) g2d_activeRenderer.push();
 
@@ -429,8 +414,6 @@ class GStage3DContext implements IContext
 	  	Set camera that should be used for all subsequent draws
 	 */
     public function setActiveCamera(p_camera:GCamera):Void {
-        MGDebug.DUMP(p_camera);
-
         g2d_activeCamera = p_camera;
 
         g2d_activeViewRect.setTo(untyped __int__(g2d_stageViewRect.width*g2d_activeCamera.normalizedViewX),
@@ -454,8 +437,6 @@ class GStage3DContext implements IContext
     }
 
     public function setDepthTest(p_depthMask:Bool, p_compareMode:Context3DCompareMode):Void {
-        MGDebug.DUMP(p_depthMask, p_compareMode);
-
         if (g2d_activeRenderer != null) g2d_activeRenderer.push();
 
         g2d_nativeContext.setDepthTest(p_depthMask, p_compareMode);
@@ -465,8 +446,6 @@ class GStage3DContext implements IContext
 	  	Start the drawing
 	 */
     public function begin():Bool {
-        MGDebug.DUMP();
-
         if (g2d_nativeContext.driverInfo == "Disposed") return false;
         g2d_stats.clear();
         setActiveCamera(g2d_defaultCamera);
@@ -491,8 +470,6 @@ class GStage3DContext implements IContext
 	  	End the drawing
 	 */
     public function end():Void {
-        MGDebug.DUMP();
-
         g2d_stats.render(this);
 
         if (g2d_activeRenderer != null) {
@@ -509,8 +486,6 @@ class GStage3DContext implements IContext
 
     @:dox(hide)
     inline public function draw2(p_texture:GTexture, p_x:Float, p_y:Float, p_scaleX:Float = 1, p_scaleY:Float = 1, p_rotation:Float = 0, p_red:Float = 1, p_green:Float = 1, p_blue:Float = 1, p_alpha:Float = 1, p_blendMode:Int = 1, p_filter:GFilter = null, p_id:Int = 0):Void {
-        MGDebug.DUMP(p_texture, p_x, p_y, p_scaleX, p_scaleY, p_rotation, p_red, p_green, p_blue, p_alpha, p_blendMode, p_filter, p_id);
-
         if (p_alpha != 0) {
             setBlendMode(p_blendMode, p_texture.premultiplied);
             bindRenderer(g2d_quadTextureBufferGPURenderer);
@@ -525,8 +500,6 @@ class GStage3DContext implements IContext
        @param p_texture textures instance used to drawing
      */
 	inline public function draw(p_texture:GTexture, p_x:Float, p_y:Float, p_scaleX:Float = 1, p_scaleY:Float = 1, p_rotation:Float = 0, p_red:Float = 1, p_green:Float = 1, p_blue:Float = 1, p_alpha:Float = 1, p_blendMode:Int = 1, p_filter:GFilter = null):Void {
-        MGDebug.DUMP(p_texture, p_x, p_y, p_scaleX, p_scaleY, p_rotation, p_red, p_green, p_blue, p_alpha, p_blendMode, p_filter);
-
 		if (p_alpha != 0) {
             setBlendMode(p_blendMode, p_texture.premultiplied);
 			bindRenderer(g2d_quadTextureShaderRenderer);
@@ -541,8 +514,6 @@ class GStage3DContext implements IContext
        @param p_texture textures to be drawn
      */
     inline public function drawSource(p_texture:GTexture, p_sourceX:Float, p_sourceY:Float, p_sourceWidth:Float, p_sourceHeight:Float, p_sourcePivotX:Float, p_sourcePivotY:Float, p_x:Float, p_y:Float, p_scaleX:Float = 1, p_scaleY:Float = 1, p_rotation:Float = 0, p_red:Float = 1, p_green:Float = 1, p_blue:Float = 1, p_alpha:Float = 1, p_blendMode:Int = 1, p_filter:GFilter = null):Void {
-        MGDebug.DUMP(p_texture, p_sourceX, p_sourceY, p_sourceWidth, p_sourceHeight, p_sourcePivotX, p_sourcePivotY, p_x, p_y, p_scaleX, p_scaleY, p_rotation, p_red, p_green, p_blue, p_alpha, p_blendMode, p_filter);
-
         if (p_alpha != 0) {
             setBlendMode(p_blendMode, p_texture.premultiplied);
             bindRenderer(g2d_quadTextureShaderRenderer);
@@ -557,8 +528,6 @@ class GStage3DContext implements IContext
        @param p_texture textures to be drawn
      */
     inline public function drawMatrix(p_texture:GTexture, p_a:Float, p_b:Float, p_c:Float, p_d:Float, p_tx:Float, p_ty:Float, p_red:Float = 1, p_green:Float = 1, p_blue:Float = 1, p_alpha:Float=1, p_blendMode:Int=1, p_filter:GFilter = null):Void {
-        MGDebug.DUMP(p_texture, p_a, p_b, p_c, p_d, p_tx, p_ty, p_red, p_green, p_blue, p_alpha, p_blendMode, p_filter);
-
         if (p_alpha != 0) {
             setBlendMode(p_blendMode, p_texture.premultiplied);
             bindRenderer(g2d_matrixQuadTextureShaderRenderer);
@@ -572,8 +541,6 @@ class GStage3DContext implements IContext
        @param p_texture textures to be drawn
      */
     inline public function drawMatrixSource(p_texture:GTexture, p_sourceX:Float, p_sourceY:Float, p_sourceWidth:Float, p_sourceHeight:Float, p_a:Float, p_b:Float, p_c:Float, p_d:Float, p_tx:Float, p_ty:Float, p_red:Float = 1, p_green:Float = 1, p_blue:Float = 1, p_alpha:Float=1, p_blendMode:Int=1, p_filter:GFilter = null):Void {
-        MGDebug.DUMP(p_texture, p_sourceX, p_sourceY, p_sourceWidth, p_sourceHeight, p_a, p_b, p_c, p_d, p_tx, p_ty, p_red, p_green, p_blue, p_alpha, p_blendMode, p_filter);
-
         if (p_alpha != 0) {
             setBlendMode(p_blendMode, p_texture.premultiplied);
             bindRenderer(g2d_matrixQuadTextureShaderRenderer);
@@ -595,8 +562,6 @@ class GStage3DContext implements IContext
         @param p_rotation rotation
      */
     inline public function drawPoly(p_texture:GTexture, p_vertices:Array<Float>, p_uvs:Array<Float>, p_x:Float, p_y:Float, p_scaleX:Float = 1, p_scaleY:Float = 1, p_rotation:Float = 0, p_red:Float = 1, p_green:Float = 1, p_blue:Float = 1, p_alpha:Float = 1, p_blendMode:Int=1, p_filter:GFilter = null):Void {
-        MGDebug.DUMP(p_texture, p_vertices, p_uvs, p_x, p_y, p_scaleX, p_scaleY, p_rotation, p_red, p_green, p_blue, p_alpha, p_blendMode, p_filter);
-
         if (p_alpha != 0) {
             setBlendMode(p_blendMode, p_texture.premultiplied);
             bindRenderer(g2d_triangleTextureBufferCPURenderer);
@@ -606,8 +571,6 @@ class GStage3DContext implements IContext
     }
 
     inline public function setBlendMode(p_blendMode:Int, p_premultiplied:Bool):Void {
-        MGDebug.DUMP(p_blendMode, p_premultiplied);
-
         if (p_blendMode != g2d_activeBlendMode || p_premultiplied != g2d_activePremultiply) {
             if (g2d_activeRenderer != null) {
                 g2d_activeRenderer.push();
@@ -620,8 +583,6 @@ class GStage3DContext implements IContext
     }
 
 	inline public function bindRenderer(p_renderer:IGRenderer):Void {
-        MGDebug.DUMP(p_renderer);
-
 		if (p_renderer != g2d_activeRenderer || g2d_activeRenderer == null) {
 			if (g2d_activeRenderer != null) {
 				g2d_activeRenderer.push();
@@ -643,8 +604,6 @@ class GStage3DContext implements IContext
         Clears the stencil buffer
      */
 	public function clearStencil():Void {
-        MGDebug.DUMP();
-
 		if (g2d_activeRenderer != null) g2d_activeRenderer.push();
 		g2d_nativeContext.clear(0,0,0,0,0,0,Context3DClearMask.STENCIL);
 	}
@@ -655,8 +614,6 @@ class GStage3DContext implements IContext
         @param p_stencilLayer active masking stencil layer
      */
 	public function renderToStencil(p_stencilLayer:Int):Void {
-        MGDebug.DUMP(p_stencilLayer);
-
 		if (g2d_activeRenderer != null) g2d_activeRenderer.push();
 		g2d_activeStencilLayer = p_stencilLayer;
 		g2d_nativeContext.setStencilReferenceValue(g2d_activeStencilLayer);
@@ -670,9 +627,7 @@ class GStage3DContext implements IContext
         @param p_stencilLayer stencil layer to be used for masking
      */
 	public function renderToColor(p_stencilLayer:Int):Void {
-        MGDebug.DUMP(p_stencilLayer);
-
-		if (g2d_activeRenderer != null) g2d_activeRenderer.push();
+        if (g2d_activeRenderer != null) g2d_activeRenderer.push();
 		g2d_activeStencilLayer = p_stencilLayer;
 		g2d_nativeContext.setStencilReferenceValue(g2d_activeStencilLayer);
 		g2d_nativeContext.setStencilActions(Context3DTriangleFace.FRONT_AND_BACK, Context3DCompareMode.LESS_EQUAL, Context3DStencilAction.KEEP);
@@ -702,8 +657,6 @@ class GStage3DContext implements IContext
         @param p_transform additional transformation that should be applied, not applicable to backbuffer target
      */
 	public function setRenderTarget(p_texture:GContextTexture = null, p_transform:GMatrix3D = null, p_clear:Bool = true):Void {
-        MGDebug.DUMP(p_texture, p_transform, p_clear);
-
 		if (g2d_renderTarget == p_texture && g2d_usedRenderTargets==0) return;
 
 		if (g2d_activeRenderer != null) g2d_activeRenderer.push();
@@ -734,8 +687,6 @@ class GStage3DContext implements IContext
     }
 
     public function setRenderTargets(p_textures:Array<GContextTexture>, p_transform:GMatrix3D = null, p_clear:Bool = true):Void {
-        MGDebug.DUMP(p_textures, p_transform, p_clear);
-
         if (g2d_activeRenderer != null) g2d_activeRenderer.push();
 
         for (i in 0...p_textures.length) {
@@ -750,8 +701,6 @@ class GStage3DContext implements IContext
     }
 
     private function g2d_enterFrameHandler(event:Event):Void {
-        MGDebug.DUMP();
-
         var currentTime:Float =  untyped __global__["flash.utils.getTimer"]();
         g2d_currentDeltaTime = currentTime - g2d_currentTime;
         g2d_currentTime = currentTime;
@@ -759,8 +708,6 @@ class GStage3DContext implements IContext
     }
 
     private function g2d_mouseEventHandler(event:MouseEvent):Void {
-        MGDebug.DUMP(event);
-
         var captured:Bool = false;
         if (enableNativeContentMouseCapture && event.target != g2d_nativeStage) captured = true;
 
@@ -776,8 +723,6 @@ class GStage3DContext implements IContext
     }
 
     private function g2d_keyboardEventHandler(event:KeyboardEvent):Void {
-        MGDebug.DUMP(event);
-
         var signal:GKeyboardSignal = new GKeyboardSignal(GKeyboardSignalType.fromNative(event.type), event.keyCode);
         g2d_onKeyboardSignal.dispatch(signal);
     }

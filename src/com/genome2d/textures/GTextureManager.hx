@@ -24,7 +24,7 @@ class GTextureManager {
         g2d_textures = new Dictionary(false);
     }
 
-    static public var defaultFilteringType:Int = 1;
+    static public var defaultFilteringType:Int = GTextureFilteringType.LINEAR;
 
     static private var g2d_textures:Dictionary;
     static public function getTextures():Dictionary {
@@ -78,6 +78,7 @@ class GTextureManager {
     static public function createTextureFromEmbedded(p_id:String, p_asset:Class<Bitmap>, p_scaleFactor:Float = 1, p_repeatable:Bool = false, p_format:String = "bgra"):GTexture {
         var bitmap:Bitmap = cast Type.createInstance(p_asset, []);
         var texture:GTexture = new GTexture(p_id, bitmap.bitmapData);
+        texture.repeatable = p_repeatable;
         texture.scaleFactor = p_scaleFactor;
         texture.invalidateNativeTexture(false);
 
@@ -86,6 +87,7 @@ class GTextureManager {
 
     static public function createTextureFromBitmapData(p_id:String, p_bitmapData:BitmapData, p_scaleFactor:Float = 1, p_repeatable:Bool = false, p_format:String = "bgra"):GTexture {
         var texture:GTexture = new GTexture(p_id, p_bitmapData);
+        texture.repeatable = p_repeatable;
         texture.scaleFactor = p_scaleFactor;
         texture.invalidateNativeTexture(false);
         return texture;
