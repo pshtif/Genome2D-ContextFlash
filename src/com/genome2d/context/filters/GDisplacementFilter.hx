@@ -36,9 +36,9 @@ class GDisplacementFilter extends GFilter {
             "m44 ft0, ft0, fc1                              \n" +
             "add ft0, v0, ft0                               \n" +
             "tex ft1, ft0, fs0 <2d,linear,mipnone,clamp>    \n" +
-            "mul ft1, ft1, fc6                              \n" +
-            "tex ft2, v0, fs2 <2d,linear,mipnone,clamp>     \n" +
-            "mul oc, ft1, ft2.wwww";
+            "mul oc, ft1, fc6                              ";
+            //"tex ft2, v0, fs2 <2d,linear,mipnone,clamp>     \n" +
+            //"mul oc, ft1, ft2.wwww";
     }
 
     override public function bind(p_context:GStage3DContext, p_defaultTexture:GContextTexture):Void {
@@ -47,11 +47,11 @@ class GDisplacementFilter extends GFilter {
         g2d_offset += .0003;
 
         p_context.getNativeContext().setTextureAt(1, displacementMap.nativeTexture);
-        p_context.getNativeContext().setTextureAt(2, alphaMap.nativeTexture);
+        //p_context.getNativeContext().setTextureAt(2, alphaMap.nativeTexture);
     }
 
     override public function clear(p_context:GStage3DContext):Void {
         p_context.getNativeContext().setTextureAt(1, null);
-        p_context.getNativeContext().setTextureAt(2, null);
+        //p_context.getNativeContext().setTextureAt(2, null);
     }
 }
