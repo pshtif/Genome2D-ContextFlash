@@ -52,7 +52,7 @@ class GImageAsset extends GAsset {
         g2d_type = GImageAssetType.BITMAPDATA;
     }
 
-    override private function g2d_completeHandler(event:Event):Void {
+    override private function g2d_complete_handler(event:Event):Void {
         g2d_bytes = event.target.data;
         GAssetManager.PATH_REGEX.match(g2d_url);
         var extension:String = GAssetManager.PATH_REGEX.matched(2);

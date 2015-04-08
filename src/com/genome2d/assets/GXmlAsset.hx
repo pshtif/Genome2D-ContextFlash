@@ -23,7 +23,7 @@ class GXmlAsset extends GAsset {
         return g2d_xml;
     }
 
-	override private function g2d_completeHandler(p_event:Event):Void {
+	override private function g2d_complete_handler(p_event:Event):Void {
 		g2d_xml = Xml.parse(p_event.target.data);
         g2d_loading = false;
         g2d_loaded = true;

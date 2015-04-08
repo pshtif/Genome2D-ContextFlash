@@ -228,16 +228,16 @@ class GBitmapContext implements IContext
         g2d_defaultCamera.y = g2d_stageViewRect.height*.5;
         g2d_activeViewRect = new GRectangle();
 
-        g2d_nativeStage.addEventListener(Event.ENTER_FRAME, g2d_enterFrameHandler);
+        g2d_nativeStage.addEventListener(Event.ENTER_FRAME, g2d_enterFrame_handler);
 
         // Mouse interaction handlers
-        g2d_nativeStage.addEventListener(MouseEvent.MOUSE_DOWN, g2d_mouseEventHandler);
-        g2d_nativeStage.addEventListener(MouseEvent.MOUSE_UP, g2d_mouseEventHandler);
-        g2d_nativeStage.addEventListener(MouseEvent.MOUSE_MOVE, g2d_mouseEventHandler);
+        g2d_nativeStage.addEventListener(MouseEvent.MOUSE_DOWN, g2d_mouseEvent_handler);
+        g2d_nativeStage.addEventListener(MouseEvent.MOUSE_UP, g2d_mouseEvent_handler);
+        g2d_nativeStage.addEventListener(MouseEvent.MOUSE_MOVE, g2d_mouseEvent_handler);
 
         // Keyboard interaction handlers
-        g2d_nativeStage.addEventListener(KeyboardEvent.KEY_DOWN, g2d_keyboardEventHandler);
-        g2d_nativeStage.addEventListener(KeyboardEvent.KEY_UP, g2d_keyboardEventHandler);
+        g2d_nativeStage.addEventListener(KeyboardEvent.KEY_DOWN, g2d_keyboardEvent_handler);
+        g2d_nativeStage.addEventListener(KeyboardEvent.KEY_UP, g2d_keyboardEvent_handler);
 
         g2d_initialized = true;
         g2d_onInitialized.dispatch();

@@ -105,18 +105,18 @@ class GAsset implements IGPrototypable
             g2d_loading = true;
             var urlLoader:URLLoader = new URLLoader();
             urlLoader.dataFormat = URLLoaderDataFormat.BINARY;
-            urlLoader.addEventListener(Event.COMPLETE, g2d_completeHandler);
-            urlLoader.addEventListener(IOErrorEvent.IO_ERROR, g2d_ioErrorHandler);
+            urlLoader.addEventListener(Event.COMPLETE, g2d_complete_handler);
+            urlLoader.addEventListener(IOErrorEvent.IO_ERROR, g2d_ioError_handler);
             urlLoader.load(new URLRequest(g2d_url));
         } else {
             GDebug.warning("Asset already loading, was loaded or invalid url specified.");
         }
     }
 
-    private function g2d_completeHandler(p_event:Event):Void {
+    private function g2d_complete_handler(p_event:Event):Void {
     }
 
-    private function g2d_ioErrorHandler(event:IOErrorEvent):Void {
+    private function g2d_ioError_handler(event:IOErrorEvent):Void {
         g2d_loading = false;
         onFailed.dispatch(this);
     }

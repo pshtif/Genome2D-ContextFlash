@@ -340,17 +340,17 @@ class GStage3DContext implements IContext implements IGDebuggableInternal
         g2d_activeViewRect = new GRectangle();
 
         // Frame handler
-        g2d_nativeStage.addEventListener(Event.ENTER_FRAME, g2d_enterFrameHandler);
+        g2d_nativeStage.addEventListener(Event.ENTER_FRAME, g2d_enterFrame_handler);
 
         // Mouse interaction handlers
-        g2d_nativeStage.addEventListener(MouseEvent.MOUSE_DOWN, g2d_mouseEventHandler);
-        g2d_nativeStage.addEventListener(MouseEvent.MOUSE_UP, g2d_mouseEventHandler);
-        g2d_nativeStage.addEventListener(MouseEvent.MOUSE_MOVE, g2d_mouseEventHandler);
-        g2d_nativeStage.addEventListener(MouseEvent.MOUSE_WHEEL, g2d_mouseEventHandler);
+        g2d_nativeStage.addEventListener(MouseEvent.MOUSE_DOWN, g2d_mouseEvent_handler);
+        g2d_nativeStage.addEventListener(MouseEvent.MOUSE_UP, g2d_mouseEvent_handler);
+        g2d_nativeStage.addEventListener(MouseEvent.MOUSE_MOVE, g2d_mouseEvent_handler);
+        g2d_nativeStage.addEventListener(MouseEvent.MOUSE_WHEEL, g2d_mouseEvent_handler);
 
         // Keyboard interaction handlers
-        g2d_nativeStage.addEventListener(KeyboardEvent.KEY_DOWN, g2d_keyboardEventHandler);
-        g2d_nativeStage.addEventListener(KeyboardEvent.KEY_UP, g2d_keyboardEventHandler);
+        g2d_nativeStage.addEventListener(KeyboardEvent.KEY_DOWN, g2d_keyboardEvent_handler);
+        g2d_nativeStage.addEventListener(KeyboardEvent.KEY_UP, g2d_keyboardEvent_handler);
 
         g2d_initialized = true;
         g2d_onInitialized.dispatch();
@@ -700,14 +700,14 @@ class GStage3DContext implements IContext implements IGDebuggableInternal
         g2d_usedRenderTargets = p_textures.length;
     }
 
-    private function g2d_enterFrameHandler(event:Event):Void {
+    private function g2d_enterFrame_handler(event:Event):Void {
         var currentTime:Float =  untyped __global__["flash.utils.getTimer"]();
         g2d_currentDeltaTime = currentTime - g2d_currentTime;
         g2d_currentTime = currentTime;
         g2d_onFrame.dispatch(g2d_currentDeltaTime);
     }
 
-    private function g2d_mouseEventHandler(event:MouseEvent):Void {
+    private function g2d_mouseEvent_handler(event:MouseEvent):Void {
         var captured:Bool = false;
         if (enableNativeContentMouseCapture && event.target != g2d_nativeStage) captured = true;
 
@@ -722,7 +722,7 @@ class GStage3DContext implements IContext implements IGDebuggableInternal
         g2d_onMouseSignal.dispatch(signal);
     }
 
-    private function g2d_keyboardEventHandler(event:KeyboardEvent):Void {
+    private function g2d_keyboardEvent_handler(event:KeyboardEvent):Void {
         var signal:GKeyboardSignal = new GKeyboardSignal(GKeyboardSignalType.fromNative(event.type), event.keyCode);
         g2d_onKeyboardSignal.dispatch(signal);
     }
