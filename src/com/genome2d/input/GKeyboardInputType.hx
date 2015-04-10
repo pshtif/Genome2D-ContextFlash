@@ -6,9 +6,9 @@
  *
  *	License:: ./doc/LICENSE.md (https://github.com/pshtif/Genome2D/blob/master/LICENSE.md)
  */
-package com.genome2d.signals;
+package com.genome2d.input;
 
-class GKeyboardSignalType {
+class GKeyboardInputType {
     inline static public var KEY_DOWN:String = "keyDown";
     inline static public var KEY_UP:String = "keyUp";
 

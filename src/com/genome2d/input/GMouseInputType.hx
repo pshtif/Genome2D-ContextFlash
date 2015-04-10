@@ -6,9 +6,9 @@
  *
  *	License:: ./doc/LICENSE.md (https://github.com/pshtif/Genome2D/blob/master/LICENSE.md)
  */
-package com.genome2d.signals;
+package com.genome2d.input;
 
-class GMouseSignalType {
+class GMouseInputType {
     inline static public var MOUSE_DOWN:String = "mouseDown";
     inline static public var MOUSE_MOVE:String = "mouseMove";
     inline static public var MOUSE_UP:String = "mouseUp";

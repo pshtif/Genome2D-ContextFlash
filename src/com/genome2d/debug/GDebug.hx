@@ -1,9 +1,9 @@
 package com.genome2d.debug;
 
+import com.genome2d.callbacks.GCallback.GCallback1;
 import com.genome2d.debug.GDebugPriority;
 import com.genome2d.debug.GDebugPriority;
 import haxe.PosInfos;
-import msignal.Signal.Signal1;
 
 class GDebug {
     static private var g2d_console:String = "";
@@ -11,12 +11,12 @@ class GDebug {
     static public var useNativeTrace:Bool = true;
     static public var stackTrace:Bool = true;
 
-    static private var g2d_onDebug:Signal1<String>;
+    static private var g2d_onDebug:GCallback1<String>;
     #if swc @:extern #end
-    static public var onDebug(get, never):Signal1<String>;
+    static public var onDebug(get, never):GCallback1<String>;
     #if swc @:getter(onDebug) #end
-    static private function get_onDebug():Signal1<String> {
-        if (g2d_onDebug == null) g2d_onDebug = new Signal1(String);
+    static private function get_onDebug():GCallback1<String> {
+        if (g2d_onDebug == null) g2d_onDebug = new GCallback1(String);
         return g2d_onDebug;
     }
 

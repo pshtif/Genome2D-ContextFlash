@@ -8,11 +8,9 @@
  */
 package com.genome2d.context.stage3d;
 
+import com.genome2d.callbacks.GCallback;
 import com.genome2d.debug.IGDebuggableInternal;
 import com.genome2d.macros.MGDebug;
-import msignal.Signal.Signal0;
-import msignal.Signal.Signal1;
-import msignal.Signal.Signal2;
 
 import com.genome2d.textures.GTextureManager;
 import com.genome2d.textures.GTexture;
@@ -32,10 +30,10 @@ import com.genome2d.textures.GContextTexture;
 import com.genome2d.context.GBlendMode;
 import com.genome2d.context.GCamera;
 import com.genome2d.context.stage3d.renderers.IGRenderer;
-import com.genome2d.signals.GMouseSignal;
-import com.genome2d.signals.GKeyboardSignal;
-import com.genome2d.signals.GKeyboardSignalType;
-import com.genome2d.signals.GMouseSignalType;
+import com.genome2d.input.GMouseInput;
+import com.genome2d.input.GKeyboardInput;
+import com.genome2d.input.GKeyboardInputType;
+import com.genome2d.input.GMouseInputType;
 
 import flash.utils.Object;
 import flash.Vector;
@@ -98,61 +96,61 @@ class GStage3DContext implements IContext implements IGDebuggableInternal
     private var g2d_currentDeltaTime:Float;
 
     /*
-     *  SIGNALS
+     *  CALLBACKS
      */
-    private var g2d_onInitialized:Signal0;
+    private var g2d_onInitialized:GCallback0;
     #if swc @:extern #end
-    public var onInitialized(get,never):Signal0;
+    public var onInitialized(get,never):GCallback0;
     #if swc @:getter(onInitialized) #end
-    inline private function get_onInitialized():Signal0{
+    inline private function get_onInitialized():GCallback0{
         return g2d_onInitialized;
     }
 
-    private var g2d_onFailed:Signal1<String>;
+    private var g2d_onFailed:GCallback1<String>;
     #if swc @:extern #end
-    public var onFailed(get,never):Signal1<String>;
+    public var onFailed(get,never):GCallback1<String>;
     #if swc @:getter(onFailed) #end
-    inline private function get_onFailed():Signal1<String>{
+    inline private function get_onFailed():GCallback1<String>{
         return g2d_onFailed;
     }
 
-    private var g2d_onFrame:Signal1<Float>;
+    private var g2d_onFrame:GCallback1<Float>;
     #if swc @:extern #end
-    public var onFrame(get,never):Signal1<Float>;
+    public var onFrame(get,never):GCallback1<Float>;
     #if swc @:getter(onFrame) #end
-    inline private function get_onFrame():Signal1<Float>{
+    inline private function get_onFrame():GCallback1<Float>{
         return g2d_onFrame;
     }
 
-    private var g2d_onKeyboardSignal:Signal1<GKeyboardSignal>;
+    private var g2d_onKeyboardInput:GCallback1<GKeyboardInput>;
     #if swc @:extern #end
-    public var onKeyboardSignal(get,never):Signal1<GKeyboardSignal>;
-    #if swc @:getter(onKeyboardSignal) #end
-    inline private function get_onKeyboardSignal():Signal1<GKeyboardSignal>{
-        return g2d_onKeyboardSignal;
+    public var onKeyboardInput(get,never):GCallback1<GKeyboardInput>;
+    #if swc @:getter(onKeyboardInput) #end
+    inline private function get_onKeyboardInput():GCallback1<GKeyboardInput>{
+        return g2d_onKeyboardInput;
     }
 
-    private var g2d_onResize:Signal2<Int,Int>;
+    private var g2d_onResize:GCallback2<Int,Int>;
     #if swc @:extern #end
-    public var onResize(get,never):Signal2<Int,Int>;
+    public var onResize(get,never):GCallback2<Int,Int>;
     #if swc @:getter(onResize) #end
-    inline private function get_onResize():Signal2<Int,Int>{
+    inline private function get_onResize():GCallback2<Int,Int>{
         return g2d_onResize;
     }
 
-    private var g2d_onMouseSignal:Signal1<GMouseSignal>;
+    private var g2d_onMouseInput:GCallback1<GMouseInput>;
     #if swc @:extern #end
-    public var onMouseSignal(get,never):Signal1<GMouseSignal>;
-    #if swc @:getter(onMouseSignal) #end
-    inline private function get_onMouseSignal():Signal1<GMouseSignal>{
-        return g2d_onMouseSignal;
+    public var onMouseInput(get,never):GCallback1<GMouseInput>;
+    #if swc @:getter(onMouseInput) #end
+    inline private function get_onMouseInput():GCallback1<GMouseInput>{
+        return g2d_onMouseInput;
     }
 
-    private var g2d_onInvalidated:Signal0;
+    private var g2d_onInvalidated:GCallback0;
     #if swc @:extern #end
-    public var onInvalidated(get,never):Signal0;
+    public var onInvalidated(get,never):GCallback0;
     #if swc @:getter(onInvalidated) #end
-    inline private function get_onInvalidated():Signal0{
+    inline private function get_onInvalidated():GCallback0{
         return g2d_onInvalidated;
     }
 
@@ -206,13 +204,13 @@ class GStage3DContext implements IContext implements IGDebuggableInternal
 
         NORMALIZED_VECTOR = new Vector3D();
 
-        g2d_onInitialized = new Signal0();
-        g2d_onFailed = new Signal1<String>();
-        g2d_onFrame = new Signal1<Float>();
-        g2d_onMouseSignal = new Signal1<GMouseSignal>();
-        g2d_onKeyboardSignal = new Signal1<GKeyboardSignal>();
-        g2d_onInvalidated = new Signal0();
-        g2d_onResize = new Signal2<Int,Int>();
+        g2d_onInitialized = new GCallback0();
+        g2d_onFailed = new GCallback1<String>();
+        g2d_onFrame = new GCallback1<Float>();
+        g2d_onMouseInput = new GCallback1<GMouseInput>();
+        g2d_onKeyboardInput = new GCallback1<GKeyboardInput>();
+        g2d_onInvalidated = new GCallback0();
+        g2d_onResize = new GCallback2<Int,Int>();
 
         g2d_stageViewRect = p_config.viewRect;
 		g2d_nativeStage = p_config.nativeStage;
@@ -363,8 +361,8 @@ class GStage3DContext implements IContext implements IGDebuggableInternal
         g2d_onFailed = null;
         g2d_onInvalidated = null;
         g2d_onFrame = null;
-        g2d_onMouseSignal = null;
-        g2d_onKeyboardSignal = null;
+        g2d_onMouseInput = null;
+        g2d_onKeyboardInput = null;
 
 		g2d_nativeStage.stage3Ds[0].removeEventListener(Event.CONTEXT3D_CREATE, g2d_contextInitialized_handler);
 		g2d_nativeStage.stage3Ds[0].removeEventListener(ErrorEvent.ERROR, g2d_contextError_handler);
@@ -713,17 +711,17 @@ class GStage3DContext implements IContext implements IGDebuggableInternal
 
         var mx:Float = event.stageX-g2d_stageViewRect.x;
         var my:Float = event.stageY-g2d_stageViewRect.y;
-        var signal:GMouseSignal = new GMouseSignal(GMouseSignalType.fromNative(event.type), mx, my, captured);
-        signal.buttonDown = event.buttonDown;
-        signal.ctrlKey = event.ctrlKey;
-        signal.altKey = event.altKey;
-        signal.shiftKey = event.shiftKey;
-        signal.delta = event.delta;
-        g2d_onMouseSignal.dispatch(signal);
+        var input:GMouseInput = new GMouseInput(GMouseInputType.fromNative(event.type), mx, my, captured);
+        input.buttonDown = event.buttonDown;
+        input.ctrlKey = event.ctrlKey;
+        input.altKey = event.altKey;
+        input.shiftKey = event.shiftKey;
+        input.delta = event.delta;
+        g2d_onMouseInput.dispatch(input);
     }
 
     private function g2d_keyboardEvent_handler(event:KeyboardEvent):Void {
-        var signal:GKeyboardSignal = new GKeyboardSignal(GKeyboardSignalType.fromNative(event.type), event.keyCode);
-        g2d_onKeyboardSignal.dispatch(signal);
+        var input:GKeyboardInput = new GKeyboardInput(GKeyboardInputType.fromNative(event.type), event.keyCode);
+        g2d_onKeyboardInput.dispatch(input);
     }
 }

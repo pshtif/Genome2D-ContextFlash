@@ -8,6 +8,7 @@
  */
 package com.genome2d.assets;
 
+import com.genome2d.callbacks.GCallback;
 import com.genome2d.debug.GDebug;
 import com.genome2d.debug.GDebug;
 import com.genome2d.proto.IGPrototypable;
@@ -16,7 +17,6 @@ import flash.events.IOErrorEvent;
 import flash.events.Event;
 import flash.net.URLLoaderDataFormat;
 import flash.net.URLLoader;
-import msignal.Signal.Signal1;
 
 /*
  * Simple asset class for alpha asset management, will be differentiated into multiple classes for different assets later
@@ -27,8 +27,8 @@ import msignal.Signal.Signal1;
 @:access(com.genome2d.assets.GAssetManager)
 class GAsset implements IGPrototypable
 {
-    public var onLoaded:Signal1<GAsset>;
-    public var onFailed:Signal1<GAsset>;
+    public var onLoaded:GCallback1<GAsset>;
+    public var onFailed:GCallback1<GAsset>;
 
     private var g2d_id:String = "";
     /**
@@ -90,8 +90,8 @@ class GAsset implements IGPrototypable
     }
 
 	public function new(p_url:String = "", p_id:String = "") {
-        onLoaded = new Signal1(GAsset);
-        onFailed = new Signal1(GAsset);
+        onLoaded = new GCallback1(GAsset);
+        onFailed = new GCallback1(GAsset);
 
         id = p_id;
         url = p_url;

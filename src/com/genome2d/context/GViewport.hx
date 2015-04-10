@@ -58,7 +58,7 @@ class GViewport {
         resizeHandler(rect.width, rect.height);
 
         if (p_autoResize) {
-            Genome2D.getInstance().getContext().onResize.addWithPriority(resizeHandler,100);
+            Genome2D.getInstance().getContext().onResize.addWithPriority(resizeHandler);
         }
     }
 

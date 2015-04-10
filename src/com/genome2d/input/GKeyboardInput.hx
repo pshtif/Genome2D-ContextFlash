@@ -6,9 +6,9 @@
  *
  *	License:: ./doc/LICENSE.md (https://github.com/pshtif/Genome2D/blob/master/LICENSE.md)
  */
-package com.genome2d.signals;
+package com.genome2d.input;
 
-class GKeyboardSignal {
+class GKeyboardInput {
     public var type:String;
     public var keyCode:Int;
 
