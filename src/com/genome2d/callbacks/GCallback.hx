@@ -60,7 +60,7 @@ class GCallback0 extends GCallback<Void -> Void>
         }
 
         while (g2d_listenersOnce.length>0) {
-            g2d_listeners.shift()();
+            g2d_listenersOnce.shift()();
         }
     }
 }
@@ -78,7 +78,7 @@ class GCallback1<TValue> extends GCallback<TValue -> Void>
         }
 
         while (g2d_listenersOnce.length>0) {
-            g2d_listeners.shift()(p_value);
+            g2d_listenersOnce.shift()(p_value);
         }
     }
 }
