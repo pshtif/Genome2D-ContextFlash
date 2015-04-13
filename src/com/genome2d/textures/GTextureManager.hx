@@ -48,6 +48,12 @@ class GTextureManager {
     static public function getTextureById(p_id:String):GTexture {
         return untyped g2d_textures[p_id];
     }
+	
+	static public function getTexturesByIds(p_ids:Array<String>):Array<GTexture> {
+		var textures:Array<GTexture> = new Array<GTexture>();
+		for (id in p_ids) textures.push(untyped g2d_textures[id]);
+        return textures;
+    }
 
     static public function getAtlasById(p_id:String):GTextureAtlas {
         return untyped g2d_textures[p_id];
