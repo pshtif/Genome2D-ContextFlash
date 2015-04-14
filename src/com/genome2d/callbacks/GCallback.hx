@@ -6,6 +6,9 @@ class GCallback<TListener> {
     private var g2d_listenersOnce:Array<TListener>;
     private var g2d_listeners:Array<TListener>;
     private var g2d_listenerCount:Int = 0;
+	
+	private var g2d_iteratingDispatch:Int;
+	private var g2d_iteratingDispatchCurrent:TListener;
 
     public function new(?p_valueClasses:Array<Dynamic>) {
         g2d_valueClasses = (p_valueClasses == null) ? [] : p_valueClasses;
@@ -38,11 +41,20 @@ class GCallback<TListener> {
     }
 
     public function remove(p_listener:TListener):Void {
-        if (!g2d_listeners.remove(p_listener)) g2d_listenersOnce.remove(p_listener);
+		var index:Int = g2d_listeners.indexOf(p_listener);
+        if (index >= 0) {
+			if (index <= g2d_iteratingDispatch) g2d_iteratingDispatch--;
+			g2d_listeners.remove(p_listener);
+			g2d_listenerCount--;
+		} else {
+			g2d_listenersOnce.remove(p_listener);
+		}
     }
 
     public function removeAll():Void {
         g2d_listeners = new Array<TListener>();
+		g2d_listenerCount = 0;
+		
         g2d_listenersOnce = new Array<TListener>();
     }
 }
@@ -55,8 +67,10 @@ class GCallback0 extends GCallback<Void -> Void>
     }
 
     public function dispatch():Void {
-        for (i in 0...g2d_listenerCount) {
-            g2d_listeners[i]();
+        g2d_iteratingDispatch = 0;		
+        while (g2d_iteratingDispatch<g2d_listenerCount) {
+            g2d_listeners[g2d_iteratingDispatch]();
+			g2d_iteratingDispatch++;
         }
 
         while (g2d_listenersOnce.length>0) {
@@ -67,14 +81,15 @@ class GCallback0 extends GCallback<Void -> Void>
 
 class GCallback1<TValue> extends GCallback<TValue -> Void>
 {
-    public function new(?p_type:Dynamic=null)
-    {
+    public function new(?p_type:Dynamic=null) {
         super([p_type]);
     }
 
     public function dispatch(p_value:TValue):Void {
-        for (i in 0...g2d_listenerCount) {
-            g2d_listeners[i](p_value);
+		g2d_iteratingDispatch = 0;		
+        while (g2d_iteratingDispatch<g2d_listenerCount) {
+            g2d_listeners[g2d_iteratingDispatch](p_value);
+			g2d_iteratingDispatch++;
         }
 
         while (g2d_listenersOnce.length>0) {
@@ -85,8 +100,7 @@ class GCallback1<TValue> extends GCallback<TValue -> Void>
 
 class GCallback2<TValue1,TValue2> extends GCallback<TValue1 -> TValue2 -> Void>
 {
-    public function new(?p_type1:Dynamic = null, ?p_type2:Dynamic = null)
-    {
+    public function new(?p_type1:Dynamic = null, ?p_type2:Dynamic = null) {
         super([p_type1,p_type2]);
     }
 
@@ -94,8 +108,10 @@ class GCallback2<TValue1,TValue2> extends GCallback<TValue1 -> TValue2 -> Void>
 		Executes the callbacks listeners with two arguements.
 	**/
     public function dispatch(p_value1:TValue1, p_value2:TValue2):Void {
-        for (i in 0...g2d_listenerCount) {
-            g2d_listeners[i](p_value1, p_value2);
+        g2d_iteratingDispatch = 0;		
+        while (g2d_iteratingDispatch<g2d_listenerCount) {
+            g2d_listeners[g2d_iteratingDispatch](p_value1, p_value2);
+			g2d_iteratingDispatch++;
         }
 
         while (g2d_listenersOnce.length>0) {

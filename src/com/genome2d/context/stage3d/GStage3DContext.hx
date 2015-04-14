@@ -10,6 +10,7 @@ package com.genome2d.context.stage3d;
 
 import com.genome2d.callbacks.GCallback;
 import com.genome2d.debug.IGDebuggableInternal;
+import com.genome2d.input.IGInteractive;
 import com.genome2d.macros.MGDebug;
 
 import com.genome2d.textures.GTextureManager;
@@ -58,7 +59,7 @@ import flash.events.MouseEvent;
 
 #if genome_stage3donly
 @:native("com.genome2d.context.IContext")
-class GStage3DContext implements IGDebuggableInternal
+class GStage3DContext implements IGDebuggableInternal implements IGInteractive
 #else
 class GStage3DContext implements IContext implements IGDebuggableInternal
 #end
@@ -710,13 +711,18 @@ class GStage3DContext implements IContext implements IGDebuggableInternal
         if (enableNativeContentMouseCapture && event.target != g2d_nativeStage) captured = true;
 
         var mx:Float = event.stageX-g2d_stageViewRect.x;
-        var my:Float = event.stageY-g2d_stageViewRect.y;
-        var input:GMouseInput = new GMouseInput(GMouseInputType.fromNative(event.type), mx, my, captured);
+        var my:Float = event.stageY - g2d_stageViewRect.y;
+		
+        var input:GMouseInput = new GMouseInput(this, this, GMouseInputType.fromNative(event.type), mx, my);
+		input.contextX = mx;
+		input.contextY = my;
         input.buttonDown = event.buttonDown;
         input.ctrlKey = event.ctrlKey;
         input.altKey = event.altKey;
         input.shiftKey = event.shiftKey;
         input.delta = event.delta;
+		input.nativeCaptured = captured;
+		
         g2d_onMouseInput.dispatch(input);
     }
 
