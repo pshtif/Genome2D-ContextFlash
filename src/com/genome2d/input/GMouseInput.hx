@@ -10,7 +10,6 @@ package com.genome2d.input;
 import com.genome2d.context.GCamera;
 
 class GMouseInput {
-<<<<<<< HEAD
 	public var g2d_captured:Bool = false;
 	
 	public var dispatcher:IGInteractive;
@@ -18,21 +17,12 @@ class GMouseInput {
 	public var camera:GCamera;
     public var localX:Float;
     public var localY:Float;
-=======
-	public var dispatcher:IGInteractive;
-	public var target:IGInteractive;
-    public var x:Float;
-    public var y:Float;
->>>>>>> origin/master
 	public var type:String;
 	
 	public var contextX:Float;
     public var contextY:Float;
-<<<<<<< HEAD
 	public var worldX:Float;
 	public var worldY:Float;
-=======
->>>>>>> origin/master
     public var buttonDown:Bool = false;
     public var ctrlKey:Bool = false;
     public var altKey:Bool = false;
@@ -40,7 +30,6 @@ class GMouseInput {
     public var nativeCaptured:Bool = false;
     public var delta:Int = 0;
 
-<<<<<<< HEAD
     public function new(p_target:IGInteractive, p_dispatcher:IGInteractive, p_type:String, p_localX:Float, p_localY:Float) {
 		dispatcher = p_dispatcher;
 		target = p_target;
@@ -55,20 +44,6 @@ class GMouseInput {
 		input.contextY = contextY;
 		input.worldX = worldX;
 		input.worldY = worldY;
-=======
-    public function new(p_dispatcher:IGInteractive, p_target:IGInteractive, p_type:String, p_x:Float, p_y:Float) {
-		dispatcher = p_dispatcher;
-		target = p_target;
-        type = p_type;
-        x = p_x;
-        y = p_y;
-    }
-	
-	public function clone(p_dispatcher:IGInteractive, p_target:IGInteractive, p_type:String, p_x:Float, p_y:Float):GMouseInput {
-		var input:GMouseInput = new GMouseInput(dispatcher, target, type, p_x, p_y);
-		input.contextX = contextX;
-		input.contextY = contextY;
->>>>>>> origin/master
 		input.buttonDown = buttonDown;
 		input.ctrlKey = ctrlKey;
 		input.altKey = altKey;
