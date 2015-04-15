@@ -716,12 +716,21 @@ class GStage3DContext implements IContext implements IGDebuggableInternal
         var captured:Bool = false;
         if (enableNativeContentMouseCapture && event.target != g2d_nativeStage) captured = true;
 
+<<<<<<< HEAD
         var mx:Float = event.stageX - g2d_stageViewRect.x;
         var my:Float = event.stageY - g2d_stageViewRect.y;
 		
         var input:GMouseInput = new GMouseInput(this, this, GMouseInputType.fromNative(event.type), mx, my);
 		input.worldX = input.contextX = mx;
 		input.worldY = input.contextY = my;
+=======
+        var mx:Float = event.stageX-g2d_stageViewRect.x;
+        var my:Float = event.stageY - g2d_stageViewRect.y;
+		
+        var input:GMouseInput = new GMouseInput(this, this, GMouseInputType.fromNative(event.type), mx, my);
+		input.contextX = mx;
+		input.contextY = my;
+>>>>>>> origin/master
         input.buttonDown = event.buttonDown;
         input.ctrlKey = event.ctrlKey;
         input.altKey = event.altKey;
