@@ -10,6 +10,7 @@ package com.genome2d.context.stage3d;
 
 import com.genome2d.callbacks.GCallback;
 import com.genome2d.debug.IGDebuggableInternal;
+import com.genome2d.input.IGInteractive;
 import com.genome2d.macros.MGDebug;
 
 import com.genome2d.textures.GTextureManager;
@@ -58,7 +59,7 @@ import flash.events.MouseEvent;
 
 #if genome_stage3donly
 @:native("com.genome2d.context.IContext")
-class GStage3DContext implements IGDebuggableInternal
+class GStage3DContext implements IGDebuggableInternal implements IGInteractive
 #else
 class GStage3DContext implements IContext implements IGDebuggableInternal
 #end
@@ -160,6 +161,8 @@ class GStage3DContext implements IContext implements IGDebuggableInternal
     inline public function getNativeContext():Context3D {
         return g2d_nativeContext;
     }
+	
+	public var g2d_onMouseInputInternal:GMouseInput->Void;
 
 	private var g2d_activeRenderer:IGRenderer;
 	private var g2d_activeBlendMode:Int;
@@ -211,6 +214,8 @@ class GStage3DContext implements IContext implements IGDebuggableInternal
         g2d_onKeyboardInput = new GCallback1<GKeyboardInput>();
         g2d_onInvalidated = new GCallback0();
         g2d_onResize = new GCallback2<Int,Int>();
+		
+		g2d_onMouseInput = new GCallback1<GMouseInput>();
 
         g2d_stageViewRect = p_config.viewRect;
 		g2d_nativeStage = p_config.nativeStage;
@@ -360,8 +365,10 @@ class GStage3DContext implements IContext implements IGDebuggableInternal
         g2d_onInitialized = null;
         g2d_onFailed = null;
         g2d_onInvalidated = null;
+		g2d_onFrame.removeAll();
         g2d_onFrame = null;
         g2d_onMouseInput = null;
+		g2d_onMouseInputInternal = null;
         g2d_onKeyboardInput = null;
 
 		g2d_nativeStage.stage3Ds[0].removeEventListener(Event.CONTEXT3D_CREATE, g2d_contextInitialized_handler);
@@ -709,15 +716,21 @@ class GStage3DContext implements IContext implements IGDebuggableInternal
         var captured:Bool = false;
         if (enableNativeContentMouseCapture && event.target != g2d_nativeStage) captured = true;
 
-        var mx:Float = event.stageX-g2d_stageViewRect.x;
-        var my:Float = event.stageY-g2d_stageViewRect.y;
-        var input:GMouseInput = new GMouseInput(GMouseInputType.fromNative(event.type), mx, my, captured);
+        var mx:Float = event.stageX - g2d_stageViewRect.x;
+        var my:Float = event.stageY - g2d_stageViewRect.y;
+		
+        var input:GMouseInput = new GMouseInput(this, this, GMouseInputType.fromNative(event.type), mx, my);
+		input.worldX = input.contextX = mx;
+		input.worldY = input.contextY = my;
         input.buttonDown = event.buttonDown;
         input.ctrlKey = event.ctrlKey;
         input.altKey = event.altKey;
         input.shiftKey = event.shiftKey;
         input.delta = event.delta;
+		input.nativeCaptured = captured;
+		
         g2d_onMouseInput.dispatch(input);
+		g2d_onMouseInputInternal(input);
     }
 
     private function g2d_keyboardEvent_handler(event:KeyboardEvent):Void {
