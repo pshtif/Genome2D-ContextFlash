@@ -60,6 +60,7 @@ class GPackerRectangle
     public var pivotY:Float;
 
     public var padding:Int = 0;
+	public var extrude:Int = 0;
 
     public var userData:Array<Float>;
 
