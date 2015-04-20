@@ -16,7 +16,7 @@ import com.genome2d.assets.GImageAssetType;
 import flash.display.BitmapData;
 import com.genome2d.assets.GImageAsset;
 import flash.display.Bitmap;
-import com.genome2d.context.IContext;
+import com.genome2d.context.IGContext;
 
 @:access(com.genome2d.textures.GContextTexture)
 class GTextureManager {

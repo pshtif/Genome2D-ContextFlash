@@ -17,7 +17,7 @@ import com.genome2d.context.stage3d.GStage3DContext;
 import com.genome2d.geom.GRectangle;
 import com.genome2d.textures.GTextureUtils;
 import flash.text.TextFieldAutoSize;
-import com.genome2d.context.IContext;
+import com.genome2d.context.IGContext;
 import com.genome2d.textures.GContextTexture;
 import flash.display.BitmapData;
 import flash.system.System;
@@ -68,7 +68,7 @@ class GStats implements IStats
         g2d_initialized = true;
     }
 
-    public function render(p_context:IContext):Void {
+    public function render(p_context:IGContext):Void {
         if (!visible) return;
 
         p_context.setActiveCamera(p_context.getDefaultCamera());

@@ -17,7 +17,7 @@ import com.genome2d.context.stage3d.GStage3DContext;
 import com.genome2d.debug.GDebug;
 import com.genome2d.geom.GRectangle;
 import flash.utils.Object;
-import com.genome2d.context.IContext;
+import com.genome2d.context.IGContext;
 import flash.utils.Dictionary;
 import flash.display3D.Context3DTextureFormat;
 import flash.geom.Point;

@@ -30,9 +30,9 @@ class GContextConfig
 	public var profile:Object;
     public var viewRect:GRectangle;
     public var nativeStage:Stage;
-    public var contextClass:Class<IContext>;
+    public var contextClass:Class<IGContext>;
     public var statsClass:Class<IStats>;
-    public var fallbackContextClass:Class<IContext> = null;
+    public var fallbackContextClass:Class<IGContext> = null;
     public var externalStage3D:Stage3D;
 
     #if swc

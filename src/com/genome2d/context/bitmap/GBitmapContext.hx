@@ -35,7 +35,7 @@ import flash.geom.Rectangle;
 import com.genome2d.context.GCamera;
 import com.genome2d.textures.GContextTexture;
 
-class GBitmapContext implements IContext
+class GBitmapContext implements IGContext
 {
     public function hasFeature(p_feature:Int):Bool {
         return false;

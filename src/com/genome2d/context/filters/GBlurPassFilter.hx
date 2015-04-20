@@ -68,7 +68,7 @@ class GBlurPassFilter extends GFilter
         direction = p_direction;
     }
 
-    override public function bind(p_context:IContext, p_texture:GContextTexture):Void {
+    override public function bind(p_context:IGContext, p_texture:GContextTexture):Void {
         // We do invalidation each bind as the textures parameters are crucial for constants
         if (direction == HORIZONTAL) {
             fragmentConstants[0] = 1/p_texture.gpuWidth * 1.3846153846 * blur * .5;

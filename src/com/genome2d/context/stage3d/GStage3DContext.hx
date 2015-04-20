@@ -61,7 +61,7 @@ import flash.events.MouseEvent;
 @:native("com.genome2d.context.IContext")
 class GStage3DContext implements IGDebuggableInternal implements IGInteractive
 #else
-class GStage3DContext implements IContext implements IGDebuggableInternal
+class GStage3DContext implements IGContext implements IGDebuggableInternal
 #end
 {
     private var NORMALIZED_VECTOR:Vector3D;

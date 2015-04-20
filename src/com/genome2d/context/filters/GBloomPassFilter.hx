@@ -44,13 +44,13 @@ class GBloomPassFilter extends GFilter
                                             1.25, 1, 1, 1]);
     }
 
-    override public function bind(p_context:IContext, p_texture:GContextTexture):Void {
+    override public function bind(p_context:IGContext, p_texture:GContextTexture):Void {
         super.bind(p_context, p_texture);
         if (texture == null) GDebug.error("There is no texture set for bloom pass.");
         p_context.getNativeContext().setTextureAt(1, texture.nativeTexture);
     }
 
-    override public function clear(p_context:IContext):Void {
+    override public function clear(p_context:IGContext):Void {
         p_context.getNativeContext().setTextureAt(1, null);
     }
 }
