@@ -412,7 +412,7 @@ class GContextTexture
 
         return g2d_sourceBitmapData.getPixel32(untyped __int__((g2d_u + p_u)*g2d_width), untyped __int__((g2d_v + p_v)*g2d_height))>>24&0xFF;
     }
-
+	
     public function toString():String {
         return "[Texture: "+id+"]";
     }
