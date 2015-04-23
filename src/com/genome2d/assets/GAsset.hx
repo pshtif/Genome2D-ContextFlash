@@ -120,4 +120,8 @@ class GAsset implements IGPrototypable
         g2d_loading = false;
         onFailed.dispatch(this);
     }
+	
+	public function toReference():String {
+		return null;
+	}
 }

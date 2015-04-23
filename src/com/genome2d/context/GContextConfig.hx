@@ -13,7 +13,7 @@ import com.genome2d.context.stage3d.GStage3DContext;
 import flash.display.Stage3D;
 import flash.utils.Object;
 import com.genome2d.context.stats.GStats;
-import com.genome2d.context.stats.IStats;
+import com.genome2d.context.stats.IGStats;
 import flash.Vector;
 import com.genome2d.geom.GRectangle;
 import flash.Lib;
@@ -31,7 +31,7 @@ class GContextConfig
     public var viewRect:GRectangle;
     public var nativeStage:Stage;
     public var contextClass:Class<IGContext>;
-    public var statsClass:Class<IStats>;
+    public var statsClass:Class<IGStats>;
     public var fallbackContextClass:Class<IGContext> = null;
     public var externalStage3D:Stage3D;
 

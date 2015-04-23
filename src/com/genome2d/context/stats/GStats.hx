@@ -24,7 +24,7 @@ import flash.system.System;
 import flash.text.TextField;
 import flash.text.TextFormat;
 
-class GStats implements IStats
+class GStats implements IGStats
 {
     static public var fps:Int = 0;
     static public var drawCalls:Int = 0;

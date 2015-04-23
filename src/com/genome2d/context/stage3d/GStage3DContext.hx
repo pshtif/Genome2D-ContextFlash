@@ -19,7 +19,7 @@ import com.genome2d.context.filters.GColorMatrixFilter;
 import com.genome2d.context.stats.GStats;
 import com.genome2d.geom.GMatrix3D;
 import com.genome2d.context.stage3d.renderers.GRenderersCommon;
-import com.genome2d.context.stats.IStats;
+import com.genome2d.context.stats.IGStats;
 import com.genome2d.geom.GRectangle;
 import com.genome2d.context.stage3d.renderers.GMatrixQuadTextureShaderRenderer;
 import com.genome2d.context.stage3d.renderers.GTriangleTextureBufferCPURenderer;
@@ -91,7 +91,7 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal
         return g2d_defaultCamera;
     }
 
-    private var g2d_stats:IStats;
+    private var g2d_stats:IGStats;
 
     private var g2d_currentTime:Float = 0;
     private var g2d_currentDeltaTime:Float;
