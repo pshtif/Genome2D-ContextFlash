@@ -107,6 +107,7 @@ class GDebug {
             case GDebugPriority.ERROR:
                 "ERROR: ";
             case _:
+				"";
         }
         if (p_pos != null) msg += p_pos.fileName+":"+p_pos.lineNumber+" : "+p_pos.methodName;
         if (p_args.length>0) msg += " : " + p_args.toString();
