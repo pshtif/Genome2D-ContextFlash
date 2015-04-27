@@ -734,7 +734,7 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal
     }
 
     private function g2d_keyboardEvent_handler(event:KeyboardEvent):Void {
-        var input:GKeyboardInput = new GKeyboardInput(GKeyboardInputType.fromNative(event.type), event.keyCode);
+        var input:GKeyboardInput = new GKeyboardInput(GKeyboardInputType.fromNative(event.type), event.keyCode, event.charCode);
         g2d_onKeyboardInput.dispatch(input);
     }
 }

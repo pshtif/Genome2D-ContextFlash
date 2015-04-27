@@ -11,9 +11,11 @@ package com.genome2d.input;
 class GKeyboardInput {
     public var type:String;
     public var keyCode:Int;
+	public var charCode:Int;
 
-    public function new(p_type:String, p_keyCode:Int) {
+    public function new(p_type:String, p_keyCode:Int, p_charCode:Int) {
         type = p_type;
         keyCode = p_keyCode;
+		charCode = p_charCode;
     }
 }

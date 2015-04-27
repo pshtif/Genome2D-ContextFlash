@@ -323,7 +323,7 @@ class GBitmapContext implements IGContext
     }
 
     public function drawPoly(p_texture:GContextTexture, p_vertices:Array<Float>, p_uvs:Array<Float>, p_x:Float, p_y:Float, p_scaleX:Float = 1, p_scaleY:Float = 1, p_rotation:Float = 0, p_red:Float = 1, p_green:Float = 1, p_blue:Float = 1, p_alpha:Float = 1, p_blendMode:Int=1, p_filter:GFilter = null):Void {
-        new GDebug.warning("drawPoly not supported for this target.");
+        GDebug.warning("drawPoly not supported for this target.");
     }
 
     public function getRenderTarget():GContextTexture {
