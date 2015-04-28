@@ -41,24 +41,6 @@ class GTexture
         return g2d_dirty;
     }
 
-    private var g2d_id:String;
-	/**
-	 * 	ID
-	 */
-    #if swc @:extern #end
-    public var id(get,never):String;
-    #if swc @:getter(id) #end
-    inline private function get_id():String {
-        return g2d_id;
-    }
-    #if swc @:setter(id) #end
-    inline private function set_id(p_value:String):String {
-        GTextureManager.g2d_removeTexture(this);
-        g2d_id = p_value;
-        GTextureManager.g2d_addTexture(this);
-        return g2d_id;
-    }
-
 	private var g2d_pivotX:Float;
 	/**
 	 * 	X pivot
@@ -278,7 +260,7 @@ class GTexture
         g2d_nativeWidth = Std.int(g2d_region.width);
         g2d_nativeHeight = Std.int(g2d_region.height);
 
-        g2d_invalidateUV();
+        invalidateUV();
 
         return g2d_region;
     }
@@ -359,7 +341,7 @@ class GTexture
 
 	static private var g2d_instanceCount:Int = 0;
 
-    public function new(p_id:String, p_source:Object) {
+    public function new(p_source:Object) {
         g2d_nativeWidth = g2d_nativeHeight = 0;
 		g2d_gpuWidth = g2d_gpuHeight = 0;
 		g2d_region = new GRectangle(0, 0, 1, 1);
@@ -376,14 +358,13 @@ class GTexture
         g2d_format = "bgra";
         g2d_repeatable = false;
 
-        g2d_id = p_id;
         g2d_filteringType = GTextureManager.defaultFilteringType;
         source = p_source;
 		
 		GTextureManager.g2d_addTexture(this);
 	}
 
-	private function g2d_invalidateUV():Void {
+	private function invalidateUV():Void {
 		g2d_u = g2d_region.x / gpuWidth;
 		g2d_v = g2d_region.y / gpuHeight;
 
@@ -485,7 +466,7 @@ class GTexture
                     default:
                 }
 				
-				g2d_invalidateUV();
+				invalidateUV();
 				
 				if (g2d_onInvalidated != null) g2d_onInvalidated.dispatch(this);
             }
@@ -541,10 +522,16 @@ class GTexture
         return "[Texture: "+id+"]";
     }
 	
+	/*
+	 *	Get a reference value
+	 */
 	public function toReference():String {
-		return id;
+		return GTextureManager.getIdForTexture(this);
 	}
 	
+	/*
+	 * 	Get an instance from reference
+	 */
 	static public function fromReference(p_reference:String) {
 		return GTextureManager.getTextureById(p_reference);
 	}
