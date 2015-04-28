@@ -11,7 +11,7 @@ package com.genome2d.context.stage3d.renderers;
 import com.genome2d.textures.GTexture;
 import flash.display3D.textures.TextureBase;
 import com.genome2d.textures.GTextureFilteringType;
-import com.genome2d.textures.GContextTexture;
+import com.genome2d.textures.GTexture;
 import com.genome2d.context.stats.GStats;
 import flash.utils.Dictionary;
 import com.genome2d.context.filters.GFilter;
@@ -250,10 +250,10 @@ class GMatrixQuadTextureShaderRenderer implements IGRenderer
         var px:Float;
         var py:Float;
         if (p_overrideSource) {
-            uvx = p_sourceX/p_texture.gpuWidth;
-            uvy = p_sourceY/p_texture.gpuHeight;
-            uvsx = p_sourceWidth/p_texture.gpuWidth;
-            uvsy = p_sourceHeight/p_texture.gpuHeight;
+            uvx = p_sourceX / p_texture.nativeWidth;
+            uvy = p_sourceY / p_texture.nativeHeight;
+            uvsx = p_sourceWidth / p_texture.nativeWidth;
+            uvsy = p_sourceHeight / p_texture.nativeHeight;
             sx = p_sourceWidth;
             sy = p_sourceHeight;
             px = 0;

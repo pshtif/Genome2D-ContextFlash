@@ -27,7 +27,7 @@ import com.genome2d.context.stage3d.renderers.GQuadTextureShaderRenderer;
 import com.genome2d.context.filters.GFilter;
 import com.genome2d.context.stage3d.renderers.GQuadTextureBufferGPURenderer;
 import com.genome2d.context.stage3d.GProjectionMatrix;
-import com.genome2d.textures.GContextTexture;
+import com.genome2d.textures.GTexture;
 import com.genome2d.context.GBlendMode;
 import com.genome2d.context.GCamera;
 import com.genome2d.context.stage3d.renderers.IGRenderer;
@@ -645,13 +645,13 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal
     private var g2d_renderTargetMatrix:Matrix3D;
     private var g2d_usedRenderTargets:Int = 0;
     private var g2d_renderTargetStack:Array<GTexture>;
-    private var g2d_renderTarget:GContextTexture;
+    private var g2d_renderTarget:GTexture;
     public var g2d_renderTargetTransform:GMatrix3D;
 
     /**
         Gets the current render target, if null the target is backbuffer
      */
-    public function getRenderTarget():GContextTexture {
+    public function getRenderTarget():GTexture {
         return g2d_renderTarget;
     }
 
@@ -661,7 +661,7 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal
         @param p_texture textures target, if null it will target backbuffer
         @param p_transform additional transformation that should be applied, not applicable to backbuffer target
      */
-	public function setRenderTarget(p_texture:GContextTexture = null, p_transform:GMatrix3D = null, p_clear:Bool = true):Void {
+	public function setRenderTarget(p_texture:GTexture = null, p_transform:GMatrix3D = null, p_clear:Bool = true):Void {
 		if (g2d_renderTarget == p_texture && g2d_usedRenderTargets==0) return;
 
 		if (g2d_activeRenderer != null) g2d_activeRenderer.push();
@@ -684,14 +684,14 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal
             g2d_nativeContext.setScissorRectangle(null);
             if (p_texture.needClearAsRenderTarget(p_clear)) g2d_nativeContext.clear(0,0,0,0);
 
-			g2d_nativeContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 0, GProjectionMatrix.getOrtho(p_texture.gpuWidth, p_texture.gpuHeight, p_transform), true);
+			g2d_nativeContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 0, GProjectionMatrix.getOrtho(p_texture.nativeWidth, p_texture.nativeHeight, p_transform), true);
 		}
 
         g2d_renderTargetTransform = p_transform;
 		g2d_renderTarget = p_texture;
     }
 
-    public function setRenderTargets(p_textures:Array<GContextTexture>, p_transform:GMatrix3D = null, p_clear:Bool = true):Void {
+    public function setRenderTargets(p_textures:Array<GTexture>, p_transform:GMatrix3D = null, p_clear:Bool = true):Void {
         if (g2d_activeRenderer != null) g2d_activeRenderer.push();
 
         for (i in 0...p_textures.length) {

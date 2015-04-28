@@ -16,7 +16,7 @@ import flash.utils.Dictionary;
 import flash.Lib;
 import com.genome2d.context.filters.GFilter;
 import com.adobe.utils.extended.AGALMiniAssembler;
-import com.genome2d.textures.GContextTexture;
+import com.genome2d.textures.GTexture;
 import flash.display3D.Context3D;
 import flash.display3D.Context3DProgramType;
 import flash.display3D.Context3DVertexBufferFormat;

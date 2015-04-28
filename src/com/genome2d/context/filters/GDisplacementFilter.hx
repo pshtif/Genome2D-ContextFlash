@@ -1,6 +1,6 @@
 package com.genome2d.context.filters;
 
-import com.genome2d.textures.GContextTexture;
+import com.genome2d.textures.GTexture;
 import com.genome2d.context.stage3d.GStage3DContext;
 import com.genome2d.geom.GMatrix3D;
 import com.genome2d.context.filters.GFilter;
@@ -13,8 +13,8 @@ class GDisplacementFilter extends GFilter {
     private var g2d_matrix:GMatrix3D;
     private var g2d_offset:Float = 0;
 
-    public var displacementMap:GContextTexture;
-    public var alphaMap:GContextTexture;
+    public var displacementMap:GTexture;
+    public var alphaMap:GTexture;
     public var alpha:Float = 1;
 
 
@@ -41,7 +41,7 @@ class GDisplacementFilter extends GFilter {
             //"mul oc, ft1, ft2.wwww";
     }
 
-    override public function bind(p_context:GStage3DContext, p_defaultTexture:GContextTexture):Void {
+    override public function bind(p_context:GStage3DContext, p_defaultTexture:GTexture):Void {
         p_context.getNativeContext().setProgramConstantsFromMatrix(Context3DProgramType.FRAGMENT, 1, g2d_matrix, true);
         p_context.getNativeContext().setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 5, Vector.ofArray([g2d_offset,0,0,0.0,alpha,alpha,alpha,alpha]), 2);
         g2d_offset += .0003;

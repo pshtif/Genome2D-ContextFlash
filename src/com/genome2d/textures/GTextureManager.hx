@@ -1,4 +1,5 @@
 package com.genome2d.textures;
+import com.genome2d.text.GTextureFont;
 import com.genome2d.textures.GTexture;
 import com.genome2d.assets.GAssetManager;
 import com.genome2d.geom.GRectangle;
@@ -18,7 +19,7 @@ import com.genome2d.assets.GImageAsset;
 import flash.display.Bitmap;
 import com.genome2d.context.IGContext;
 
-@:access(com.genome2d.textures.GContextTexture)
+@:access(com.genome2d.textures.GTexture)
 class GTextureManager {
     static public function init():Void {
         g2d_textures = new Dictionary(false);
@@ -31,17 +32,17 @@ class GTextureManager {
         return g2d_textures;
     }
 
-    static private function g2d_addTexture(p_texture:GContextTexture):Void {
+    static private function g2d_addTexture(p_texture:GTexture):Void {
         if (p_texture.id == null || p_texture.id.length == 0) GDebug.error("Invalid texture id");
         if (untyped g2d_textures[p_texture.id] != null) GDebug.error("Duplicate textures id: "+p_texture.id);
         untyped g2d_textures[p_texture.id] = p_texture;
     }
 
-    static private function g2d_removeTexture(p_texture:GContextTexture):Void {
+    static private function g2d_removeTexture(p_texture:GTexture):Void {
         untyped __delete__(g2d_textures, p_texture.id);
     }
 
-    static public function getContextTextureById(p_id:String):GContextTexture {
+    static public function getContextTextureById(p_id:String):GTexture {
         return untyped g2d_textures[p_id];
     }
 
@@ -59,7 +60,7 @@ class GTextureManager {
         return untyped g2d_textures[p_id];
     }
 
-    static public function getFontAtlasById(p_id:String):GTextureFontAtlas {
+    static public function getFontAtlasById(p_id:String):GTextureFont {
         return untyped g2d_textures[p_id];
     }
 
@@ -133,7 +134,7 @@ class GTextureManager {
 
     /****************************************************************************************************
                                                 ATLAS STUFF
-     ****************************************************************************************************/
+     ****************************************************************************************************
 
     static public function createAtlasFromEmbedded(p_id:String, p_bitmapAsset:Class<Bitmap>, p_xmlAsset:Class<Dynamic>, p_scaleFactor:Float = 1, p_format:String = "bgra"):GTextureAtlas {
         var bitmap:Bitmap = cast Type.createInstance(p_bitmapAsset, []);
@@ -143,13 +144,13 @@ class GTextureManager {
         return createAtlasFromBitmapDataAndXml(p_id, bitmap.bitmapData, xml, p_scaleFactor, p_format);
     }
 
-/**
+	/**
 	 * 	Helper function that will create atlas from bitmap data source and regions defined within an XML [Sparrow format]
 	 *
 	 * 	@param p_id id of the atlas
 	 * 	@param p_bitmapData bitmap data
 	 * 	@param p_xml
-	 */
+	 *
     static public function createAtlasFromBitmapDataAndXml(p_id:String, p_bitmapData:BitmapData, p_xml:Xml, p_scaleFactor:Float = 1, p_format:String = "bgra"):GTextureAtlas {
         if (!GTextureUtils.isValidTextureSize(p_bitmapData.width) || !GTextureUtils.isValidTextureSize(p_bitmapData.height)) GDebug.error("Atlas bitmap needs to have power of 2 size.");
         var textureAtlas:GTextureAtlas = new GTextureAtlas(p_id, p_bitmapData);
@@ -252,7 +253,7 @@ class GTextureManager {
         return textureAtlas;
     }
 
-    static public function createFontAtlasFromAssets(p_id:String, p_imageAsset:GImageAsset, p_xmlAsset:GXmlAsset, p_scaleFactor:Float = 1, p_format:String = "bgra"):GTextureFontAtlas {
+    static public function createFontAtlasFromAssets(p_id:String, p_imageAsset:GImageAsset, p_xmlAsset:GXmlAsset, p_scaleFactor:Float = 1, p_format:String = "bgra"):GTextureFont {
         return createFontAtlasFromBitmapDataAndXml(p_id, p_imageAsset.bitmapData, p_xmlAsset.xml, p_scaleFactor, p_format);
     }
 
@@ -290,10 +291,9 @@ class GTextureManager {
 
         return createFromBitmapDatas(p_id, bitmaps, ids, p_format);
     }
-    /**/
 
-    static public function createFontAtlasFromBitmapDataAndXml(p_id:String, p_bitmapData:BitmapData, p_fontXml:Xml, p_scaleFactor:Float = 1, p_format:String = "bgra"):GTextureFontAtlas {
-        var textureAtlas:GTextureFontAtlas = new GTextureFontAtlas(p_id, p_bitmapData);
+    static public function createFontAtlasFromBitmapDataAndXml(p_id:String, p_bitmapData:BitmapData, p_fontXml:Xml, p_scaleFactor:Float = 1, p_format:String = "bgra"):GTextureFont {
+        var textureAtlas:GTextureFont = new GTextureFont(p_id, p_bitmapData);
         textureAtlas.scaleFactor = p_scaleFactor;
 
         var root:Xml = p_fontXml.firstElement();
@@ -310,7 +310,7 @@ class GTextureManager {
             var h:Int = Std.parseInt(node.get("height"));
             var region:GRectangle = new GRectangle(Std.parseInt(node.get("x")), Std.parseInt(node.get("y")), w, h);
 
-            var subtexture:GCharTexture = textureAtlas.addSubTexture(node.get("id"), region, null);
+            var subtexture:GTextureChar = textureAtlas.addSubTexture(node.get("id"), region, null);
             subtexture.g2d_pivotX = -w/2;
             subtexture.g2d_pivotY = -h/2;
             subtexture.g2d_xoffset = Std.parseFloat(node.get("xoffset"));
@@ -339,4 +339,5 @@ class GTextureManager {
         textureAtlas.invalidateNativeTexture(false);
         return textureAtlas;
     }
+	/**/
 }

@@ -11,7 +11,7 @@ package com.genome2d.context.stage3d.renderers;
 import com.genome2d.textures.GTexture;
 import flash.display3D.textures.TextureBase;
 import com.genome2d.textures.GTextureFilteringType;
-import com.genome2d.textures.GContextTexture;
+import com.genome2d.textures.GTexture;
 import com.genome2d.context.stats.GStats;
 import com.genome2d.context.filters.GFilter;
 import com.adobe.utils.extended.AGALMiniAssembler;

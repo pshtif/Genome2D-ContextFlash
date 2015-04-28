@@ -8,7 +8,7 @@
  */
 package com.genome2d.context.filters;
 
-import com.genome2d.textures.GContextTexture;
+import com.genome2d.textures.GTexture;
 import flash.Vector;
 import flash.display3D.Context3DProgramType;
 
@@ -35,7 +35,7 @@ class GFilter {
     /**
         Called when filter is being bound to the render pipeline
     **/
-    public function bind(p_context:IGContext, p_defaultTexture:GContextTexture):Void {
+    public function bind(p_context:IGContext, p_defaultTexture:GTexture):Void {
         if (fragmentConstants != null && fragmentConstants.length>0) p_context.getNativeContext().setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, fragmentConstants, untyped __int__(fragmentConstants.length/4));
     }
 

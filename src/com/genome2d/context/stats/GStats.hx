@@ -18,7 +18,7 @@ import com.genome2d.geom.GRectangle;
 import com.genome2d.textures.GTextureUtils;
 import flash.text.TextFieldAutoSize;
 import com.genome2d.context.IGContext;
-import com.genome2d.textures.GContextTexture;
+import com.genome2d.textures.GTexture;
 import flash.display.BitmapData;
 import flash.system.System;
 import flash.text.TextField;

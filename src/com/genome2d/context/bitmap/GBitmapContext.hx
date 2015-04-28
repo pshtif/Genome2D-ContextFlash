@@ -33,7 +33,7 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 
 import com.genome2d.context.GCamera;
-import com.genome2d.textures.GContextTexture;
+import com.genome2d.textures.GTexture;
 
 class GBitmapContext implements IGContext
 {
@@ -122,7 +122,7 @@ class GBitmapContext implements IGContext
     private var g2d_initialized:Bool = false;
     private var g2d_currentTime:Float = 0;
     private var g2d_currentDeltaTime:Float;
-    private var g2d_renderTarget:GContextTexture;
+    private var g2d_renderTarget:GTexture;
     private var g2d_renderTargetMatrix:Matrix3D;
 
     public var enableNativeContentMouseCapture:Bool = false;
@@ -315,22 +315,22 @@ class GBitmapContext implements IGContext
         }
 	}
 
-    public function drawSource(p_texture:GContextTexture, p_sourceX:Float, p_sourceY:Float, p_sourceWidth:Float, p_sourceHeight:Float, p_sourcePivotX:Float, p_sourcePivotY:Float, p_x:Float, p_y:Float, p_scaleX:Float = 1, p_scaleY:Float = 1, p_rotation:Float = 0, p_red:Float = 1, p_green:Float = 1, p_blue:Float = 1, p_alpha:Float = 1, p_blendMode:Int = 1, p_filter:GFilter = null):Void {
+    public function drawSource(p_texture:GTexture, p_sourceX:Float, p_sourceY:Float, p_sourceWidth:Float, p_sourceHeight:Float, p_sourcePivotX:Float, p_sourcePivotY:Float, p_x:Float, p_y:Float, p_scaleX:Float = 1, p_scaleY:Float = 1, p_rotation:Float = 0, p_red:Float = 1, p_green:Float = 1, p_blue:Float = 1, p_alpha:Float = 1, p_blendMode:Int = 1, p_filter:GFilter = null):Void {
 
     }
 
-    public function drawMatrix(p_texture:GContextTexture, p_a:Float, p_b:Float, p_c:Float, p_d:Float, p_tx:Float, p_ty:Float, p_red:Float = 1, p_green:Float = 1, p_blue:Float = 1, p_alpha:Float=1, p_blendMode:Int=1, p_filter:GFilter = null):Void {
+    public function drawMatrix(p_texture:GTexture, p_a:Float, p_b:Float, p_c:Float, p_d:Float, p_tx:Float, p_ty:Float, p_red:Float = 1, p_green:Float = 1, p_blue:Float = 1, p_alpha:Float=1, p_blendMode:Int=1, p_filter:GFilter = null):Void {
     }
 
-    public function drawPoly(p_texture:GContextTexture, p_vertices:Array<Float>, p_uvs:Array<Float>, p_x:Float, p_y:Float, p_scaleX:Float = 1, p_scaleY:Float = 1, p_rotation:Float = 0, p_red:Float = 1, p_green:Float = 1, p_blue:Float = 1, p_alpha:Float = 1, p_blendMode:Int=1, p_filter:GFilter = null):Void {
+    public function drawPoly(p_texture:GTexture, p_vertices:Array<Float>, p_uvs:Array<Float>, p_x:Float, p_y:Float, p_scaleX:Float = 1, p_scaleY:Float = 1, p_rotation:Float = 0, p_red:Float = 1, p_green:Float = 1, p_blue:Float = 1, p_alpha:Float = 1, p_blendMode:Int=1, p_filter:GFilter = null):Void {
         GDebug.warning("drawPoly not supported for this target.");
     }
 
-    public function getRenderTarget():GContextTexture {
+    public function getRenderTarget():GTexture {
         return g2d_renderTarget;
     }
 
-    public function setRenderTarget(p_texture:GContextTexture = null, p_transform:Matrix3D = null, p_clean:Bool = true):Void {
+    public function setRenderTarget(p_texture:GTexture = null, p_transform:Matrix3D = null, p_clean:Bool = true):Void {
         if (g2d_renderTarget == p_texture) return;
 
         g2d_renderTarget = p_texture;
@@ -383,7 +383,7 @@ class GBitmapContext implements IGContext
 
     }
 
-    public function setRenderTargets(p_textures:Array<GContextTexture>, p_transform:GMatrix3D = null, p_clean:Bool = true):Void {
+    public function setRenderTargets(p_textures:Array<GTexture>, p_transform:GMatrix3D = null, p_clean:Bool = true):Void {
 
     }
 }

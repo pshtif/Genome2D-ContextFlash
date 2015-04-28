@@ -10,7 +10,7 @@ package com.genome2d.context.filters;
 
 import flash.display3D.Context3D;
 import flash.Vector;
-import com.genome2d.textures.GContextTexture;
+import com.genome2d.textures.GTexture;
 class GBlurPassFilter extends GFilter
 {
 
@@ -68,7 +68,7 @@ class GBlurPassFilter extends GFilter
         direction = p_direction;
     }
 
-    override public function bind(p_context:IGContext, p_texture:GContextTexture):Void {
+    override public function bind(p_context:IGContext, p_texture:GTexture):Void {
         // We do invalidation each bind as the textures parameters are crucial for constants
         if (direction == HORIZONTAL) {
             fragmentConstants[0] = 1/p_texture.gpuWidth * 1.3846153846 * blur * .5;

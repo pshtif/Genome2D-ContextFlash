@@ -16,5 +16,4 @@ class GTextureSourceType {
     inline static public var ATF_COMPRESSED:Int = 5;
     inline static public var ATF_COMPRESSEDALPHA:Int = 6;
     inline static public var TEXTURE:Int = 7;
-    inline static public var ATLAS:Int = 8;
 }
