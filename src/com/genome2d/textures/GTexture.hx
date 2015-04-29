@@ -27,6 +27,9 @@ import flash.utils.Object;
 class GTexture
 {
 	private var g2d_onInvalidated:GCallback1<GTexture>;
+	/**
+	 * 	Callback after the texture was invalidated on GPU
+	 */
 	#if swc @:extern #end
     public var onInvalidated(get,never):GCallback1<GTexture>;
     #if swc @:getter(onInvalidated) #end
@@ -39,6 +42,24 @@ class GTexture
     private var g2d_dirty:Bool = true;
     inline public function isDirty():Bool {
         return g2d_dirty;
+    }
+	
+	private var g2d_id:String;
+	/**
+	 * 	Id
+	 */
+    #if swc @:extern #end
+    public var id(get,never):String;
+    #if swc @:getter(id) #end
+    inline private function get_id():String {
+        return g2d_id;
+    }
+    #if swc @:setter(id) #end
+    inline private function set_id(p_value:String):String {
+        GTextureManager.g2d_removeTexture(this);
+        g2d_id = p_value;
+        GTextureManager.g2d_addTexture(this);
+        return g2d_id;
     }
 
 	private var g2d_pivotX:Float;
@@ -69,28 +90,6 @@ class GTexture
     #if swc @:setter(pivotY) #end
     inline private function set_pivotY(p_value:Float):Float {
         return g2d_pivotY = p_value/scaleFactor;
-    }
-	
-	private var g2d_gpuWidth:Int;
-	/**
-	 * 	Gpu width
-	 */
-    #if swc @:extern #end
-    public var gpuWidth(get, never):Int;
-    #if swc @:getter(gpuWidth) #end
-    inline private function get_gpuWidth():Int {
-        return g2d_gpuWidth;
-    }
-
-	private var g2d_gpuHeight:Int;
-	/**
-	 * 	Gpu height
-	 */
-    #if swc @:extern #end
-    public var gpuHeight(get, never):Int;
-    #if swc @:getter(gpuHeight) #end
-    inline private function get_gpuHeight():Int {
-        return g2d_gpuHeight;
     }
 	
 	private var g2d_nativeWidth:Int;
@@ -178,6 +177,9 @@ class GTexture
     }
 	
 	private var g2d_format:String;
+	/**
+	 * 	Texture format
+	 */
     #if swc @:extern #end
     public var format(get,set):String;
     #if swc @:getter(format) #end
@@ -192,13 +194,20 @@ class GTexture
     }
 
     private var g2d_u:Float;
+	/**
+	 * 	U
+	 */
 	#if swc @:extern #end
     public var u(get, never):Float;
     #if swc @:getter(u) #end
     inline private function get_u():Float {
         return g2d_u;
     }
+	
     private var g2d_v:Float;
+	/**
+	 * 	V
+	 */
 	#if swc @:extern #end
     public var v(get, never):Float;
     #if swc @:getter(v) #end
@@ -207,6 +216,9 @@ class GTexture
     }
 	
     private var g2d_uScale:Float;
+	/**
+	 * 	U scale
+	 */
 	#if swc @:extern #end
     public var uScale(get, never):Float;
     #if swc @:getter(uScale) #end
@@ -215,6 +227,9 @@ class GTexture
     }
 	
     private var g2d_vScale:Float;
+	/**
+	 * 	V scale
+	 */
 	#if swc @:extern #end
     public var vScale(get, never):Float;
     #if swc @:getter(vScale) #end
@@ -223,6 +238,9 @@ class GTexture
     }
 
     private var g2d_repeatable:Bool;
+	/**
+	 * 	Repeatable
+	 */
     #if swc @:extern #end
     public var repeatable(get,set):Bool;
     #if swc @:getter(repeatable) #end
@@ -235,18 +253,13 @@ class GTexture
         g2d_dirty = true;
         return p_value;
     }
-
-    private var g2d_nativeTexture:TextureBase;
-    #if swc @:extern #end
-    public var nativeTexture(get,never):TextureBase;
-    #if swc @:getter(nativeTexture) #end
-    inline private function get_nativeTexture():TextureBase {
-        return g2d_nativeTexture;
-    }
 	
 	private var g2d_frame:GRectangle;
 
     private var g2d_region:GRectangle;
+	/**
+	 * 	Region of the texture
+	 */
     #if swc @:extern #end
     public var region(get,set):GRectangle;
     #if swc @:getter(region) #end
@@ -265,7 +278,6 @@ class GTexture
         return g2d_region;
     }
 
-	private var g2d_parent:GTexture;
     private var g2d_source:Object;
     /**
         Source
@@ -315,14 +327,14 @@ class GTexture
                 g2d_nativeWidth = p_value.width;
                 g2d_nativeHeight = p_value.height;
             } else if (Std.is(g2d_source, GTexture)) {
-				g2d_parent = cast g2d_source;
+				var parent:GTexture = cast g2d_source;
+				parent.onInvalidated.add(parentInvalidated_handler);
+				g2d_gpuWidth = parent.g2d_gpuWidth;
+				g2d_gpuHeight = parent.g2d_gpuHeight;
+				g2d_nativeWidth = parent.g2d_nativeWidth;
+				g2d_nativeHeight = parent.g2d_nativeHeight;
+				g2d_nativeTexture = parent.nativeTexture;
 				g2d_sourceType = GTextureSourceType.TEXTURE;
-				g2d_parent.onInvalidated.add(parentInvalidated_handler);
-				g2d_gpuWidth = g2d_parent.g2d_gpuWidth;
-				g2d_gpuHeight = g2d_parent.g2d_gpuHeight;
-				g2d_nativeWidth = g2d_parent.g2d_nativeWidth;
-				g2d_nativeHeight = g2d_parent.g2d_nativeHeight;
-				g2d_nativeTexture = g2d_parent.nativeTexture;
 			} else {
                 GDebug.error("Invalid texture source.");
             }
@@ -341,7 +353,8 @@ class GTexture
 
 	static private var g2d_instanceCount:Int = 0;
 
-    public function new(p_source:Object) {
+    public function new(p_id:String, p_source:Object) {
+		g2d_id = p_id;
         g2d_nativeWidth = g2d_nativeHeight = 0;
 		g2d_gpuWidth = g2d_gpuHeight = 0;
 		g2d_region = new GRectangle(0, 0, 1, 1);
@@ -511,9 +524,9 @@ class GTexture
     }
 	
 	private function parentInvalidated_handler(texture:GTexture):Void {
-		g2d_gpuWidth = g2d_parent.g2d_gpuWidth;
-		g2d_gpuHeight = g2d_parent.g2d_gpuHeight;
-		g2d_nativeTexture = g2d_parent.g2d_nativeTexture;
+		g2d_gpuWidth = texture.g2d_gpuWidth;
+		g2d_gpuHeight = texture.g2d_gpuHeight;
+		g2d_nativeTexture = texture.g2d_nativeTexture;
 		
 		if (g2d_onInvalidated != null) g2d_onInvalidated.dispatch(this);
 	}
@@ -526,7 +539,7 @@ class GTexture
 	 *	Get a reference value
 	 */
 	public function toReference():String {
-		return GTextureManager.getIdForTexture(this);
+		return g2d_id;
 	}
 	
 	/*
@@ -535,4 +548,41 @@ class GTexture
 	static public function fromReference(p_reference:String) {
 		return GTextureManager.getTextureById(p_reference);
 	}
+	
+	/****************************************************************************************************
+	 * 	GPU DEPENDANT PROPERTIES
+	 ****************************************************************************************************/
+	
+	private var g2d_gpuWidth:Int;
+	/**
+	 * 	Gpu width
+	 */
+    #if swc @:extern #end
+    public var gpuWidth(get, never):Int;
+    #if swc @:getter(gpuWidth) #end
+    inline private function get_gpuWidth():Int {
+        return g2d_gpuWidth;
+    }
+
+	private var g2d_gpuHeight:Int;
+	/**
+	 * 	Gpu height
+	 */
+    #if swc @:extern #end
+    public var gpuHeight(get, never):Int;
+    #if swc @:getter(gpuHeight) #end
+    inline private function get_gpuHeight():Int {
+        return g2d_gpuHeight;
+    }
+	
+	private var g2d_nativeTexture:TextureBase;
+	/**
+	 * 	Native texture reference
+	 */
+    #if swc @:extern #end
+    public var nativeTexture(get,never):TextureBase;
+    #if swc @:getter(nativeTexture) #end
+    inline private function get_nativeTexture():TextureBase {
+        return g2d_nativeTexture;
+    }
 }
