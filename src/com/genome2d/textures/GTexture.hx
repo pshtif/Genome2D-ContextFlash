@@ -302,6 +302,7 @@ class GTexture
             } else if (Std.is(g2d_source, ByteArray)) {
 				var byteArray:ByteArray = cast g2d_source;
                 var atf:String = String.fromCharCode(byteArray[0]) + String.fromCharCode(byteArray[1]) + String.fromCharCode(byteArray[2]);
+				//if (atf != "ATF") GDebug.error("Invalid ATF data");
                 if (atf == "ATF") {
                     g2d_sourceType = GTextureSourceType.ATF_BGRA;
                     var offset:Int = byteArray[6] == 255 ? 12 : 6;
@@ -546,7 +547,7 @@ class GTexture
 	 * 	Get an instance from reference
 	 */
 	static public function fromReference(p_reference:String) {
-		return GTextureManager.getTextureById(p_reference);
+		return GTextureManager.getTexture(p_reference);
 	}
 	
 	/****************************************************************************************************
