@@ -121,7 +121,7 @@ class GTextureManager {
     }
 	
 	static public function createSubTexture(p_id:String, p_texture:GTexture, p_region:GRectangle, p_frame:GRectangle):GTexture {
-		var texture:GTexture = new GTexture(p_id, p_texture);
+		var texture:GTexture = new GTexture(p_texture.id+"_"+p_id, p_texture);
 		
 		texture.region = p_region;
 		
@@ -140,7 +140,7 @@ class GTextureManager {
         return texture;
     }
 	 
-	static public function createSubTextures(p_id:String, p_texture:GTexture, p_xml:Xml):Array<GTexture> {
+	static public function createSubTextures(p_texture:GTexture, p_xml:Xml):Array<GTexture> {
         var textures:Array<GTexture> = new Array<GTexture>();
 
         var root = p_xml.firstElement();
@@ -155,7 +155,6 @@ class GTextureManager {
             if (node.get("frameX") != null && node.get("frameWidth") != null && node.get("frameY") != null && node.get("frameHeight") != null) {
                 frame = new GRectangle(Std.parseInt(node.get("frameX")), Std.parseInt(node.get("frameY")), Std.parseInt(node.get("frameWidth")), Std.parseInt(node.get("frameHeight")));
             }
-			
 			textures.push(createSubTexture(node.get("name"), p_texture, region, frame));
         }
 
