@@ -32,7 +32,7 @@ import flash.utils.ByteArray;
 import flash.Vector;
 
 @:access(com.genome2d.textures.GTexture)
-class GCustomRenderer implements IGRenderer
+class GFbxRenderer implements IGRenderer
 {
     static private inline var DATA_PER_VERTEX:Int = 5;
     static private inline var DATA_PER_VERTEX_NORMALS:Int = 8;
@@ -135,6 +135,8 @@ class GCustomRenderer implements IGRenderer
     public var projectionMatrix:GProjectionMatrix;
     public var shadowMatrix:GMatrix3D;
 
+	public var texture:GTexture;
+	
     public var lightPos:GFloat4;
     public var ambientColor:GFloat4;
     public var tintColor:GFloat4;
@@ -262,7 +264,7 @@ class GCustomRenderer implements IGRenderer
         }
     }
 
-    public function draw(p_texture:GTexture, p_cull:Int = 0, p_renderType:Int):Void {
+    public function draw(p_cull:Int = 0, p_renderType:Int):Void {
         GStats.drawCalls++;
         var nativeContext:Context3D = g2d_context.getNativeContext();
 
@@ -293,12 +295,12 @@ class GCustomRenderer implements IGRenderer
         nativeContext.setVertexBufferAt(0, g2d_vertexBuffer, 0, Context3DVertexBufferFormat.FLOAT_3);
         switch (renderType) {
             case 0:
-                nativeContext.setTextureAt(0, p_texture.nativeTexture);
-                nativeContext.setProgramConstantsFromVector(Context3DProgramType.VERTEX, 12, Vector.ofArray([p_texture.g2d_u, p_texture.g2d_v, p_texture.g2d_uScale, p_texture.g2d_vScale]), 1);
+                nativeContext.setTextureAt(0, texture.nativeTexture);
+                nativeContext.setProgramConstantsFromVector(Context3DProgramType.VERTEX, 12, Vector.ofArray([texture.g2d_u, texture.g2d_v, texture.g2d_uScale, texture.g2d_vScale]), 1);
                 nativeContext.setVertexBufferAt(1, g2d_vertexBuffer, 3, Context3DVertexBufferFormat.FLOAT_2);
             // With light/normals
             case 1:
-                nativeContext.setTextureAt(0, p_texture.nativeTexture);
+                nativeContext.setTextureAt(0, texture.nativeTexture);
                 nativeContext.setVertexBufferAt(1, g2d_vertexBuffer, 3, Context3DVertexBufferFormat.FLOAT_2);
                 nativeContext.setVertexBufferAt(2, g2d_vertexBuffer, 5, Context3DVertexBufferFormat.FLOAT_3);
                 // Inverse transpose model view matrix
@@ -308,7 +310,7 @@ class GCustomRenderer implements IGRenderer
                 invtran.transpose();
                 nativeContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 12, invtran, true);
                 // UV
-                nativeContext.setProgramConstantsFromVector(Context3DProgramType.VERTEX, 16, Vector.ofArray([p_texture.g2d_u, p_texture.g2d_v, p_texture.g2d_uScale, p_texture.g2d_vScale]), 1);
+                nativeContext.setProgramConstantsFromVector(Context3DProgramType.VERTEX, 16, Vector.ofArray([texture.g2d_u, texture.g2d_v, texture.g2d_uScale, texture.g2d_vScale]), 1);
                 // Light position
                 nativeContext.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, Vector.ofArray([lightPos.x,lightPos.y,lightPos.z,1.0]), 1);
                 // Ambient color
