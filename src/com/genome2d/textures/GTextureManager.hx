@@ -1,24 +1,12 @@
 package com.genome2d.textures;
-import com.genome2d.text.GTextureFont;
-import com.genome2d.text.GTextureChar;
-import com.genome2d.textures.GTexture;
-import com.genome2d.assets.GAssetManager;
-import com.genome2d.geom.GRectangle;
-import com.genome2d.geom.GRectangle;
-import com.genome2d.geom.GRectangle;
-import com.genome2d.assets.GXmlAsset;
-import com.genome2d.utils.GMaxRectPacker;
-import com.genome2d.utils.GPackerRectangle;
-import flash.utils.Dictionary;
-import com.genome2d.geom.GRectangle;
-import flash.utils.ByteArray;
-import com.genome2d.debug.GDebug;
-import flash.utils.Function;
-import com.genome2d.assets.GImageAssetType;
-import flash.display.BitmapData;
 import com.genome2d.assets.GImageAsset;
+import com.genome2d.assets.GImageAssetType;
+import com.genome2d.debug.GDebug;
+import com.genome2d.geom.GRectangle;
+import com.genome2d.textures.GTexture;
 import flash.display.Bitmap;
-import com.genome2d.context.IGContext;
+import flash.display.BitmapData;
+import flash.utils.ByteArray;
 
 @:access(com.genome2d.textures.GTexture)
 class GTextureManager {
@@ -35,16 +23,16 @@ class GTextureManager {
 
     static private function g2d_addTexture(p_texture:GTexture):Void {
         if (p_texture.id == null || p_texture.id.length == 0) GDebug.error("Invalid texture id");
-        if (untyped g2d_textures[p_texture.id] != null) GDebug.error("Duplicate textures id: "+p_texture.id);
-        untyped g2d_textures[p_texture.id] = p_texture;
+        if (g2d_textures.exists(p_texture.id)) GDebug.error("Duplicate textures id: "+p_texture.id);
+        g2d_textures.set(p_texture.id, p_texture);
     }
 
     static private function g2d_removeTexture(p_texture:GTexture):Void {
-        untyped g2d_textures.remove(p_texture.id);
+        g2d_textures.remove(p_texture.id);
     }
 
     static public function getTexture(p_id:String):GTexture {
-        return untyped g2d_textures.get(p_id);
+        return g2d_textures.get(p_id);
     }
 	
 	static public function getTextures(p_ids:Array<String>):Array<GTexture> {

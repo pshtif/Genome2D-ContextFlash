@@ -38,6 +38,17 @@ class GTexture
         return g2d_onInvalidated;
     }
 	
+	private var g2d_onDisposed:GCallback1<GTexture>;
+	/**
+	 * 	Callback after the texture was disposed
+	 */
+	#if swc @:extern #end
+    public var onDisposed(get,never):GCallback1<GTexture>;
+    #if swc @:getter(onDisposed) #end
+    inline private function get_onDisposed():GCallback1<GTexture> {
+		if (g2d_onDisposed == null) g2d_onDisposed = new GCallback1(GTexture);
+        return g2d_onDisposed;
+    }
 	
     private var g2d_dirty:Bool = true;
     inline public function isDirty():Bool {
@@ -330,6 +341,7 @@ class GTexture
             } else if (Std.is(g2d_source, GTexture)) {
 				var parent:GTexture = cast g2d_source;
 				parent.onInvalidated.add(parentInvalidated_handler);
+				parent.onDisposed.add(parentDisposed_handler);
 				g2d_gpuWidth = parent.g2d_gpuWidth;
 				g2d_gpuHeight = parent.g2d_gpuHeight;
 				g2d_nativeWidth = parent.g2d_nativeWidth;
@@ -510,11 +522,13 @@ class GTexture
     }
 
     public function dispose():Void {
-        if (g2d_nativeTexture != null) g2d_nativeTexture.dispose();
+        if (g2d_sourceType != GTextureSourceType.TEXTURE && g2d_nativeTexture != null) g2d_nativeTexture.dispose();
 
         g2d_source = null;
         g2d_nativeTexture = null;
         GTextureManager.g2d_removeTexture(this);
+		
+		if (g2d_onDisposed != null) g2d_onDisposed.dispatch(this);
     }
 
     public function getAlphaAtUV(p_u:Float, p_v:Float):Float {
@@ -529,7 +543,13 @@ class GTexture
 		g2d_gpuHeight = texture.g2d_gpuHeight;
 		g2d_nativeTexture = texture.g2d_nativeTexture;
 		
+		invalidateUV();
+		
 		if (g2d_onInvalidated != null) g2d_onInvalidated.dispatch(this);
+	}
+	
+	private function parentDisposed_handler(texture:GTexture):Void {
+		dispose();
 	}
 	
     public function toString():String {
