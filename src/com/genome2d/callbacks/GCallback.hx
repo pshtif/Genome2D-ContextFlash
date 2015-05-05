@@ -37,6 +37,7 @@ class GCallback<TListener> {
     public function addWithPriority(p_listener:TListener):Void {
         if (g2d_listeners.indexOf(p_listener) == -1 && g2d_listenersOnce.indexOf(p_listener) == -1) {
             g2d_listeners.unshift(p_listener);
+			g2d_listenerCount++;
         }
     }
 
@@ -109,7 +110,7 @@ class GCallback2<TValue1,TValue2> extends GCallback<TValue1 -> TValue2 -> Void>
 	**/
     public function dispatch(p_value1:TValue1, p_value2:TValue2):Void {
         g2d_iteratingDispatch = 0;		
-        while (g2d_iteratingDispatch<g2d_listenerCount) {
+        while (g2d_iteratingDispatch < g2d_listenerCount) {
             g2d_listeners[g2d_iteratingDispatch](p_value1, p_value2);
 			g2d_iteratingDispatch++;
         }

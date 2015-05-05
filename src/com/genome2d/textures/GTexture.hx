@@ -14,6 +14,7 @@ import com.genome2d.context.GContextFeature;
 import com.genome2d.context.stage3d.GStage3DContext;
 import com.genome2d.debug.GDebug;
 import com.genome2d.geom.GRectangle;
+import com.genome2d.proto.IGPrototypable;
 import com.genome2d.textures.GTextureManager;
 import com.genome2d.textures.GTextureSourceType;
 
@@ -24,7 +25,7 @@ import flash.utils.ByteArray;
 import flash.utils.Object;
 
 @:access(com.genome2d.textures.GTextureManager)
-class GTexture
+class GTexture implements IGPrototypable
 {
 	private var g2d_onInvalidated:GCallback1<GTexture>;
 	/**
