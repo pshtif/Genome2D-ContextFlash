@@ -395,8 +395,8 @@ class GTexture implements IGPrototypable
 		g2d_u = g2d_region.x / gpuWidth;
 		g2d_v = g2d_region.y / gpuHeight;
 
-		g2d_uScale = g2d_nativeWidth / gpuWidth;
-		g2d_vScale = g2d_nativeHeight / gpuHeight;
+		g2d_uScale = g2d_region.width / gpuWidth;
+		g2d_vScale = g2d_region.height / gpuHeight;
     }
 	
 	
@@ -429,8 +429,8 @@ class GTexture implements IGPrototypable
             var contextStage3D:GStage3DContext = cast Genome2D.getInstance().getContext();
 
             if (g2d_sourceType != GTextureSourceType.TEXTURE && contextStage3D.getNativeContext().driverInfo != "Disposed") {
-                g2d_gpuWidth = g2d_nativeWidth = usesRectangle() ? g2d_nativeWidth : GTextureUtils.getNextValidTextureSize(g2d_nativeWidth);
-                g2d_gpuHeight = g2d_nativeHeight = usesRectangle() ? g2d_nativeHeight : GTextureUtils.getNextValidTextureSize(g2d_nativeHeight);
+                g2d_gpuWidth = usesRectangle() ? g2d_nativeWidth : GTextureUtils.getNextValidTextureSize(g2d_nativeWidth);
+                g2d_gpuHeight = usesRectangle() ? g2d_nativeHeight : GTextureUtils.getNextValidTextureSize(g2d_nativeHeight);
 
                 switch (g2d_sourceType) {
                     case GTextureSourceType.BITMAPDATA:
@@ -447,7 +447,6 @@ class GTexture implements IGPrototypable
                                 g2d_nativeTexture = contextStage3D.getNativeContext().createTexture(g2d_gpuWidth, g2d_gpuHeight, untyped g2d_format, false);
                             }
                         }
-
                         untyped g2d_nativeTexture["uploadFromBitmapData"](resampled);
                     /*
                     case GTextureSourceType.BYTEARRAY:
@@ -493,12 +492,13 @@ class GTexture implements IGPrototypable
                     default:
                 }
 				
+				region = new GRectangle(0,0,g2d_nativeWidth,g2d_nativeHeight);
 				invalidateUV();
 				
 				if (g2d_onInvalidated != null) g2d_onInvalidated.dispatch(this);
             }
         }
-
+		
         g2d_dirty = false;
     }
 

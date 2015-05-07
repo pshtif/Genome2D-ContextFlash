@@ -7,6 +7,8 @@
  *	License:: ./doc/LICENSE.md (https://github.com/pshtif/Genome2D/blob/master/LICENSE.md)
  */
 package com.genome2d.context.bitmap;
+import com.genome2d.callbacks.GCallback;
+import com.genome2d.input.IGInteractive;
 
 #if !genome_stage3donly
 import com.genome2d.textures.GTexture;
@@ -35,12 +37,14 @@ import flash.geom.Rectangle;
 import com.genome2d.context.GCamera;
 import com.genome2d.textures.GTexture;
 
-class GBitmapContext implements IGContext
+class GBitmapContext implements IGContext implements IGInteractive
 {
     public function hasFeature(p_feature:Int):Bool {
         return false;
     }
 
+	public var g2d_onMouseInputInternal:GMouseInput->Void;
+	
     private var ZERO_POINT:Point;
 
     private var g2d_nativeStage:Stage;
@@ -85,7 +89,7 @@ class GBitmapContext implements IGContext
 
     private var g2d_onKeyboardInput:GCallback1<GKeyboardInput>;
     #if swc @:extern #end
-    public var onKeyboardGInput(get,never):GCallback1<GKeyboardInput>;
+    public var onKeyboardInput(get,never):GCallback1<GKeyboardInput>;
     #if swc @:getter(onKeyboardInput) #end
     inline private function get_onKeyboardInput():GCallback1<GKeyboardInput>{
         return g2d_onKeyboardInput;
@@ -336,25 +340,25 @@ class GBitmapContext implements IGContext
         g2d_renderTarget = p_texture;
     }
 
-    private function g2d_enterFrameHandler(event:Event):Void {
+    private function g2d_enterFrame_handler(event:Event):Void {
         var currentTime:Float =  untyped __global__["flash.utils.getTimer"]();
         g2d_currentDeltaTime = currentTime - g2d_currentTime;
         g2d_currentTime = currentTime;
         g2d_onFrame.dispatch(g2d_currentDeltaTime);
     }
 
-    private function g2d_mouseEventHandler(event:MouseEvent):Void {
+    private function g2d_mouseEvent_handler(event:MouseEvent):Void {
         var captured:Bool = false;
         if (enableNativeContentMouseCapture && event.target != g2d_nativeStage) captured = true;
 
         var mx:Float = event.stageX-g2d_stageViewRect.x;
         var my:Float = event.stageY-g2d_stageViewRect.y;
-        var input:GMouseInput = new GMouseInput(GMouseInputType.fromNative(event.type), mx, my, captured);// event.buttonDown, event.ctrlKey,
+        var input:GMouseInput = new GMouseInput(this, this, GMouseInputType.fromNative(event.type), mx, my);
         g2d_onMouseInput.dispatch(input);
     }
 
-    private function g2d_keyboardEventHandler(event:KeyboardEvent):Void {
-        var input:GKeyboardInput = new GKeyboardInput(GKeyboardInputType.fromNative(event.type), event.keyCode);
+    private function g2d_keyboardEvent_handler(event:KeyboardEvent):Void {
+        var input:GKeyboardInput = new GKeyboardInput(GKeyboardInputType.fromNative(event.type), event.keyCode, event.charCode);
         g2d_onKeyboardInput.dispatch(input);
     }
 
@@ -384,7 +388,11 @@ class GBitmapContext implements IGContext
     }
 
     public function setRenderTargets(p_textures:Array<GTexture>, p_transform:GMatrix3D = null, p_clean:Bool = true):Void {
-
+		
     }
+	
+	inline public function setBlendMode(p_blendMode:Int, p_premultiplied:Bool):Void {
+		
+	}
 }
 #end

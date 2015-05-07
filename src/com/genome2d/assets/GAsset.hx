@@ -66,7 +66,7 @@ class GAsset implements IGPrototypable
     inline private function set_url(p_value:String):String {
         if (!isLoaded()) {
             g2d_url = p_value;
-            if (g2d_id == "") id = g2d_url;
+            if (g2d_id == "") id = g2d_url.substr(g2d_url.lastIndexOf("\\")+1);
         } else {
             GDebug.warning("Asset already loaded " + id);
         }
