@@ -18,6 +18,7 @@ class GOutlineFilter extends GFilter
     public var red:Float = 0;
     public var green:Float = 0;
     public var blue:Float = 0;
+	public var alpha:Float = 1;
 
     public function new(p_size:Int) {
         super();
@@ -44,7 +45,7 @@ class GOutlineFilter extends GFilter
             "tex ft2, ft1.xy, fs0 <2d,linear,mipnone,clamp> \n" +
             "sub ft0.w, ft0.w, ft2.w                        \n" +
 
-            "mov ft0.xyz, fc3.xyz       					\n" +
+            "mul ft0, fc3, ft0.wwww		 					\n" +
             "mov oc, ft0 \n";
 
         fragmentConstants = Vector.ofArray([0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0.0]);
@@ -60,6 +61,7 @@ class GOutlineFilter extends GFilter
         fragmentConstants[8] = red;
         fragmentConstants[9] = green;
         fragmentConstants[10] = blue;
+		fragmentConstants[11] = alpha;
 
         super.bind(p_context, p_texture);
     }
