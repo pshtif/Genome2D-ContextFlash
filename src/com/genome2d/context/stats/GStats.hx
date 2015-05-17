@@ -107,7 +107,7 @@ class GStats implements IGStats
                 var w:Int = untyped __int__(g2d_statsField.width);
                 if (w>1024) w = 1024;
                 g2d_bitmapData = new BitmapData(GTextureUtils.getNextValidTextureSize(w),16, true, 0x0);
-                g2d_texture.source = g2d_bitmapData;
+                g2d_texture.setSource(g2d_bitmapData);
                 g2d_bitmapData.draw(g2d_statsField);
                 g2d_texture.invalidateNativeTexture(true);
             } else {
