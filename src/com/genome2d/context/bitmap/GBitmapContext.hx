@@ -277,7 +277,7 @@ class GBitmapContext implements IGContext implements IGInteractive
 	}
 	
 	public function draw(p_texture:GTexture, p_x:Float, p_y:Float, p_scaleX:Float = 1, p_scaleY:Float = 1, p_rotation:Float = 0, p_red:Float = 1, p_green:Float = 1, p_blue:Float = 1, p_alpha:Float = 1, p_blendMode:Int = 1, p_filter:GFilter = null):Void {
-        var bitmapData:BitmapData = cast p_texture.source;
+        var bitmapData:BitmapData = cast p_texture.getSource();
 		if (bitmapData == null) return;
 
         if (p_rotation == 0 && p_scaleX == 1 && p_scaleY == 1 && p_red == 1 && p_green == 1 && p_blue == 1 && p_alpha == 1 && g2d_activeCamera.rotation == 0 && g2d_activeCamera.scaleX == 1 && g2d_activeMaskRect == null) {
