@@ -55,16 +55,20 @@ class GViewport {
         viewBottom = p_viewHeight;
 
         var rect:GRectangle = Genome2D.getInstance().getContext().getStageViewRect();
-        resizeHandler(rect.width, rect.height);
+        resize_handler(rect.width, rect.height);
 
         if (p_autoResize) {
-            Genome2D.getInstance().getContext().onResize.addWithPriority(resizeHandler);
+            Genome2D.getInstance().getContext().onResize.addWithPriority(resize_handler);
         }
     }
 
     private var g2d_previousZoom:Int = 1;
+	
+	public function dispose():Void {
+		Genome2D.getInstance().getContext().onResize.remove(resize_handler);
+	}
 
-    private function resizeHandler(p_width:Float, p_height:Float):Void {
+    private function resize_handler(p_width:Float, p_height:Float):Void {
         var aw:Float = p_width/viewRight;
         var ah:Float = p_height/viewBottom;
 

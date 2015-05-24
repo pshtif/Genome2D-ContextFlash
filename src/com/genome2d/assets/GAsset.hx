@@ -124,4 +124,10 @@ class GAsset implements IGPrototypable
 	public function toReference():String {
 		return null;
 	}
+	
+	public function dispose():Void {
+		onLoaded.removeAll();
+		onFailed.removeAll();
+		GAssetManager.g2d_references.remove(id);
+	}
 }
