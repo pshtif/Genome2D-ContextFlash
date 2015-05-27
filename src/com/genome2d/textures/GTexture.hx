@@ -93,7 +93,7 @@ class GTexture extends GTextureBase
             if (g2d_sourceType != GTextureSourceType.TEXTURE && contextStage3D.getNativeContext().driverInfo != "Disposed") {
                 g2d_gpuWidth = usesRectangle() ? g2d_nativeWidth : GTextureUtils.getNextValidTextureSize(g2d_nativeWidth);
                 g2d_gpuHeight = usesRectangle() ? g2d_nativeHeight : GTextureUtils.getNextValidTextureSize(g2d_nativeHeight);
-
+				
                 switch (g2d_sourceType) {
                     case GTextureSourceType.BITMAPDATA:
                         var resampled:BitmapData = cast g2d_source;
@@ -156,7 +156,7 @@ class GTexture extends GTextureBase
 				
 				region = new GRectangle(0,0,g2d_nativeWidth,g2d_nativeHeight);
 				invalidateUV();
-				
+
 				if (g2d_onInvalidated != null) g2d_onInvalidated.dispatch(this);
             }
         }
@@ -184,10 +184,10 @@ class GTexture extends GTextureBase
         untyped g2d_nativeTexture["uploadFromByteArray"](p_data, p_byteArrayOffset);
     }
 	
-	override private function parentInvalidated_handler(texture:GTexture):Void {
-		g2d_nativeTexture = texture.g2d_nativeTexture;
+	override private function parentInvalidated_handler(p_texture:GTexture):Void {
+		g2d_nativeTexture = p_texture.g2d_nativeTexture;
 		
-		super.parentInvalidated_handler(this);
+		super.parentInvalidated_handler(p_texture);
 	}
 
     override public function dispose():Void {
