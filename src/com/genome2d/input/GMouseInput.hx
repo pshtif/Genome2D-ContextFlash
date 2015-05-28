@@ -50,6 +50,7 @@ class GMouseInput {
 		input.shiftKey = shiftKey;
 		input.nativeCaptured = nativeCaptured;
 		input.delta = delta;
+		input.camera = camera;
 		
 		return input;
 	}
