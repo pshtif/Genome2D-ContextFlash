@@ -87,8 +87,8 @@ class GTexture extends GTextureBase
     }
 
     public function invalidateNativeTexture(p_reinitialize:Bool):Void {
-        if (untyped __is__(Genome2D.getInstance().getContext(), GStage3DContext)) {
-            var contextStage3D:GStage3DContext = cast Genome2D.getInstance().getContext();
+        if (untyped __is__(g2d_context, GStage3DContext)) {
+            var contextStage3D:GStage3DContext = cast g2d_context;
 
             if (g2d_sourceType != GTextureSourceType.TEXTURE && contextStage3D.getNativeContext().driverInfo != "Disposed") {
                 g2d_gpuWidth = usesRectangle() ? g2d_nativeWidth : GTextureUtils.getNextValidTextureSize(g2d_nativeWidth);
@@ -165,20 +165,20 @@ class GTexture extends GTextureBase
     }
 
     private function g2d_uploadFromBitmapData(p_bitmapData:BitmapData):Void {
-        var contextStage3D:GStage3DContext = cast Genome2D.getInstance().getContext();
+        var contextStage3D:GStage3DContext = cast g2d_context;
         if (g2d_nativeTexture == null || contextStage3D.getNativeContext().driverInfo == "Disposed") return;
 
         untyped g2d_nativeTexture["uploadFromBitmapData"](p_bitmapData);
     }
 
     private function g2d_uploadFromCompressedByteArray(p_data:ByteArray, p_byteArrayOffset:UInt, p_asyncBoolean:Bool = false):Void {
-        var contextStage3D:GStage3DContext = cast Genome2D.getInstance().getContext();
+        var contextStage3D:GStage3DContext = cast g2d_context;
         if (g2d_nativeTexture == null || contextStage3D.getNativeContext().driverInfo == "Disposed") return;
         untyped g2d_nativeTexture["uploadCompressedTextureFromByteArray"](p_data, p_byteArrayOffset, p_asyncBoolean);
     }
 
     private function g2d_uploadFromByteArray(p_data:ByteArray, p_byteArrayOffset:UInt):Void {
-        var contextStage3D:GStage3DContext = cast Genome2D.getInstance().getContext();
+        var contextStage3D:GStage3DContext = cast g2d_context;
         if (g2d_nativeTexture == null || contextStage3D.getNativeContext().driverInfo == "Disposed") return;
 
         untyped g2d_nativeTexture["uploadFromByteArray"](p_data, p_byteArrayOffset);
