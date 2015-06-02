@@ -642,18 +642,21 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal imple
     /****************************************************************************************************
      *  Render target methods
      ****************************************************************************************************/
-    private var g2d_renderTargetMatrix:Matrix3D;
     private var g2d_usedRenderTargets:Int = 0;
     private var g2d_renderTargetStack:Array<GTexture>;
+	
     private var g2d_renderTarget:GTexture;
-    public var g2d_renderTargetTransform:GMatrix3D;
-
-    /**
+	/**
         Gets the current render target, if null the target is backbuffer
      */
     public function getRenderTarget():GTexture {
         return g2d_renderTarget;
     }
+	
+    private var g2d_renderTargetMatrix:GMatrix3D;
+	public function getRenderTargetMatrix():GMatrix3D {
+		return g2d_renderTargetMatrix;
+	}
 
     /**
         Sets the render target for all subsequent draw calls
@@ -687,7 +690,7 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal imple
 			g2d_nativeContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 0, GProjectionMatrix.getOrtho(p_texture.nativeWidth, p_texture.nativeHeight, p_transform), true);
 		}
 
-        g2d_renderTargetTransform = p_transform;
+        g2d_renderTargetMatrix = p_transform;
 		g2d_renderTarget = p_texture;
     }
 

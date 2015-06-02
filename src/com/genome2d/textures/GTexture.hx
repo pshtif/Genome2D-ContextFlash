@@ -93,7 +93,7 @@ class GTexture extends GTextureBase
             if (g2d_sourceType != GTextureSourceType.TEXTURE && contextStage3D.getNativeContext().driverInfo != "Disposed") {
                 g2d_gpuWidth = usesRectangle() ? g2d_nativeWidth : GTextureUtils.getNextValidTextureSize(g2d_nativeWidth);
                 g2d_gpuHeight = usesRectangle() ? g2d_nativeHeight : GTextureUtils.getNextValidTextureSize(g2d_nativeHeight);
-				
+
                 switch (g2d_sourceType) {
                     case GTextureSourceType.BITMAPDATA:
                         var resampled:BitmapData = cast g2d_source;

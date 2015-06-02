@@ -333,6 +333,10 @@ class GBitmapContext implements IGContext implements IGInteractive
     public function getRenderTarget():GTexture {
         return g2d_renderTarget;
     }
+	
+	public function getRenderTargetMatrix():GMatrix3D {
+        return null;
+    }
 
     public function setRenderTarget(p_texture:GTexture = null, p_transform:Matrix3D = null, p_clean:Bool = true):Void {
         if (g2d_renderTarget == p_texture) return;
