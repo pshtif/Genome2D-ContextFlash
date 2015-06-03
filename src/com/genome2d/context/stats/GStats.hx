@@ -93,7 +93,7 @@ class GStats implements IGStats
 
         if (customStats != null) {
             for (i in 0...customStats.length) {
-                g2d_statsField.htmlText += customStats[i];
+                g2d_statsField.htmlText += customStats[i] + " ";
             }
         }
 
