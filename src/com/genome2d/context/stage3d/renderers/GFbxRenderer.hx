@@ -141,6 +141,8 @@ class GFbxRenderer implements IGRenderer
     public var ambientColor:GFloat4;
     public var tintColor:GFloat4;
     public var lightColor:GFloat4;
+	
+	public var visible:Bool = true;
 
     public function new(p_vertices:Array<Float>, p_uvs:Array<Float>, p_indices:Array<UInt> = null, p_normals:Array<Float>, p_generatePerspectiveMatrix:Bool = false) {
         modelMatrix = new GMatrix3D();
