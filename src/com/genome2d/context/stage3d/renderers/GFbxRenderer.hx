@@ -84,6 +84,7 @@ class GFbxRenderer implements IGRenderer
             "mul ft0, ft0, fc2 \n" +
             // Add diffuse + ambient
             "add ft1, ft1, ft0 \n" +
+			//"sat ft1, ft1 \n" +
             // Multiply with tint
             "mul oc, ft1, fc3";
             //"mov oc, v1";
@@ -296,10 +297,14 @@ class GFbxRenderer implements IGRenderer
 
         nativeContext.setVertexBufferAt(0, g2d_vertexBuffer, 0, Context3DVertexBufferFormat.FLOAT_3);
         switch (renderType) {
+			// Unlit
             case 0:
                 nativeContext.setTextureAt(0, texture.nativeTexture);
+				nativeContext.setVertexBufferAt(1, g2d_vertexBuffer, 3, Context3DVertexBufferFormat.FLOAT_2);
+				// UV
                 nativeContext.setProgramConstantsFromVector(Context3DProgramType.VERTEX, 12, Vector.ofArray([texture.g2d_u, texture.g2d_v, texture.g2d_uScale, texture.g2d_vScale]), 1);
-                nativeContext.setVertexBufferAt(1, g2d_vertexBuffer, 3, Context3DVertexBufferFormat.FLOAT_2);
+				// TINT
+				nativeContext.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, Vector.ofArray([tintColor.x,tintColor.y,tintColor.z,tintColor.w]), 1);
             // With light/normals
             case 1:
                 nativeContext.setTextureAt(0, texture.nativeTexture);
