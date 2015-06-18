@@ -19,13 +19,11 @@ class GDisplacementFilter extends GFilter {
     public var alpha:Float = 1;
 
 
-    public function new() {
+    public function new(p_scaleX:Float = .1, p_scaleY:Float = .1) {
         super();
 
-        var scaleX:Float = 1/256;
-        var scaleY:Float = 2/256;
         g2d_matrix = new GMatrix3D();
-        g2d_matrix.copyRawDataFrom(Vector.ofArray([scaleX,0,0,0, 0,scaleY,0,0, 0,0,0,0, 0,0,0,0]));
+        g2d_matrix.copyRawDataFrom(Vector.ofArray([p_scaleX,0,0,0, 0, p_scaleY,0,0, 0,0,0,0, 0,0,0,0]));
 
         overrideFragmentShader = true;
 

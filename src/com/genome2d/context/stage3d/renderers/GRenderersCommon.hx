@@ -15,21 +15,9 @@ import flash.Vector;
 
 class GRenderersCommon
 {
-    inline static private var COLOR_FRAGMENT_CODE:String = "mov oc, fc0";
-
-    static private function getSamplerFragmentCode(p_repeat:Bool, p_filtering:Int, p_atf:String):String {
-        return "tex ft0, v0, fs0 <2d," + ((p_repeat) ? "repeat" : "clamp") + ((p_atf != "") ? "," + p_atf + "," : ",") + ((p_filtering == 0) ? "nearest>" : "linear>");
-    }
-
-    inline static private var ALPHA_FRAGMENT_CONSTANT_CODE:String = "mul ft0, ft0, fc1";
-
-    inline static private var ALPHA_FRAGMENT_VARYING_CODE:String = "mul ft0, ft0, v1";
-
-    inline static private var FINAL_FRAGMENT_CODE:String = "mov oc, ft0";
-
     static public function getColorShaderCode():ByteArray {
         var assembler:AGALMiniAssembler = new AGALMiniAssembler();
-        assembler.assemble("fragment", COLOR_FRAGMENT_CODE, GRenderersCommon.AGAL_VERSION);
+        assembler.assemble("fragment", GShaderCode.FRAGMENT_FINAL_CONSTANT_CODE, GRenderersCommon.AGAL_VERSION);
 
         return assembler.agalcode;
     }
@@ -37,10 +25,10 @@ class GRenderersCommon
     static public function getTexturedShaderCode(p_repeat:Bool, p_filtering:Int, p_alpha:Int, p_atf:String = "", p_filter:GFilter = null):ByteArray {
         var shaderString:String;
         if (p_filter==null || !p_filter.overrideFragmentShader) {
-            shaderString = getSamplerFragmentCode(p_repeat, p_filtering, p_atf);
+            shaderString = GShaderCode.getSamplerFragmentCode(p_repeat, p_filtering, p_atf);
             if (p_filter != null) shaderString += "\n"+p_filter.fragmentCode;
-            if (p_alpha == 1) shaderString += "\n"+ALPHA_FRAGMENT_VARYING_CODE else if (p_alpha == 2) shaderString += "\n"+ALPHA_FRAGMENT_CONSTANT_CODE;
-            shaderString+="\n"+FINAL_FRAGMENT_CODE;
+            if (p_alpha == 1) shaderString += "\n"+GShaderCode.FRAGMENT_MUL_COLOR_VARYING_CODE else if (p_alpha == 2) shaderString += "\n"+GShaderCode.FRAGMENT_MUL_COLOR_CONSTANT_CODE;
+            shaderString+="\n"+GShaderCode.FRAGMENT_FINAL_TEMPORARY_CODE;
         } else {
             shaderString = p_filter.fragmentCode;
         }

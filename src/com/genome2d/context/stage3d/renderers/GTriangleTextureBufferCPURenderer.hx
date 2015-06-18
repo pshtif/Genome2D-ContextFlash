@@ -29,16 +29,20 @@ import flash.Vector;
 @:access(com.genome2d.textures.GTexture)
 class GTriangleTextureBufferCPURenderer implements IGRenderer
 {
-    static private inline var BATCH_SIZE:Int = 1200;
-    static private inline var DATA_PER_VERTEX:Int = 4;
-    static private inline var DATA_PER_VERTEX_ALPHA:Int = DATA_PER_VERTEX+4;
+    inline static private var BATCH_SIZE:Int = 1200;
+    inline static private var DATA_PER_VERTEX:Int = 4;
+    inline static private var DATA_PER_VERTEX_ALPHA:Int = DATA_PER_VERTEX+4;
 
-    static private inline var VERTEX_SHADER_CODE:String =
+	inline static private var VERTEX_SHADER_CODE:String =
+        "m44 op, va0, vc0";
+	
+	inline static private var VERTEX_SHADER_CODE_COLOR:String = VERTEX_SHADER_CODE + "\nmov v0, va1";
+	
+    inline static private var VERTEX_SHADER_CODE_TEXTURED:String =
         "m44 op, va0, vc0       \n" +
-
         "mov v0, va1";
 
-    inline static private var VERTEX_SHADER_CODE_ALPHA:String = VERTEX_SHADER_CODE + "\nmov v1, va2";
+    inline static private var VERTEX_SHADER_CODE_TEXTURED_COLOR:String = VERTEX_SHADER_CODE_TEXTURED + "\nmov v1, va2";
 
     private var g2d_vertexBuffer:VertexBuffer3D;
     private var g2d_vertexBufferAlpha:VertexBuffer3D;
@@ -59,13 +63,13 @@ class GTriangleTextureBufferCPURenderer implements IGRenderer
 
     private var g2d_cachedPrograms:Dictionary;
     private var g2d_cachedProgramIds:Dictionary;
-    private var g2d_vertexShaderCode:ByteArray;
-    private var g2d_vertexShaderAlphaCode:ByteArray;
+    private var g2d_vertexShaderTexturedCode:ByteArray;
+    private var g2d_vertexShaderTexturedAlphaCode:ByteArray;
 
     private var g2d_context:GStage3DContext;
     private var g2d_nativeContext:Context3D;
 
-    inline private function getCachedProgram(p_alpha:Bool, p_repeat:Bool, p_filtering:Int, p_atf:String, p_filter:GFilter):Program3D {
+    inline private function getCachedProgram(p_textured:Bool, p_alpha:Bool, p_repeat:Bool, p_filtering:Int, p_atf:String, p_filter:GFilter):Program3D {
         var programBit:Int = 0;
 
         if (p_alpha) programBit |= 1;
@@ -87,7 +91,11 @@ class GTriangleTextureBufferCPURenderer implements IGRenderer
         var program:Program3D = untyped g2d_cachedPrograms[programId];
         if (program == null) {
             program = g2d_nativeContext.createProgram();
-            program.upload((p_alpha) ? g2d_vertexShaderAlphaCode : g2d_vertexShaderCode, GRenderersCommon.getTexturedShaderCode(p_repeat, p_filtering, p_alpha?1:0, p_atf, p_filter));
+			if (p_textured) {
+				program.upload((p_alpha) ? g2d_vertexShaderTexturedAlphaCode : g2d_vertexShaderTexturedCode, GRenderersCommon.getTexturedShaderCode(p_repeat, p_filtering, p_alpha?1:0, p_atf, p_filter));	
+			} else {
+				//program.upload((p_alpha) ? g2d_vertexShaderTexturedAlphaCode 
+			}
             untyped g2d_cachedPrograms[programId] = program;
         }
 
@@ -105,10 +113,10 @@ class GTriangleTextureBufferCPURenderer implements IGRenderer
         g2d_cachedProgramIds = new Dictionary(false);
 
         var agal:AGALMiniAssembler = new AGALMiniAssembler();
-        agal.assemble("vertex", VERTEX_SHADER_CODE);
-        g2d_vertexShaderCode = agal.agalcode;
-        agal.assemble("vertex", VERTEX_SHADER_CODE_ALPHA);
-        g2d_vertexShaderAlphaCode = agal.agalcode;
+        agal.assemble("vertex", VERTEX_SHADER_CODE_TEXTURED);
+        g2d_vertexShaderTexturedCode = agal.agalcode;
+        agal.assemble("vertex", VERTEX_SHADER_CODE_TEXTURED_COLOR);
+        g2d_vertexShaderTexturedAlphaCode = agal.agalcode;
 
         g2d_vertexVector = new Vector<Float>(3 * BATCH_SIZE * DATA_PER_VERTEX_ALPHA);
         g2d_vertexBuffer = g2d_nativeContext.createVertexBuffer(3 * BATCH_SIZE, DATA_PER_VERTEX);
@@ -129,7 +137,7 @@ class GTriangleTextureBufferCPURenderer implements IGRenderer
         if (g2d_cachedPrograms==null || (p_reinitialize && !g2d_initializedThisFrame)) initialize(p_context);
         g2d_initializedThisFrame = p_reinitialize;
 
-        g2d_nativeContext.setProgram(getCachedProgram(g2d_activeAlpha, false, GTextureManager.defaultFilteringType, g2d_activeAtf, g2d_activeFilter));
+        g2d_nativeContext.setProgram(getCachedProgram(true, g2d_activeAlpha, false, GTextureManager.defaultFilteringType, g2d_activeAtf, g2d_activeFilter));
 
         g2d_nativeContext.setProgramConstantsFromVector(Context3DProgramType.VERTEX, 4, Vector.ofArray([1, 0, 0, .5]), 1);
         g2d_nativeContext.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, Vector.ofArray([1.0,1.0,1.0,1.0]), 1);
@@ -165,7 +173,7 @@ class GTriangleTextureBufferCPURenderer implements IGRenderer
                 g2d_activeFilter = p_filter;
                 if (g2d_activeFilter != null) g2d_activeFilter.bind(g2d_context, p_texture);
                 g2d_activeRepeat = p_texture.g2d_repeatable;
-                g2d_nativeContext.setProgram(getCachedProgram(g2d_activeAlpha, g2d_activeRepeat, g2d_activeFiltering, g2d_activeAtf, g2d_activeFilter));
+                g2d_nativeContext.setProgram(getCachedProgram(true, g2d_activeAlpha, g2d_activeRepeat, g2d_activeFiltering, g2d_activeAtf, g2d_activeFilter));
             }
         }
 
