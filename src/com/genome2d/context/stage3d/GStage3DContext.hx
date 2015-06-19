@@ -168,6 +168,7 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal imple
 	private var g2d_activeBlendMode:Int;
 	private var g2d_activePremultiply:Bool;
 
+	private var g2d_hdResolution:Bool;
     private var g2d_antiAliasing:Int;
     private var g2d_enableDepthAndStencil:Bool;
     private var g2d_renderMode:String;
@@ -224,6 +225,7 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal imple
         g2d_nativeStage3D = p_config.externalStage3D;
 
         g2d_antiAliasing = p_config.antiAliasing;
+		g2d_hdResolution = p_config.hdResolution;
         g2d_enableDepthAndStencil = p_config.enableDepthAndStencil;
         g2d_renderMode = p_config.renderMode;
         g2d_profile = p_config.profile;
@@ -315,7 +317,7 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal imple
             try {
                 var w:Int = untyped __int__(g2d_stageViewRect.width);
                 var h:Int = untyped __int__(g2d_stageViewRect.height);
-                g2d_nativeContext.configureBackBuffer(w, h, g2d_antiAliasing, g2d_enableDepthAndStencil);
+                g2d_nativeContext.configureBackBuffer(w, h, g2d_antiAliasing, g2d_enableDepthAndStencil, g2d_hdResolution);
             }
             catch (msg:String) {
                 success = false;

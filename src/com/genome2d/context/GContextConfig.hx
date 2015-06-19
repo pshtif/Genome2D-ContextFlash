@@ -26,6 +26,7 @@ class GContextConfig
     public var useFastMem:Bool = true;
 	public var enableDepthAndStencil:Bool = false;
 	public var antiAliasing:Int = 0;
+	public var hdResolution:Bool = false;
 	public var renderMode:String;
 	public var profile:Object;
     public var viewRect:GRectangle;
