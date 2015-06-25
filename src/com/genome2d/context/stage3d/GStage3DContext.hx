@@ -12,6 +12,7 @@ import com.genome2d.callbacks.GCallback;
 import com.genome2d.debug.IGDebuggableInternal;
 import com.genome2d.input.IGInteractive;
 import com.genome2d.macros.MGDebug;
+import flash.display.BitmapData;
 
 import com.genome2d.textures.GTextureManager;
 import com.genome2d.textures.GTexture;
@@ -95,6 +96,9 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal imple
 
     private var g2d_currentTime:Float = 0;
     private var g2d_currentDeltaTime:Float;
+	
+	private var g2d_useBitmapDataTargetOnce:Bool = true;
+	private var g2d_bitmapDataTarget:BitmapData;
 
     /*
      *  CALLBACKS
@@ -484,6 +488,11 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal imple
             g2d_activeRenderer.clear();
         }
 
+		if (g2d_bitmapDataTarget != null) {
+			g2d_nativeContext.drawToBitmapData(g2d_bitmapDataTarget);
+			if (g2d_useBitmapDataTargetOnce) g2d_bitmapDataTarget = null;
+		}
+		
         if (!g2d_usingExternalContext) {
 		    g2d_nativeContext.present();
         }
@@ -709,6 +718,11 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal imple
 
         g2d_usedRenderTargets = p_textures.length;
     }
+	
+	
+	public function setBitmapDataTarget(p_bitmapData:BitmapData, p_useOnce:Bool = true):Void {
+		g2d_bitmapDataTarget = p_bitmapData;
+	}
 
     private function g2d_enterFrame_handler(event:Event):Void {
         var currentTime:Float =  untyped __global__["flash.utils.getTimer"]();

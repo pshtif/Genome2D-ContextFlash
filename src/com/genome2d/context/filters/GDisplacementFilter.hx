@@ -12,7 +12,7 @@ import flash.display3D.Context3DProgramType;
 class GDisplacementFilter extends GFilter {
 
     private var g2d_matrix:GMatrix3D;
-    private var g2d_offset:Float = 0;
+    public var offset:Float = 0;
 
     public var displacementMap:GTexture;
     public var alphaMap:GTexture;
@@ -42,8 +42,7 @@ class GDisplacementFilter extends GFilter {
 
     override public function bind(p_context:IGContext, p_defaultTexture:GTexture):Void {
         p_context.getNativeContext().setProgramConstantsFromMatrix(Context3DProgramType.FRAGMENT, 1, g2d_matrix, true);
-        p_context.getNativeContext().setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 5, Vector.ofArray([g2d_offset,0,0,0.0,alpha,alpha,alpha,alpha]), 2);
-        g2d_offset += .0003;
+        p_context.getNativeContext().setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 5, Vector.ofArray([offset,0,0,0.0,alpha,alpha,alpha,alpha]), 2);
 
         p_context.getNativeContext().setTextureAt(1, displacementMap.nativeTexture);
         //p_context.getNativeContext().setTextureAt(2, alphaMap.nativeTexture);

@@ -138,7 +138,7 @@ class GFbxRenderer implements IGRenderer
 
 	public var texture:GTexture;
 	
-    public var lightPos:GFloat4;
+    public var lightDirection:GFloat4;
     public var ambientColor:GFloat4;
     public var tintColor:GFloat4;
     public var lightColor:GFloat4;
@@ -149,7 +149,7 @@ class GFbxRenderer implements IGRenderer
         modelMatrix = new GMatrix3D();
         cameraMatrix = new GMatrix3D();
 
-        lightPos = new GFloat4(1,1,1);
+        lightDirection = new GFloat4(1,1,1);
         ambientColor = new GFloat4(1,1,1,1);
         tintColor = new GFloat4(1,1,1,1);
         lightColor = new GFloat4(1,1,1,1);
@@ -319,7 +319,7 @@ class GFbxRenderer implements IGRenderer
                 // UV
                 nativeContext.setProgramConstantsFromVector(Context3DProgramType.VERTEX, 16, Vector.ofArray([texture.g2d_u, texture.g2d_v, texture.g2d_uScale, texture.g2d_vScale]), 1);
                 // Light position
-                nativeContext.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, Vector.ofArray([lightPos.x,lightPos.y,lightPos.z,1.0]), 1);
+                nativeContext.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, Vector.ofArray([lightDirection.x,lightDirection.y,lightDirection.z,1.0]), 1);
                 // Ambient color
                 nativeContext.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 2, Vector.ofArray([ambientColor.x,ambientColor.y,ambientColor.z,ambientColor.w]), 1);
                 nativeContext.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 3, Vector.ofArray([tintColor.x,tintColor.y,tintColor.z,tintColor.w]), 1);
@@ -330,7 +330,7 @@ class GFbxRenderer implements IGRenderer
                 plane.normalize();
                 var point:Vector3D = new Vector3D(0,0,0);
                 point.normalize();
-                var shadowProjection:Vector<Float> = makeShadowProjection(plane, point, lightPos);
+                var shadowProjection:Vector<Float> = makeShadowProjection(plane, point, lightDirection);
                 nativeContext.setProgramConstantsFromVector(Context3DProgramType.VERTEX, 12, shadowProjection, 4);
                 nativeContext.setProgramConstantsFromVector(Context3DProgramType.VERTEX, 16, Vector.ofArray([0,0,0,0.0]), 1);
                 nativeContext.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, Vector.ofArray([0,0,0,1.0]), 1);
