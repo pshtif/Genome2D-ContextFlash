@@ -30,7 +30,7 @@ class GTexture extends GTextureBase
 {
     private var g2d_atfType:String = "";
     
-    override public function setSource(p_value:Object):Object {
+    override public function setSource(p_value:Dynamic):Dynamic {
         if (g2d_source != p_value) {
             g2d_dirty = true;
 			g2d_source = p_value;
