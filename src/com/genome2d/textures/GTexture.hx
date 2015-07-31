@@ -198,7 +198,7 @@ class GTexture extends GTextureBase
     }
 
     override public function getAlphaAtUV(p_u:Float, p_v:Float):Float {
-		var bitmapData:BitmapData = cast g2d_source;
+		var bitmapData:BitmapData = (Std.is(g2d_source, GTexture)) ? cast cast(g2d_source, GTexture).g2d_source : Std.is(g2d_source, BitmapData) ? cast g2d_source : null;
         if (bitmapData == null)  return 255;
 
         return bitmapData.getPixel32(untyped __int__((g2d_u + p_u) * g2d_nativeWidth), untyped __int__((g2d_v + p_v) * g2d_nativeHeight)) >> 24 & 0xFF;
@@ -208,7 +208,7 @@ class GTexture extends GTextureBase
 	 * 	Get an instance from reference
 	 */
 	static public function fromReference(p_reference:String) {
-		return GTextureManager.getTexture(p_reference);
+		return GTextureManager.getTexture(p_reference.substr(1));
 	}
 	
 	/****************************************************************************************************
