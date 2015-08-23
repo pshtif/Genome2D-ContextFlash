@@ -22,4 +22,6 @@ class GShaderCode
 	
 	inline static public var VERTEX_COLOR_CODE:String = "m44 op, va0, vc0 \n"+ 
 														"mov v0, va1";
+														
+	inline static public var VERTEX_CODE:String = "m44 op, va0, vc0";
 }

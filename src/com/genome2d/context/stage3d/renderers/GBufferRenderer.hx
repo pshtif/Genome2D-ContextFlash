@@ -2,8 +2,11 @@ package com.genome2d.context.stage3d.renderers;
 import com.genome2d.context.IGContext;
 import com.genome2d.context.stage3d.GStage3DContext;
 import com.genome2d.debug.GDebug;
+import com.genome2d.geom.GMatrix3D;
+import com.genome2d.textures.GTexture;
 import flash.display3D.Context3D;
 import com.adobe.utils.extended.AGALMiniAssembler;
+import flash.display3D.Context3DProgramType;
 import flash.display3D.Context3DVertexBufferFormat;
 import flash.display3D.IndexBuffer3D;
 import flash.display3D.Program3D;
@@ -19,7 +22,7 @@ import flash.Vector;
  */
 class GBufferRenderer implements IGRenderer
 {
-	private var g2d_context:GStage3DContext;
+	private var g2d_context:IGContext;
 	private var g2d_nativeContext:Context3D;
 	private var g2d_initializedThisFrame:Bool;
 	
@@ -41,6 +44,7 @@ class GBufferRenderer implements IGRenderer
 	private var g2d_fragmentShaderCode:ByteArray;
 	
 	private var g2d_program:Program3D;
+	private var g2d_setTextures:Int = 0;
 	
 	public function setVertexProgram(p_programCode:String):Void {
 		g2d_agal.assemble("vertex", p_programCode);
@@ -51,6 +55,12 @@ class GBufferRenderer implements IGRenderer
 		}
 	}
 	
+	public function setVertexConstant(p_value:Dynamic):Void {
+		if (Std.is(p_value, GMatrix3D)) {
+			g2d_nativeContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 4, p_value, true);
+		}
+	}
+	
 	public function setFragmentProgram(p_programCode:String):Void {
 		g2d_agal.assemble("fragment", p_programCode);
         g2d_fragmentShaderCode = g2d_agal.agalcode;
@@ -58,6 +68,15 @@ class GBufferRenderer implements IGRenderer
 		if (g2d_vertexShaderCode != null) {
 			g2d_program.upload(g2d_vertexShaderCode, g2d_fragmentShaderCode);
 		}
+	}
+	
+	public function setFragmentConstant(p_value:Dynamic):Void {
+		g2d_nativeContext.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, p_value);
+	}
+	
+	public function setTexture(p_texture:GTexture):Void {
+		g2d_nativeContext.setTextureAt(g2d_setTextures, p_texture.nativeTexture);
+		g2d_setTextures++;
 	}
 	
 	public function setVertexBuffer(p_vertexData:Vector<Float>, p_dataTypes:Array<Int>):Void {
@@ -116,9 +135,9 @@ class GBufferRenderer implements IGRenderer
 		return format;
 	}
 	
-	public function draw():Void {
+	public function draw(p_reupload:Bool = false):Void {
 		if (g2d_vertexBuffer != null && g2d_indexBuffer != null) {
-			g2d_vertexBuffer.uploadFromVector(g2d_vertexData, 0, Std.int(g2d_vertexData.length/g2d_dataPerVertex));
+			if (p_reupload) g2d_vertexBuffer.uploadFromVector(g2d_vertexData, 0, Std.int(g2d_vertexData.length / g2d_dataPerVertex));
 			var index:Int = 0;
 			var offset:Int = 0;
 			for (type in g2d_dataTypes) {
@@ -140,6 +159,10 @@ class GBufferRenderer implements IGRenderer
         for (index in 0...g2d_dataTypes.length) {
 			g2d_nativeContext.setVertexBufferAt(index, null);
 		}
+		for (index in 0...g2d_setTextures) {
+			g2d_nativeContext.setTextureAt(index, null);
+		}
+		g2d_setTextures = 0;
     }
 	
 }

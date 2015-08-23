@@ -278,7 +278,7 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal imple
 
     private function g2d_contextInitialized_handler(event:Event):Void {
         g2d_nativeContext = g2d_nativeStage3D.context3D;
-        g2d_nativeContext.enableErrorChecking = false;
+        g2d_nativeContext.enableErrorChecking = true;
 
         if (g2d_useFastMem) {
             g2d_fastMemArray = new ByteArray();
