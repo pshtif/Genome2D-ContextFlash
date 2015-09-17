@@ -477,16 +477,20 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal imple
         return true;
 	}
 	
+	inline public function flushActiveRenderer():Void {
+		if (g2d_activeRenderer != null) {
+            g2d_activeRenderer.push();
+            g2d_activeRenderer.clear();
+        }
+	}
+	
 	/**
 	  	End the drawing
 	 */
     public function end():Void {
         g2d_stats.render(this);
 
-        if (g2d_activeRenderer != null) {
-            g2d_activeRenderer.push();
-            g2d_activeRenderer.clear();
-        }
+        flushActiveRenderer();
 
 		if (g2d_bitmapDataTarget != null) {
 			g2d_nativeContext.drawToBitmapData(g2d_bitmapDataTarget);
@@ -588,9 +592,7 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal imple
 
     inline public function setBlendMode(p_blendMode:Int, p_premultiplied:Bool):Void {
         if (p_blendMode != g2d_activeBlendMode || p_premultiplied != g2d_activePremultiply) {
-            if (g2d_activeRenderer != null) {
-                g2d_activeRenderer.push();
-            }
+            if (g2d_activeRenderer != null) g2d_activeRenderer.push();
 
             g2d_activeBlendMode = p_blendMode;
             g2d_activePremultiply = p_premultiplied;
@@ -600,10 +602,7 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal imple
 
 	inline public function bindRenderer(p_renderer:IGRenderer):Void {
 		if (p_renderer != g2d_activeRenderer || g2d_activeRenderer == null) {
-			if (g2d_activeRenderer != null) {
-				g2d_activeRenderer.push();
-				g2d_activeRenderer.clear();
-			}
+			flushActiveRenderer();
 			
 			g2d_activeRenderer = p_renderer;
             g2d_activeRenderer.bind(this, g2d_reinitialize);

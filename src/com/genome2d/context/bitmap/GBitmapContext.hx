@@ -267,6 +267,10 @@ class GBitmapContext implements IGContext implements IGInteractive
         return true;
 	}
 	
+	inline public function flushActiveRenderer():Void {
+		
+	}
+	
 	public function end():Void {
         g2d_stats.render(this);
 
