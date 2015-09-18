@@ -8,6 +8,7 @@
  */
 package com.genome2d.context.bitmap;
 import com.genome2d.callbacks.GCallback;
+import com.genome2d.context.IGRenderer;
 import com.genome2d.input.IGInteractive;
 
 #if !genome_stage3donly
@@ -267,10 +268,6 @@ class GBitmapContext implements IGContext implements IGInteractive
         return true;
 	}
 	
-	inline public function flushActiveRenderer():Void {
-		
-	}
-	
 	public function end():Void {
         g2d_stats.render(this);
 
@@ -375,9 +372,17 @@ class GBitmapContext implements IGContext implements IGInteractive
         g2d_onResize.dispatch(untyped __int__(p_rect.width), untyped __int__(p_rect.height));
     }
 
-    public function bindRenderer(p_renderer:Dynamic):Void {
+    public function setRenderer(p_renderer:IGRenderer):Void {
 
     }
+	
+	public function getRenderer():IGRenderer {
+		return null;
+	}
+	
+	inline public function flushRenderer():Void {
+		
+	}
 
     public function clearStencil():Void {
 

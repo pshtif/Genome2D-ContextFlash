@@ -31,7 +31,7 @@ import com.genome2d.context.stage3d.GProjectionMatrix;
 import com.genome2d.textures.GTexture;
 import com.genome2d.context.GBlendMode;
 import com.genome2d.context.GCamera;
-import com.genome2d.context.stage3d.renderers.IGRenderer;
+import com.genome2d.context.IGRenderer;
 import com.genome2d.input.GMouseInput;
 import com.genome2d.input.GKeyboardInput;
 import com.genome2d.input.GKeyboardInputType;
@@ -477,20 +477,13 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal imple
         return true;
 	}
 	
-	inline public function flushActiveRenderer():Void {
-		if (g2d_activeRenderer != null) {
-            g2d_activeRenderer.push();
-            g2d_activeRenderer.clear();
-        }
-	}
-	
 	/**
 	  	End the drawing
 	 */
     public function end():Void {
         g2d_stats.render(this);
 
-        flushActiveRenderer();
+        flushRenderer();
 
 		if (g2d_bitmapDataTarget != null) {
 			g2d_nativeContext.drawToBitmapData(g2d_bitmapDataTarget);
@@ -508,7 +501,7 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal imple
     inline public function draw2(p_texture:GTexture, p_x:Float, p_y:Float, p_scaleX:Float = 1, p_scaleY:Float = 1, p_rotation:Float = 0, p_red:Float = 1, p_green:Float = 1, p_blue:Float = 1, p_alpha:Float = 1, p_blendMode:Int = 1, p_filter:GFilter = null, p_id:Int = 0):Void {
         if (p_alpha != 0) {
             setBlendMode(p_blendMode, p_texture.premultiplied);
-            bindRenderer(g2d_quadTextureBufferGPURenderer);
+            setRenderer(g2d_quadTextureBufferGPURenderer);
 
             g2d_quadTextureBufferGPURenderer.draw(p_x, p_y, p_scaleX, p_scaleY, p_rotation, p_red, p_green, p_blue, p_alpha, p_texture, p_filter);
         }
@@ -522,7 +515,7 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal imple
 	inline public function draw(p_texture:GTexture, p_x:Float, p_y:Float, p_scaleX:Float = 1, p_scaleY:Float = 1, p_rotation:Float = 0, p_red:Float = 1, p_green:Float = 1, p_blue:Float = 1, p_alpha:Float = 1, p_blendMode:Int = 1, p_filter:GFilter = null):Void {
 		if (p_alpha != 0) {
             setBlendMode(p_blendMode, p_texture.premultiplied);
-			bindRenderer(g2d_quadTextureShaderRenderer);
+			setRenderer(g2d_quadTextureShaderRenderer);
 
 			g2d_quadTextureShaderRenderer.draw(p_x, p_y, p_scaleX, p_scaleY, p_rotation, p_red, p_green, p_blue, p_alpha, p_texture, p_filter, false, 0, 0, 0, 0, 0, 0);
 		}
@@ -536,7 +529,7 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal imple
     inline public function drawSource(p_texture:GTexture, p_sourceX:Float, p_sourceY:Float, p_sourceWidth:Float, p_sourceHeight:Float, p_sourcePivotX:Float, p_sourcePivotY:Float, p_x:Float, p_y:Float, p_scaleX:Float = 1, p_scaleY:Float = 1, p_rotation:Float = 0, p_red:Float = 1, p_green:Float = 1, p_blue:Float = 1, p_alpha:Float = 1, p_blendMode:Int = 1, p_filter:GFilter = null):Void {
         if (p_alpha != 0) {
             setBlendMode(p_blendMode, p_texture.premultiplied);
-            bindRenderer(g2d_quadTextureShaderRenderer);
+            setRenderer(g2d_quadTextureShaderRenderer);
 
             g2d_quadTextureShaderRenderer.draw(p_x, p_y, p_scaleX, p_scaleY, p_rotation, p_red, p_green, p_blue, p_alpha, p_texture, p_filter, true, p_sourceX, p_sourceY, p_sourceWidth, p_sourceHeight, p_sourcePivotX, p_sourcePivotY);
         }
@@ -550,7 +543,7 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal imple
     inline public function drawMatrix(p_texture:GTexture, p_a:Float, p_b:Float, p_c:Float, p_d:Float, p_tx:Float, p_ty:Float, p_red:Float = 1, p_green:Float = 1, p_blue:Float = 1, p_alpha:Float=1, p_blendMode:Int=1, p_filter:GFilter = null):Void {
         if (p_alpha != 0) {
             setBlendMode(p_blendMode, p_texture.premultiplied);
-            bindRenderer(g2d_matrixQuadTextureShaderRenderer);
+            setRenderer(g2d_matrixQuadTextureShaderRenderer);
             g2d_matrixQuadTextureShaderRenderer.draw(p_a, p_b, p_c, p_d, p_tx, p_ty, p_red, p_green, p_blue, p_alpha, p_texture, p_filter, false, 0, 0, 0, 0);
         }
     }
@@ -563,7 +556,7 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal imple
     inline public function drawMatrixSource(p_texture:GTexture, p_sourceX:Float, p_sourceY:Float, p_sourceWidth:Float, p_sourceHeight:Float, p_a:Float, p_b:Float, p_c:Float, p_d:Float, p_tx:Float, p_ty:Float, p_red:Float = 1, p_green:Float = 1, p_blue:Float = 1, p_alpha:Float=1, p_blendMode:Int=1, p_filter:GFilter = null):Void {
         if (p_alpha != 0) {
             setBlendMode(p_blendMode, p_texture.premultiplied);
-            bindRenderer(g2d_matrixQuadTextureShaderRenderer);
+            setRenderer(g2d_matrixQuadTextureShaderRenderer);
 
             g2d_matrixQuadTextureShaderRenderer.draw(p_a, p_b, p_c, p_d, p_tx, p_ty, p_red, p_green, p_blue, p_alpha, p_texture, p_filter, true, p_sourceX, p_sourceY, p_sourceWidth, p_sourceHeight);
         }
@@ -584,7 +577,7 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal imple
     inline public function drawPoly(p_texture:GTexture, p_vertices:Array<Float>, p_uvs:Array<Float>, p_x:Float, p_y:Float, p_scaleX:Float = 1, p_scaleY:Float = 1, p_rotation:Float = 0, p_red:Float = 1, p_green:Float = 1, p_blue:Float = 1, p_alpha:Float = 1, p_blendMode:Int=1, p_filter:GFilter = null):Void {
         if (p_alpha != 0) {
             setBlendMode(p_blendMode, p_texture.premultiplied);
-            bindRenderer(g2d_triangleTextureBufferCPURenderer);
+            setRenderer(g2d_triangleTextureBufferCPURenderer);
 
             g2d_triangleTextureBufferCPURenderer.draw(p_vertices, p_uvs, p_x, p_y, p_scaleX, p_scaleY, p_rotation, p_red, p_green, p_blue, p_alpha, p_texture, p_filter);
         }
@@ -600,13 +593,24 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal imple
         }
     }
 
-	inline public function bindRenderer(p_renderer:IGRenderer):Void {
+	inline public function setRenderer(p_renderer:IGRenderer):Void {
 		if (p_renderer != g2d_activeRenderer || g2d_activeRenderer == null) {
-			flushActiveRenderer();
+			flushRenderer();
 			
 			g2d_activeRenderer = p_renderer;
             g2d_activeRenderer.bind(this, g2d_reinitialize);
 		}
+	}
+	
+	inline public function getRenderer():IGRenderer {
+		return g2d_activeRenderer;
+	}
+	
+	inline public function flushRenderer():Void {
+		if (g2d_activeRenderer != null) {
+            g2d_activeRenderer.push();
+            g2d_activeRenderer.clear();
+        }
 	}
 
 	/****************************************************************************************************

@@ -8,6 +8,7 @@
  */
 package com.genome2d.context.stage3d.renderers;
 
+import com.genome2d.context.IGRenderer;
 import com.genome2d.textures.GTexture;
 import flash.display3D.textures.TextureBase;
 import com.genome2d.textures.GTextureFilteringType;
@@ -187,8 +188,8 @@ class GMatrixQuadTextureShaderRenderer implements IGRenderer
 		g2d_indexBuffer.uploadFromVector(indices, 0, 6*BATCH_SIZE);
 	}
 	
-	inline public function bind(p_context:GStage3DContext, p_reinitialize:Bool):Void {
-		if (g2d_cachedPrograms == null || (p_reinitialize && !g2d_initializedThisFrame)) initialize(p_context);
+	inline public function bind(p_context:IGContext, p_reinitialize:Bool):Void {
+		if (g2d_cachedPrograms == null || (p_reinitialize && !g2d_initializedThisFrame)) initialize(cast p_context);
 		g2d_initializedThisFrame = p_reinitialize;
 
 		g2d_nativeContext.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, GRenderersCommon.DEFAULT_CONSTANTS, 1);

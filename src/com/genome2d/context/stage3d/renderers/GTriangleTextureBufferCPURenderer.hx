@@ -133,8 +133,8 @@ class GTriangleTextureBufferCPURenderer implements IGRenderer
         g2d_triangleCount = 0;
     }
 
-    public function bind(p_context:GStage3DContext, p_reinitialize:Bool):Void {
-        if (g2d_cachedPrograms==null || (p_reinitialize && !g2d_initializedThisFrame)) initialize(p_context);
+    public function bind(p_context:IGContext, p_reinitialize:Bool):Void {
+        if (g2d_cachedPrograms==null || (p_reinitialize && !g2d_initializedThisFrame)) initialize(cast p_context);
         g2d_initializedThisFrame = p_reinitialize;
 
         g2d_nativeContext.setProgram(getCachedProgram(true, g2d_activeAlpha, false, GTextureManager.defaultFilteringType, g2d_activeAtf, g2d_activeFilter));

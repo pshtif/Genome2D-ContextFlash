@@ -111,8 +111,8 @@ class GBufferRenderer implements IGRenderer
 		
 	}
 	
-	public function bind(p_context:GStage3DContext, p_reinitialize:Bool):Void {
-        if ((p_reinitialize && !g2d_initializedThisFrame)) g2d_reinitialize(p_context);
+	public function bind(p_context:IGContext, p_reinitialize:Bool):Void {
+        if ((p_reinitialize && !g2d_initializedThisFrame)) g2d_reinitialize(cast p_context);
         g2d_initializedThisFrame = p_reinitialize;
 
         g2d_nativeContext.setProgram(g2d_program);
