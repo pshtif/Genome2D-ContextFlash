@@ -59,7 +59,7 @@ import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 
 #if genome_stage3donly
-@:native("com.genome2d.context.IContext")
+@:native("com.genome2d.context.IGContext")
 class GStage3DContext implements IGDebuggableInternal implements IGInteractive
 #else
 class GStage3DContext implements IGContext implements IGDebuggableInternal implements IGInteractive
