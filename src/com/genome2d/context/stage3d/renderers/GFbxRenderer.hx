@@ -8,6 +8,7 @@
  */
 package com.genome2d.context.stage3d.renderers;
 
+import com.genome2d.context.GBlendMode;
 import com.genome2d.context.IGRenderer;
 import com.genome2d.geom.GFloat3;
 import com.genome2d.geom.GFloat4;
@@ -16,6 +17,7 @@ import com.genome2d.textures.GTexture;
 import com.genome2d.textures.GTextureFilteringType;
 import com.genome2d.context.stage3d.GStage3DContext;
 import com.genome2d.geom.GMatrix3D;
+import flash.display3D.Context3DBlendFactor;
 
 import com.adobe.utils.extended.AGALMiniAssembler;
 
@@ -104,6 +106,23 @@ class GFbxRenderer implements IGRenderer
 
     static private inline var FRAGMENT_SHADER_CODE_SHADOW:String =
             "mov oc, fc1";
+			
+	static private inline var VERTEX_SHADER_CODE_DEPTH:String =
+            // Model view matrix
+            "m44 vt0, va0, vc4          \n" +
+            "m44 vt0, vt0, vc8          \n" +
+            //"m44 vt1, va2, vc4          \n" +
+            // Projection matrix
+            "m44 op, vt0, vc0			\n" +
+
+            // Move UV to fragment shader
+            "mov v0, va0";
+			
+	static private inline var FRAGMENT_SHADER_CODE_DEPTH:String =
+			//"sub ft0, v0.zzzz, fc2		\n" +
+			"div ft0, fc2, v0.zzzz		\n" +
+			"sat ft0, ft0 \n" +
+            "mul oc, ft0, fc1";
 
 
     private var g2d_initializedThisFrame:Bool;
@@ -114,6 +133,8 @@ class GFbxRenderer implements IGRenderer
     private var g2d_fragmentShaderCodeNormals:ByteArray;
     private var g2d_vertexShaderCodeShadow:ByteArray;
     private var g2d_fragmentShaderCodeShadow:ByteArray;
+	private var g2d_vertexShaderCodeDepth:ByteArray;
+    private var g2d_fragmentShaderCodeDepth:ByteArray;
 
     private var g2d_context:GStage3DContext;
 
@@ -123,6 +144,7 @@ class GFbxRenderer implements IGRenderer
     private var g2d_program:Program3D;
     private var g2d_programNormals:Program3D;
     private var g2d_programShadow:Program3D;
+	private var g2d_programDepth:Program3D;
     private var g2d_generatePerspectiveMatrix:Bool = false;
 
     private var g2d_vertices:Array<Float>;
@@ -189,6 +211,14 @@ class GFbxRenderer implements IGRenderer
         var agal:AGALMiniAssembler = new AGALMiniAssembler();
         agal.assemble("fragment", FRAGMENT_SHADER_CODE_SHADOW, GRenderersCommon.AGAL_VERSION);
         g2d_fragmentShaderCodeShadow = agal.agalcode;
+		
+		var agal:AGALMiniAssembler = new AGALMiniAssembler();
+        agal.assemble("vertex", VERTEX_SHADER_CODE_DEPTH, GRenderersCommon.AGAL_VERSION);
+        g2d_vertexShaderCodeDepth = agal.agalcode;
+
+        var agal:AGALMiniAssembler = new AGALMiniAssembler();
+        agal.assemble("fragment", FRAGMENT_SHADER_CODE_DEPTH, GRenderersCommon.AGAL_VERSION);
+        g2d_fragmentShaderCodeDepth = agal.agalcode;
 
         g2d_program = g2d_context.getNativeContext().createProgram();
         g2d_program.upload(g2d_vertexShaderCode, GRenderersCommon.getTexturedShaderCode(false, GTextureFilteringType.LINEAR, 2, "", null));
@@ -198,6 +228,9 @@ class GFbxRenderer implements IGRenderer
 
         g2d_programShadow = g2d_context.getNativeContext().createProgram();
         g2d_programShadow.upload(g2d_vertexShaderCodeShadow, g2d_fragmentShaderCodeShadow);
+		
+		g2d_programDepth = g2d_context.getNativeContext().createProgram();
+        g2d_programDepth.upload(g2d_vertexShaderCodeDepth, g2d_fragmentShaderCodeDepth);
 
         var contextWidth:Float = p_context.getStageViewRect().width;
         var contextHeight:Float = p_context.getStageViewRect().height;
@@ -264,6 +297,8 @@ class GFbxRenderer implements IGRenderer
                 g2d_context.getNativeContext().setProgram(g2d_programNormals);
             case 2:
                 g2d_context.getNativeContext().setProgram(g2d_programShadow);
+			case 3:
+                g2d_context.getNativeContext().setProgram(g2d_programDepth);
             case _:
         }
     }
@@ -283,6 +318,8 @@ class GFbxRenderer implements IGRenderer
                     g2d_context.getNativeContext().setProgram(g2d_programNormals);
                 case 2:
                     g2d_context.getNativeContext().setProgram(g2d_programShadow);
+				case 3:
+                    g2d_context.getNativeContext().setProgram(g2d_programDepth);
                 case _:
             }
         }
@@ -334,7 +371,19 @@ class GFbxRenderer implements IGRenderer
                 var shadowProjection:Vector<Float> = makeShadowProjection(plane, point, lightDirection);
                 nativeContext.setProgramConstantsFromVector(Context3DProgramType.VERTEX, 12, shadowProjection, 4);
                 nativeContext.setProgramConstantsFromVector(Context3DProgramType.VERTEX, 16, Vector.ofArray([0,0,0,0.0]), 1);
-                nativeContext.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, Vector.ofArray([0,0,0,1.0]), 1);
+                nativeContext.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, Vector.ofArray([0, 0, 0, 1.0]), 1);
+			// Depth
+            case 3:
+                // Inverse transpose model view matrix
+                // TODO: Cloning matrix per render is not a good idea just for testing!
+                var invtran:GMatrix3D = modelMatrix.clone();
+                invtran.invert();
+                invtran.transpose();
+                nativeContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 12, invtran, true);
+				// Color
+                nativeContext.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, Vector.ofArray([0, 0, 0, .35]), 1);
+				// Height
+                nativeContext.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 2, Vector.ofArray([20,20,20,20.0]), 1);
             case _:
         }
 
