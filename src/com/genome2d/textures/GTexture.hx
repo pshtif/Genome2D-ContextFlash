@@ -190,11 +190,14 @@ class GTexture extends GTextureBase
 		super.parentInvalidated_handler(p_texture);
 	}
 
-    override public function dispose():Void {
+    override public function dispose(p_disposeSource:Bool = false):Void {
         if (g2d_sourceType != GTextureSourceType.TEXTURE && g2d_nativeTexture != null) g2d_nativeTexture.dispose();
         g2d_nativeTexture = null;
+		if (p_disposeSource) {
+			if (g2d_sourceType == GTextureSourceType.BITMAPDATA) cast (g2d_source, BitmapData).dispose();
+		}
         
-		super.dispose();
+		super.dispose(p_disposeSource);
     }
 
     override public function getAlphaAtUV(p_u:Float, p_v:Float):Float {
