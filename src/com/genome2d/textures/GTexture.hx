@@ -192,9 +192,6 @@ class GTexture extends GTextureBase
 
     override public function dispose(p_disposeSource:Bool = false):Void {
         if (g2d_sourceType != GTextureSourceType.TEXTURE && g2d_nativeTexture != null) g2d_nativeTexture.dispose();
-		if (g2d_sourceType == GTextureSourceType.BITMAPDATA) {
-			cast (g2d_source,BitmapData).dispose();
-		}
         g2d_nativeTexture = null;
 		if (p_disposeSource) {
 			if (g2d_sourceType == GTextureSourceType.BITMAPDATA) cast (g2d_source, BitmapData).dispose();
