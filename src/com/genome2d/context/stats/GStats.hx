@@ -98,7 +98,7 @@ class GStats implements IGStats
         }
 
         if (g2d_texture == null) {
-            g2d_texture = GTextureManager.createTexture("stats_internal", g2d_bitmapData);
+            g2d_texture = GTextureManager.createTexture("g2d_stats", g2d_bitmapData);
             g2d_texture.filteringType = GTextureFilteringType.NEAREST;
             g2d_texture.invalidateNativeTexture(false);
         } else {

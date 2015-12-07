@@ -196,8 +196,11 @@ class GTexture extends GTextureBase
 			cast (g2d_source,BitmapData).dispose();
 		}
         g2d_nativeTexture = null;
+		if (p_disposeSource) {
+			if (g2d_sourceType == GTextureSourceType.BITMAPDATA) cast (g2d_source, BitmapData).dispose();
+		}
         
-		super.dispose();
+		super.dispose(p_disposeSource);
     }
 
     override public function getAlphaAtUV(p_u:Float, p_v:Float):Float {
