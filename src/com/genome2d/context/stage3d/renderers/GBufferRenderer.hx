@@ -24,7 +24,7 @@ class GBufferRenderer implements IGRenderer
 {
 	private var g2d_context:IGContext;
 	private var g2d_nativeContext:Context3D;
-	private var g2d_initializedThisFrame:Bool;
+	private var g2d_initialized:Int;
 	
 	private var g2d_cachedPrograms:Dictionary;
     private var g2d_cachedProgramIds:Dictionary;
@@ -111,9 +111,9 @@ class GBufferRenderer implements IGRenderer
 		
 	}
 	
-	public function bind(p_context:IGContext, p_reinitialize:Bool):Void {
-        if ((p_reinitialize && !g2d_initializedThisFrame)) g2d_reinitialize(cast p_context);
-        g2d_initializedThisFrame = p_reinitialize;
+	public function bind(p_context:IGContext, p_reinitialize:Int):Void {
+        if ((p_reinitialize != g2d_initialized)) g2d_reinitialize(cast p_context);
+        g2d_initialized = p_reinitialize;
 
         g2d_nativeContext.setProgram(g2d_program);
     }

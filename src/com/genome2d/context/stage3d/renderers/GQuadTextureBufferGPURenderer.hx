@@ -79,7 +79,7 @@ class GQuadTextureBufferGPURenderer implements IGRenderer
 	
 	private var g2d_quadCount:Int = 0;
 	
-	private var g2d_initializedThisFrame:Bool;
+	private var g2d_initialized:Int = 0;
 	private var g2d_activeTexture:TextureBase;
 	private var g2d_activeAlpha:Bool = false;
 	private var g2d_activeAtf:String = "";
@@ -183,9 +183,9 @@ class GQuadTextureBufferGPURenderer implements IGRenderer
 		g2d_activeFiltering = GTextureFilteringType.LINEAR;
 	}
 	
-	inline public function bind(p_context:IGContext, p_reinitialize:Bool):Void {
-		if (g2d_cachedPrograms == null || (p_reinitialize && !g2d_initializedThisFrame)) initialize(cast p_context);
-		g2d_initializedThisFrame = p_reinitialize;
+	inline public function bind(p_context:IGContext, p_reinitialize:Int):Void {
+		if (g2d_cachedPrograms == null || (p_reinitialize != g2d_initialized)) initialize(cast p_context);
+		g2d_initialized = p_reinitialize;
 
 		g2d_nativeContext.setProgram(getCachedProgram(g2d_activeAlpha, g2d_activeRepeat, g2d_activeFiltering, g2d_activeAtf, g2d_activeFilter));
 		

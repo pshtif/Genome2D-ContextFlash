@@ -88,7 +88,7 @@ class GQuadTextureShaderRenderer implements IGRenderer
 
 	private var g2d_indexBuffer : IndexBuffer3D;
 	
-	private var g2d_initializedThisFrame:Bool = false;
+	private var g2d_initialized:Int = 0;
 	private var g2d_quadCount:Int = 0;
 	private var g2d_activeNativeTexture:TextureBase;
 	private var g2d_activeFiltering:Int;
@@ -211,9 +211,9 @@ class GQuadTextureShaderRenderer implements IGRenderer
 		g2d_indexBuffer.uploadFromVector(indices, 0, 6*BATCH_SIZE);
 	}
 	
-	inline public function bind(p_context:IGContext, p_reinitialize:Bool):Void {
-		if (g2d_cachedPrograms == null || (p_reinitialize && !g2d_initializedThisFrame)) initialize(cast p_context);
-		g2d_initializedThisFrame = p_reinitialize;
+	inline public function bind(p_context:IGContext, p_reinitialize:Int):Void {
+		if (g2d_cachedPrograms == null || (p_reinitialize != g2d_initialized)) initialize(cast p_context);
+		g2d_initialized = p_reinitialize;
 
 		g2d_nativeContext.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, GRenderersCommon.DEFAULT_CONSTANTS, 1);
 		g2d_nativeContext.setProgramConstantsFromVector(Context3DProgramType.VERTEX, 4, GRenderersCommon.DEFAULT_CONSTANTS, 1);

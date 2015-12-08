@@ -125,6 +125,7 @@ class GFbxRenderer implements IGRenderer
             "mul oc, ft0, fc1";
 
 
+	private var g2d_initialized:Int = 0;
     private var g2d_initializedThisFrame:Bool;
 
     private var g2d_vertexShaderCode:ByteArray;
@@ -284,9 +285,9 @@ class GFbxRenderer implements IGRenderer
         }
     }
 
-    public function bind(p_context:IGContext, p_reinitialize:Bool):Void {
-        if (g2d_program==null || (p_reinitialize && !g2d_initializedThisFrame)) initialize(cast p_context);
-        g2d_initializedThisFrame = p_reinitialize;
+    public function bind(p_context:IGContext, p_reinitialize:Int):Void {
+        if (g2d_program==null || (p_reinitialize != g2d_initialized)) initialize(cast p_context);
+        g2d_initialized = p_reinitialize;
 
         g2d_context.getNativeContext().setDepthTest(true, Context3DCompareMode.LESS);
 

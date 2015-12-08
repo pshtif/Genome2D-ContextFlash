@@ -81,7 +81,7 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal imple
     private var g2d_activeMaskRect:GRectangle;
 
     private var g2d_initialized:Bool = false;
-    private var g2d_reinitialize:Bool = false;
+    private var g2d_reinitialize:Int = 0;
 
     private var g2d_stageViewRect:GRectangle;
     inline public function getStageViewRect():GRectangle {
@@ -303,7 +303,7 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal imple
 
         g2d_invalidate();
 
-        g2d_reinitialize = true;
+        g2d_reinitialize++;
     }
 
     private function g2d_invalidate():Void {
@@ -494,7 +494,7 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal imple
 		    g2d_nativeContext.present();
         }
 
-		g2d_reinitialize = false;
+		//g2d_reinitialize = false;
 	}
 
     @:dox(hide)
