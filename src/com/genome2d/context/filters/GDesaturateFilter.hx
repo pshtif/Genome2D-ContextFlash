@@ -1,5 +1,5 @@
 /*
-* 	Genome2D - GPU 2D framework utilizing Molehill API
+* 	Genome2D - GPU 2D framework utilizing Stage3D API
 *
 *	Copyright 2011 Peter Stefcek. All rights reserved.
 *
