@@ -1,5 +1,5 @@
 /*
-* 	Genome2D - GPU 2D framework utilizing Stage3D API
+* 	Genome2D - GPU 2D framework
 *
 *	Copyright 2011 Peter Stefcek. All rights reserved.
 *

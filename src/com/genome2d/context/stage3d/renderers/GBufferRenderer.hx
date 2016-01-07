@@ -47,7 +47,7 @@ class GBufferRenderer implements IGRenderer
 	private var g2d_setTextures:Int = 0;
 	
 	public function setVertexProgram(p_programCode:String):Void {
-		g2d_agal.assemble("vertex", p_programCode);
+		g2d_agal.assemble("vertex", p_programCode, GRenderersCommon.AGAL_VERSION);
         g2d_vertexShaderCode = g2d_agal.agalcode;
 		
 		if (g2d_fragmentShaderCode != null) {
@@ -62,7 +62,7 @@ class GBufferRenderer implements IGRenderer
 	}
 	
 	public function setFragmentProgram(p_programCode:String):Void {
-		g2d_agal.assemble("fragment", p_programCode);
+		g2d_agal.assemble("fragment", p_programCode, GRenderersCommon.AGAL_VERSION);
         g2d_fragmentShaderCode = g2d_agal.agalcode;
 		
 		if (g2d_vertexShaderCode != null) {

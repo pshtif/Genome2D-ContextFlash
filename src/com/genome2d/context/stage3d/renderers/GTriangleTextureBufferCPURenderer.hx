@@ -113,9 +113,9 @@ class GTriangleTextureBufferCPURenderer implements IGRenderer
         g2d_cachedProgramIds = new Dictionary(false);
 
         var agal:AGALMiniAssembler = new AGALMiniAssembler();
-        agal.assemble("vertex", VERTEX_SHADER_CODE_TEXTURED);
+        agal.assemble("vertex", VERTEX_SHADER_CODE_TEXTURED, GRenderersCommon.AGAL_VERSION);
         g2d_vertexShaderTexturedCode = agal.agalcode;
-        agal.assemble("vertex", VERTEX_SHADER_CODE_TEXTURED_COLOR);
+        agal.assemble("vertex", VERTEX_SHADER_CODE_TEXTURED_COLOR, GRenderersCommon.AGAL_VERSION);
         g2d_vertexShaderTexturedAlphaCode = agal.agalcode;
 
         g2d_vertexVector = new Vector<Float>(3 * BATCH_SIZE * DATA_PER_VERTEX_ALPHA);
