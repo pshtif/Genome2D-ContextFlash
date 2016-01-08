@@ -178,6 +178,8 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal imple
     private var g2d_renderMode:String;
     private var g2d_profile:Object;
     private var g2d_usingExternalContext:Bool;
+	
+	private var g2d_enableErrorChecking:Bool;
 
     private var g2d_backgroundRed:Float = 0;
     private var g2d_backgroundGreen:Float = 0;
@@ -231,6 +233,7 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal imple
         g2d_antiAliasing = p_config.antiAliasing;
 		g2d_hdResolution = p_config.hdResolution;
         g2d_enableDepthAndStencil = p_config.enableDepthAndStencil;
+		g2d_enableErrorChecking = p_config.enableErrorChecking;
         g2d_renderMode = p_config.renderMode;
         g2d_profile = p_config.profile;
 
@@ -278,7 +281,7 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal imple
 
     private function g2d_contextInitialized_handler(event:Event):Void {
         g2d_nativeContext = g2d_nativeStage3D.context3D;
-        g2d_nativeContext.enableErrorChecking = false;
+        g2d_nativeContext.enableErrorChecking = g2d_enableErrorChecking;
 
         if (g2d_useFastMem) {
             g2d_fastMemArray = new ByteArray();

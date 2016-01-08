@@ -25,6 +25,7 @@ class GContextConfig
     public var useSeparateAlphaPipeline:Bool = true;
     public var useFastMem:Bool = true;
 	public var enableDepthAndStencil:Bool = false;
+	public var enableErrorChecking:Bool = false;
 	public var antiAliasing:Int = 0;
 	public var hdResolution:Bool = false;
 	public var renderMode:String;

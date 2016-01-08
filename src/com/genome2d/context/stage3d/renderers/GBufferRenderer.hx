@@ -36,9 +36,12 @@ class GBufferRenderer implements IGRenderer
 	private var g2d_dataTypes:Array<Int>;
 	private var g2d_vertexBuffer:VertexBuffer3D;
 	
-	private var g2d_indices:Vector<UInt>;
+	private var g2d_indexData:Vector<UInt>;
 	private var g2d_triangleCount:Int;
 	private var g2d_indexBuffer:IndexBuffer3D;
+	
+	private var g2d_vertexConstants:Map<Int, Dynamic>;
+	private var g2d_fragmentConstants:Map<Int, Dynamic>;
 	
 	private var g2d_vertexShaderCode:ByteArray;
 	private var g2d_fragmentShaderCode:ByteArray;
@@ -46,32 +49,40 @@ class GBufferRenderer implements IGRenderer
 	private var g2d_program:Program3D;
 	private var g2d_setTextures:Int = 0;
 	
+	private var g2d_gpuDataDirty:Int = 0;
+	
+	inline static private var DIRTY_PROGRAM:Int = 1;
+	inline static private var DIRTY_VERTEX_BUFFER:Int = 2;
+	inline static private var DIRTY_INDEX_BUFFER:Int = 4;
+	
 	public function setVertexProgram(p_programCode:String):Void {
 		g2d_agal.assemble("vertex", p_programCode, GRenderersCommon.AGAL_VERSION);
         g2d_vertexShaderCode = g2d_agal.agalcode;
 		
-		if (g2d_fragmentShaderCode != null) {
-			g2d_program.upload(g2d_vertexShaderCode, g2d_fragmentShaderCode);
-		}
+		if ((g2d_gpuDataDirty & DIRTY_PROGRAM) == 0) g2d_gpuDataDirty += DIRTY_PROGRAM;
 	}
 	
-	public function setVertexConstant(p_value:Dynamic):Void {
-		if (Std.is(p_value, GMatrix3D)) {
-			g2d_nativeContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 4, p_value, true);
-		}
+	public function setVertexConstant(p_index:Int, p_value:Dynamic):Void {
+		if (Std.is(p_value, Array)) {
+			p_value = Vector.ofArray(p_value);
+		}		
+		g2d_vertexConstants.set(p_index, p_value);
 	}
 	
 	public function setFragmentProgram(p_programCode:String):Void {
 		g2d_agal.assemble("fragment", p_programCode, GRenderersCommon.AGAL_VERSION);
         g2d_fragmentShaderCode = g2d_agal.agalcode;
 		
-		if (g2d_vertexShaderCode != null) {
-			g2d_program.upload(g2d_vertexShaderCode, g2d_fragmentShaderCode);
-		}
+		if ((g2d_gpuDataDirty & DIRTY_PROGRAM) == 0) g2d_gpuDataDirty += DIRTY_PROGRAM;
 	}
 	
-	public function setFragmentConstant(p_value:Dynamic):Void {
-		g2d_nativeContext.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, p_value);
+	public function setFragmentConstant(p_index:Int, p_value:Dynamic):Void {
+		if (Std.is(p_value, Array)) {
+			var newValue:Vector<Float> = new Vector<Float>();
+			for (value in cast (p_value,Array<Dynamic>)) newValue.push(value);
+			p_value = newValue;
+		}
+		g2d_fragmentConstants.set(p_index, p_value);
 	}
 	
 	public function setTexture(p_texture:GTexture):Void {
@@ -79,40 +90,73 @@ class GBufferRenderer implements IGRenderer
 		g2d_setTextures++;
 	}
 	
-	public function setVertexBuffer(p_vertexData:Vector<Float>, p_dataTypes:Array<Int>):Void {
-		g2d_vertexData = p_vertexData;
+	public function setVertexBuffer(p_vertexData:Dynamic, p_dataTypes:Array<Int>):Void {
+		if (Std.is(p_vertexData, Vector)) {
+			g2d_vertexData = p_vertexData;
+		} else if (Std.is(p_vertexData, Array)) {
+			g2d_vertexData = Vector.ofArray(p_vertexData);
+		} else {
+			GDebug.error("Invalid vertex data source.");
+		}
+		
 		g2d_dataTypes = p_dataTypes;
 		g2d_dataPerVertex = 0;
 		for (type in p_dataTypes) g2d_dataPerVertex += type;
-		g2d_vertexBuffer = g2d_nativeContext.createVertexBuffer(Std.int(g2d_vertexData.length / g2d_dataPerVertex), g2d_dataPerVertex);
-		g2d_vertexBuffer.uploadFromVector(g2d_vertexData, 0, Std.int(g2d_vertexData.length / g2d_dataPerVertex));
-	}
-	
-	public function setIndexBuffer(p_indices:Vector<UInt>):Void {
-		g2d_indices = p_indices;
-		g2d_triangleCount = Std.int(g2d_indices.length / 3);
-		g2d_indexBuffer = g2d_nativeContext.createIndexBuffer(g2d_indices.length);
-        g2d_indexBuffer.uploadFromVector(g2d_indices, 0, g2d_indices.length);
-	}
-	
-	public function new(p_context:IGContext) {
-		g2d_context = p_context;
-		g2d_nativeContext = g2d_context.getNativeContext();
 		
+		if ((g2d_gpuDataDirty & DIRTY_VERTEX_BUFFER) == 0) g2d_gpuDataDirty += DIRTY_VERTEX_BUFFER;
+	}
+	
+	public function setIndexBuffer(p_indexData:Dynamic):Void {
+		if (Std.is(p_indexData, Vector)) {
+			g2d_indexData = p_indexData;
+		} else if (Std.is(p_indexData, Array)) {
+			g2d_indexData = Vector.ofArray(p_indexData);
+		} else {
+			GDebug.error("Invalid index data source.");
+		}
+		
+		g2d_triangleCount = Std.int(g2d_indexData.length / 3);
+		
+		if ((g2d_gpuDataDirty & DIRTY_INDEX_BUFFER) == 0) g2d_gpuDataDirty += DIRTY_INDEX_BUFFER;
+	}
+	
+	public function new() {
 		g2d_cachedPrograms = new Dictionary(false);
         g2d_cachedProgramIds = new Dictionary(false);
 		
-		g2d_agal = new AGALMiniAssembler();
+		g2d_vertexConstants = new Map<Int, Dynamic>();
+		g2d_fragmentConstants = new Map<Int, Dynamic>();
 		
-		g2d_program = g2d_nativeContext.createProgram();
+		g2d_agal = new AGALMiniAssembler();
 	}
 	
-	private function g2d_reinitialize(p_context:GStage3DContext):Void {
+	public function initialize(p_context:GStage3DContext):Void {
+		g2d_context = p_context;
+		g2d_nativeContext = g2d_context.getNativeContext();
 		
+		if (g2d_vertexShaderCode == null) GDebug.error("No vertex shader set.");
+		if (g2d_fragmentShaderCode == null) GDebug.error("No fragment shader set.");
+		
+		if ((g2d_gpuDataDirty & DIRTY_PROGRAM) != 0) {
+			g2d_program = g2d_nativeContext.createProgram();
+			g2d_program.upload(g2d_vertexShaderCode, g2d_fragmentShaderCode);
+		}
+		
+		if ((g2d_gpuDataDirty & DIRTY_VERTEX_BUFFER) != 0) {
+			g2d_vertexBuffer = g2d_nativeContext.createVertexBuffer(Std.int(g2d_vertexData.length / g2d_dataPerVertex), g2d_dataPerVertex);
+			g2d_vertexBuffer.uploadFromVector(g2d_vertexData, 0, Std.int(g2d_vertexData.length / g2d_dataPerVertex));
+		}
+		
+		if ((g2d_gpuDataDirty & DIRTY_INDEX_BUFFER) != 0) {
+			g2d_indexBuffer = g2d_nativeContext.createIndexBuffer(g2d_indexData.length);
+			g2d_indexBuffer.uploadFromVector(g2d_indexData, 0, g2d_indexData.length);
+		}
+		
+		g2d_gpuDataDirty = 0;
 	}
 	
 	public function bind(p_context:IGContext, p_reinitialize:Int):Void {
-        if ((p_reinitialize != g2d_initialized)) g2d_reinitialize(cast p_context);
+        if ((p_reinitialize != g2d_initialized) || g2d_gpuDataDirty != 0) initialize(cast p_context);
         g2d_initialized = p_reinitialize;
 
         g2d_nativeContext.setProgram(g2d_program);
@@ -135,9 +179,8 @@ class GBufferRenderer implements IGRenderer
 		return format;
 	}
 	
-	public function draw(p_reupload:Bool = false):Void {
+	public function draw():Void {
 		if (g2d_vertexBuffer != null && g2d_indexBuffer != null) {
-			if (p_reupload) g2d_vertexBuffer.uploadFromVector(g2d_vertexData, 0, Std.int(g2d_vertexData.length / g2d_dataPerVertex));
 			var index:Int = 0;
 			var offset:Int = 0;
 			for (type in g2d_dataTypes) {
@@ -145,7 +188,26 @@ class GBufferRenderer implements IGRenderer
 				index++;
 				offset += type;
 			}
-				
+			
+			for (index in g2d_vertexConstants.keys()) {
+				var value:Dynamic = g2d_vertexConstants.get(index);
+				if (Std.is(value, GMatrix3D)) {
+					g2d_nativeContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, index, value, true);
+				// Assuming its a Vector<Float>, we can't check with Std.is since Haxe doesn't support it for some types in Vector<T> yet.
+				} else {
+					g2d_nativeContext.setProgramConstantsFromVector(Context3DProgramType.VERTEX, index, value);
+				}
+			}
+			
+			for (index in g2d_fragmentConstants.keys()) {
+				var value:Dynamic = g2d_fragmentConstants.get(index);
+				if (Std.is(value, GMatrix3D)) {
+					g2d_nativeContext.setProgramConstantsFromMatrix(Context3DProgramType.FRAGMENT, index, value, true);
+				// Assuming its a Vector<Float>, we can't check with Std.is since Haxe doesn't support it for some types in Vector<T> yet.
+				} else {
+					g2d_nativeContext.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, index, value);
+				}
+			}
 
 			g2d_nativeContext.drawTriangles(g2d_indexBuffer, 0, g2d_triangleCount);
 		}
