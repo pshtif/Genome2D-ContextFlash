@@ -496,8 +496,6 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal imple
         if (!g2d_usingExternalContext) {
 		    g2d_nativeContext.present();
         }
-
-		//g2d_reinitialize = false;
 	}
 
     @:dox(hide)
