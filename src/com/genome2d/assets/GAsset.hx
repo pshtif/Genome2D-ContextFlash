@@ -8,6 +8,7 @@
  */
 package com.genome2d.assets;
 
+import com.genome2d.assets.GAssetManager;
 import com.genome2d.callbacks.GCallback;
 import com.genome2d.debug.GDebug;
 import com.genome2d.debug.GDebug;
