@@ -307,7 +307,6 @@ class GFbxRenderer implements IGRenderer
     public function draw(p_cull:Int = 0, p_renderType:Int):Void {
         GStats.drawCalls++;
         var nativeContext:Context3D = g2d_context.getNativeContext();
-
         if (p_renderType != renderType) {
             clear();
             g2d_context.getNativeContext().setDepthTest(true, Context3DCompareMode.LESS);
