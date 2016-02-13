@@ -484,6 +484,7 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal imple
 	  	End the drawing
 	 */
     public function end():Void {
+		if (g2d_renderTarget != null) setRenderTarget(null);
         g2d_stats.render(this);
 
         flushRenderer();
@@ -681,7 +682,7 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal imple
      */
 	public function setRenderTarget(p_texture:GTexture = null, p_transform:GMatrix3D = null, p_clear:Bool = true):Void {
 		if (g2d_renderTarget == p_texture && g2d_usedRenderTargets==0) return;
-
+		
 		if (g2d_activeRenderer != null) g2d_activeRenderer.push();
 
         // Clear MRT
@@ -698,6 +699,7 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal imple
             setActiveCamera(g2d_activeCamera);
         // Otherwise its a render texture
 		} else {
+			if (p_texture.nativeTexture == null) MGDebug.WARNING("Null render texture, will incorrectly render to backbuffer instead.");
 			g2d_nativeContext.setRenderToTexture(p_texture.nativeTexture, g2d_enableDepthAndStencil, g2d_antiAliasing, 0);
             g2d_nativeContext.setScissorRectangle(null);
             if (p_texture.needClearAsRenderTarget(p_clear)) g2d_nativeContext.clear(0,0,0,0);
@@ -758,6 +760,9 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal imple
 
     private function g2d_keyboardEvent_handler(event:KeyboardEvent):Void {
         var input:GKeyboardInput = new GKeyboardInput(GKeyboardInputType.fromNative(event.type), event.keyCode, event.charCode);
+		input.ctrlKey = event.ctrlKey;
+		input.altKey = event.altKey;
+		input.shiftKey = event.shiftKey;
         g2d_onKeyboardInput.dispatch(input);
     }
 }
