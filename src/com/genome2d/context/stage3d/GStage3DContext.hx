@@ -239,6 +239,13 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal imple
 
         g2d_useSeparateAlphaPipeline = p_config.useSeparateAlphaPipeline;
         g2d_useFastMem = p_config.useFastMem;
+		
+		if (g2d_useFastMem) {
+            g2d_fastMemArray = new ByteArray();
+            g2d_fastMemArray.endian = Endian.LITTLE_ENDIAN;
+            g2d_fastMemArray.length = 10040000;
+            Memory.select(g2d_fastMemArray);
+        }
     }
 
 /**
@@ -282,13 +289,6 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal imple
     private function g2d_contextInitialized_handler(event:Event):Void {
         g2d_nativeContext = g2d_nativeStage3D.context3D;
         g2d_nativeContext.enableErrorChecking = g2d_enableErrorChecking;
-
-        if (g2d_useFastMem) {
-            g2d_fastMemArray = new ByteArray();
-            g2d_fastMemArray.endian = Endian.LITTLE_ENDIAN;
-            g2d_fastMemArray.length = 10040000;
-            Memory.select(g2d_fastMemArray);
-        }
 
         if (untyped g2d_nativeContext.hasOwnProperty("profile")) {
             g2d_profile = untyped g2d_nativeContext["profile"];
