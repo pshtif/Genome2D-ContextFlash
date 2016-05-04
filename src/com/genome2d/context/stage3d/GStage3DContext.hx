@@ -173,7 +173,16 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal imple
 	private var g2d_activePremultiply:Bool;
 
 	private var g2d_hdResolution:Bool;
+	
     private var g2d_antiAliasing:Int;
+	public function getAntiAliasing():Int {
+		return g2d_antiAliasing;
+	}
+	public function setAntiAliasing(p_value:Int):Void {
+		g2d_antiAliasing = p_value;
+		g2d_configureBackBuffer();
+	}
+	
     private var g2d_enableDepthAndStencil:Bool;
     private var g2d_renderMode:String;
     private var g2d_profile:Object;
@@ -308,6 +317,12 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal imple
 
         g2d_reinitialize++;
     }
+	
+	private function g2d_configureBackBuffer():Void {
+		var w:Int = untyped __int__(g2d_stageViewRect.width);
+        var h:Int = untyped __int__(g2d_stageViewRect.height);
+        g2d_nativeContext.configureBackBuffer(w, h, g2d_antiAliasing, g2d_enableDepthAndStencil, g2d_hdResolution);
+	}
 
     private function g2d_invalidate():Void {
         if (g2d_nativeContext.driverInfo == "Disposed") return;
@@ -322,9 +337,7 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal imple
         var success:Bool = true;
         if (!g2d_usingExternalContext) {
             try {
-                var w:Int = untyped __int__(g2d_stageViewRect.width);
-                var h:Int = untyped __int__(g2d_stageViewRect.height);
-                g2d_nativeContext.configureBackBuffer(w, h, g2d_antiAliasing, g2d_enableDepthAndStencil, g2d_hdResolution);
+                g2d_configureBackBuffer();
             }
             catch (msg:String) {
                 success = false;
