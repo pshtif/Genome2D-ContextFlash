@@ -155,10 +155,10 @@ class GFbxRenderer implements IGRenderer
 
     public var renderType:Int = 0;
 
+	public var useSceneMatrix:Bool = true;
     public var modelMatrix:GMatrix3D;
     public var cameraMatrix:GMatrix3D;
     public var projectionMatrix:GProjectionMatrix;
-    public var shadowMatrix:GMatrix3D;
 
 	public var texture:GTexture;
 	
@@ -181,7 +181,7 @@ class GFbxRenderer implements IGRenderer
         if (p_generatePerspectiveMatrix) {
             projectionMatrix = new GProjectionMatrix();
         }
-        /**/
+        
         g2d_vertices = p_vertices;
         g2d_uvs = p_uvs;
         g2d_normals = p_normals;
