@@ -380,9 +380,22 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal imple
 		g2d_onMouseInputInternal = null;
         g2d_onKeyboardInput = null;
 
+		g2d_nativeStage.removeEventListener(Event.ENTER_FRAME, g2d_enterFrame_handler);
+		
+		g2d_nativeStage.removeEventListener(MouseEvent.MOUSE_DOWN, g2d_mouseEvent_handler);
+        g2d_nativeStage.removeEventListener(MouseEvent.MOUSE_UP, g2d_mouseEvent_handler);
+        g2d_nativeStage.removeEventListener(MouseEvent.MOUSE_MOVE, g2d_mouseEvent_handler);
+        g2d_nativeStage.removeEventListener(MouseEvent.MOUSE_WHEEL, g2d_mouseEvent_handler);
+
+        g2d_nativeStage.removeEventListener(KeyboardEvent.KEY_DOWN, g2d_keyboardEvent_handler);
+        g2d_nativeStage.removeEventListener(KeyboardEvent.KEY_UP, g2d_keyboardEvent_handler);
+		
+		
 		g2d_nativeStage.stage3Ds[0].removeEventListener(Event.CONTEXT3D_CREATE, g2d_contextInitialized_handler);
 		g2d_nativeStage.stage3Ds[0].removeEventListener(ErrorEvent.ERROR, g2d_contextError_handler);
 		g2d_nativeContext.dispose();
+		
+		g2d_reinitialize = 0;
 	}
 
     public function resize(p_rect:GRectangle):Void {
