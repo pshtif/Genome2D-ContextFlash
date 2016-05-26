@@ -35,7 +35,7 @@ import flash.utils.ByteArray;
 import flash.Vector;
 
 @:access(com.genome2d.textures.GTexture)
-class GFbxRenderer implements IGRenderer
+class G3DRenderer implements IGRenderer
 {
     static private inline var DATA_PER_VERTEX:Int = 5;
     static private inline var DATA_PER_VERTEX_NORMALS:Int = 8;
@@ -155,8 +155,7 @@ class GFbxRenderer implements IGRenderer
 
     public var renderType:Int = 0;
 
-	public var useSceneMatrix:Bool = true;
-    public var modelMatrix:GMatrix3D;
+	public var renderMatrix:GMatrix3D;
     public var cameraMatrix:GMatrix3D;
     public var projectionMatrix:GProjectionMatrix;
 
@@ -170,7 +169,7 @@ class GFbxRenderer implements IGRenderer
 	public var visible:Bool = true;
 
     public function new(p_vertices:Array<Float>, p_uvs:Array<Float>, p_indices:Array<UInt> = null, p_normals:Array<Float>, p_generatePerspectiveMatrix:Bool = false) {
-        modelMatrix = new GMatrix3D();
+        renderMatrix = new GMatrix3D();
         cameraMatrix = new GMatrix3D();
 
         lightDirection = new GFloat4(1,1,1);
@@ -330,7 +329,7 @@ class GFbxRenderer implements IGRenderer
 
         if (projectionMatrix != null) nativeContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 0, projectionMatrix, true);
 
-        nativeContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 4, modelMatrix, true);
+        nativeContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 4, renderMatrix, true);
         nativeContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 8, cameraMatrix, true);
 
         nativeContext.setVertexBufferAt(0, g2d_vertexBuffer, 0, Context3DVertexBufferFormat.FLOAT_3);
@@ -350,7 +349,7 @@ class GFbxRenderer implements IGRenderer
                 nativeContext.setVertexBufferAt(2, g2d_vertexBuffer, 5, Context3DVertexBufferFormat.FLOAT_3);
                 // Inverse transpose model view matrix
                 // TODO: Cloning matrix per render is not a good idea just for testing!
-                var invtran:GMatrix3D = modelMatrix.clone();
+                var invtran:GMatrix3D = renderMatrix.clone();
                 invtran.invert();
                 invtran.transpose();
                 nativeContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 12, invtran, true);
@@ -376,7 +375,7 @@ class GFbxRenderer implements IGRenderer
             case 3:
                 // Inverse transpose model view matrix
                 // TODO: Cloning matrix per render is not a good idea just for testing!
-                var invtran:GMatrix3D = modelMatrix.clone();
+                var invtran:GMatrix3D = renderMatrix.clone();
                 invtran.invert();
                 invtran.transpose();
                 nativeContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 12, invtran, true);
