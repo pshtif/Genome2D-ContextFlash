@@ -9,7 +9,7 @@ package com.genome2d.context.filters;
 
 import com.genome2d.context.IGContext;
 import com.genome2d.textures.GTexture;
-import com.genome2d.context.stage3d.GStage3DContext;
+import com.genome2d.context.GStage3DContext;
 import flash.Vector;
 import com.genome2d.context.filters.GFilter;
 

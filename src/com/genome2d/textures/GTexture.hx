@@ -11,7 +11,7 @@ package com.genome2d.textures;
 import com.genome2d.callbacks.GCallback.GCallback0;
 import com.genome2d.callbacks.GCallback.GCallback1;
 import com.genome2d.context.GContextFeature;
-import com.genome2d.context.stage3d.GStage3DContext;
+import com.genome2d.context.GStage3DContext;
 import com.genome2d.debug.GDebug;
 import com.genome2d.geom.GRectangle;
 import com.genome2d.proto.IGPrototypable;

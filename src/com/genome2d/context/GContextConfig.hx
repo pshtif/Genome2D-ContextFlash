@@ -8,8 +8,7 @@
  */
 package com.genome2d.context;
 
-import com.genome2d.context.bitmap.GBitmapContext;
-import com.genome2d.context.stage3d.GStage3DContext;
+import com.genome2d.context.GStage3DContext;
 import flash.display.Stage3D;
 import flash.utils.Object;
 import com.genome2d.context.stats.GStats;

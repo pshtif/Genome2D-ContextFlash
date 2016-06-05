@@ -1,4 +1,4 @@
-package com.genome2d.context.stage3d;
+package com.genome2d.context;
 
 /**
  * ...

@@ -6,7 +6,7 @@
  *
  *	License:: ./doc/LICENSE.md (https://github.com/pshtif/Genome2D/blob/master/LICENSE.md)
  */
-package com.genome2d.context.stage3d;
+package com.genome2d.context;
 
 import flash.geom.Matrix3D;
 import flash.Vector;

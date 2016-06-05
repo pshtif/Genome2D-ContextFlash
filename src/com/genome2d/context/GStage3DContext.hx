@@ -6,7 +6,7 @@
  *
  *	License:: ./doc/LICENSE.md (https://github.com/pshtif/Genome2D/blob/master/LICENSE.md)
  */
-package com.genome2d.context.stage3d;
+package com.genome2d.context;
 
 import com.genome2d.callbacks.GCallback;
 import com.genome2d.debug.IGDebuggableInternal;
@@ -19,15 +19,15 @@ import com.genome2d.textures.GTexture;
 import com.genome2d.context.filters.GColorMatrixFilter;
 import com.genome2d.context.stats.GStats;
 import com.genome2d.geom.GMatrix3D;
-import com.genome2d.context.stage3d.renderers.GRenderersCommon;
+import com.genome2d.context.renderers.GRenderersCommon;
 import com.genome2d.context.stats.IGStats;
 import com.genome2d.geom.GRectangle;
-import com.genome2d.context.stage3d.renderers.GMatrixQuadTextureShaderRenderer;
-import com.genome2d.context.stage3d.renderers.GTriangleTextureBufferCPURenderer;
-import com.genome2d.context.stage3d.renderers.GQuadTextureShaderRenderer;
+import com.genome2d.context.renderers.GMatrixQuadTextureShaderRenderer;
+import com.genome2d.context.renderers.GTriangleTextureBufferCPURenderer;
+import com.genome2d.context.renderers.GQuadTextureShaderRenderer;
 import com.genome2d.context.filters.GFilter;
-import com.genome2d.context.stage3d.renderers.GQuadTextureBufferGPURenderer;
-import com.genome2d.context.stage3d.GProjectionMatrix;
+import com.genome2d.context.renderers.GQuadTextureBufferGPURenderer;
+import com.genome2d.context.GProjectionMatrix;
 import com.genome2d.textures.GTexture;
 import com.genome2d.context.GBlendMode;
 import com.genome2d.context.GCamera;

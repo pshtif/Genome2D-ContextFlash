@@ -6,16 +6,16 @@
  *
  *	License:: ./doc/LICENSE.md (https://github.com/pshtif/Genome2D/blob/master/LICENSE.md)
  */
-package com.genome2d.context.stage3d.renderers;
+package com.genome2d.context.renderers;
 
 import com.genome2d.context.GBlendMode;
 import com.genome2d.context.IGRenderer;
-import com.genome2d.geom.GFloat3;
+import com.genome2d.geom.GVector3D;
 import com.genome2d.geom.GFloat4;
 import com.genome2d.context.stats.GStats;
 import com.genome2d.textures.GTexture;
 import com.genome2d.textures.GTextureFilteringType;
-import com.genome2d.context.stage3d.GStage3DContext;
+import com.genome2d.context.GStage3DContext;
 import com.genome2d.geom.GMatrix3D;
 import flash.display3D.Context3DBlendFactor;
 
