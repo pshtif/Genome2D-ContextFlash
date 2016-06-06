@@ -1,6 +1,6 @@
 package com.genome2d.geom;
 
-class GVector3D {
+class GFloat3 {
     public var x:Float;
     public var y:Float;
     public var z:Float;
