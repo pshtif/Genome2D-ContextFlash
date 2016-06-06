@@ -155,7 +155,7 @@ class G3DRenderer implements IGRenderer
 
     public var renderType:Int = 0;
 
-	public var renderMatrix:GMatrix3D;
+	public var modelMatrix:GMatrix3D;
     public var cameraMatrix:GMatrix3D;
     public var projectionMatrix:GProjectionMatrix;
 
@@ -169,7 +169,7 @@ class G3DRenderer implements IGRenderer
 	public var visible:Bool = true;
 
     public function new(p_vertices:Array<Float>, p_uvs:Array<Float>, p_indices:Array<UInt> = null, p_normals:Array<Float>, p_generatePerspectiveMatrix:Bool = false) {
-        renderMatrix = new GMatrix3D();
+        modelMatrix = new GMatrix3D();
         cameraMatrix = new GMatrix3D();
 
         lightDirection = new GFloat4(1,1,1);
@@ -262,7 +262,7 @@ class G3DRenderer implements IGRenderer
 
             index += (g2d_normals == null) ? DATA_PER_VERTEX : DATA_PER_VERTEX_NORMALS;
         }
-
+		trace(vertexVector);
         g2d_vertexBuffer.uploadFromVector(vertexVector, 0, size);
 
         if (g2d_indices == null) {
@@ -329,7 +329,7 @@ class G3DRenderer implements IGRenderer
 
         if (projectionMatrix != null) nativeContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 0, projectionMatrix, true);
 
-        nativeContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 4, renderMatrix, true);
+        nativeContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 4, modelMatrix, true);
         nativeContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 8, cameraMatrix, true);
 
         nativeContext.setVertexBufferAt(0, g2d_vertexBuffer, 0, Context3DVertexBufferFormat.FLOAT_3);
@@ -349,7 +349,7 @@ class G3DRenderer implements IGRenderer
                 nativeContext.setVertexBufferAt(2, g2d_vertexBuffer, 5, Context3DVertexBufferFormat.FLOAT_3);
                 // Inverse transpose model view matrix
                 // TODO: Cloning matrix per render is not a good idea just for testing!
-                var invtran:GMatrix3D = renderMatrix.clone();
+                var invtran:GMatrix3D = modelMatrix.clone();
                 invtran.invert();
                 invtran.transpose();
                 nativeContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 12, invtran, true);
@@ -375,7 +375,7 @@ class G3DRenderer implements IGRenderer
             case 3:
                 // Inverse transpose model view matrix
                 // TODO: Cloning matrix per render is not a good idea just for testing!
-                var invtran:GMatrix3D = renderMatrix.clone();
+                var invtran:GMatrix3D = modelMatrix.clone();
                 invtran.invert();
                 invtran.transpose();
                 nativeContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 12, invtran, true);
