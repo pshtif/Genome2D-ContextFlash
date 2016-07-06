@@ -262,7 +262,7 @@ class G3DRenderer implements IGRenderer
 
             index += (g2d_normals == null) ? DATA_PER_VERTEX : DATA_PER_VERTEX_NORMALS;
         }
-		trace(vertexVector);
+
         g2d_vertexBuffer.uploadFromVector(vertexVector, 0, size);
 
         if (g2d_indices == null) {

@@ -387,7 +387,7 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal imple
         g2d_onInitialized = null;
         g2d_onFailed = null;
         g2d_onInvalidated = null;
-		g2d_onFrame.removeAll();
+		if (g2d_onFrame != null) g2d_onFrame.removeAll();
         g2d_onFrame = null;
         g2d_onMouseInput = null;
 		g2d_onMouseInputInternal = null;
@@ -406,7 +406,7 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal imple
 		
 		g2d_nativeStage.stage3Ds[0].removeEventListener(Event.CONTEXT3D_CREATE, g2d_contextInitialized_handler);
 		g2d_nativeStage.stage3Ds[0].removeEventListener(ErrorEvent.ERROR, g2d_contextError_handler);
-		g2d_nativeContext.dispose();
+		if (g2d_nativeContext != null) g2d_nativeContext.dispose();
 		
 		g2d_reinitialize = 0;
 	}
