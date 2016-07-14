@@ -308,7 +308,6 @@ class G3DRenderer implements IGRenderer
         var nativeContext:Context3D = g2d_context.getNativeContext();
         if (p_renderType != renderType) {
             clear();
-            g2d_context.getNativeContext().setDepthTest(true, Context3DCompareMode.LESS);
             renderType = p_renderType;
             switch (renderType) {
                 case 0:

@@ -8,7 +8,7 @@
  */
 package com.genome2d.context;
 
-import Genome2D.GDepthFunc;
+import com.genome2d.context.GDepthFunc;
 import com.genome2d.callbacks.GCallback;
 import com.genome2d.debug.IGDebuggableInternal;
 import com.genome2d.input.IGInteractive;
@@ -495,9 +495,8 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal imple
 				g2d_nativeContext.setDepthTest(p_depthMask, Context3DCompareMode.NEVER);
 			case GDepthFunc.NOTEQUAL:
 				g2d_nativeContext.setDepthTest(p_depthMask, Context3DCompareMode.NOT_EQUAL);
-			default:
+			case GDepthFunc.ALWAYS:
 				g2d_nativeContext.setDepthTest(p_depthMask, Context3DCompareMode.ALWAYS);
-				
 		}
     }
 	
@@ -518,9 +517,9 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal imple
 		    g2d_nativeContext.clear(g2d_backgroundRed, g2d_backgroundGreen, g2d_backgroundBlue, g2d_backgroundAlpha, 1);
         }
 
-		g2d_nativeContext.setDepthTest(false, Context3DCompareMode.ALWAYS);
+		setDepthTest(false, GDepthFunc.ALWAYS);
         g2d_nativeContext.setStencilActions(Context3DTriangleFace.FRONT_AND_BACK, Context3DCompareMode.ALWAYS, Context3DStencilAction.KEEP, Context3DStencilAction.KEEP, Context3DStencilAction.KEEP);
-        g2d_nativeContext.setCulling(Context3DTriangleFace.NONE);
+        g2d_nativeContext.setCulling(Context3DTriangleFace.BACK);
 		GBlendMode.setBlendMode(g2d_nativeContext, GBlendMode.NORMAL, g2d_activePremultiply);
         return true;
 	}
