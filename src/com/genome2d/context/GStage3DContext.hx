@@ -8,6 +8,7 @@
  */
 package com.genome2d.context;
 
+import Genome2D.GDepthFunc;
 import com.genome2d.callbacks.GCallback;
 import com.genome2d.debug.IGDebuggableInternal;
 import com.genome2d.input.IGInteractive;
@@ -476,10 +477,28 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal imple
         g2d_nativeContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 0, g2d_activeCamera.matrix, true);
     }
 
-    public function setDepthTest(p_depthMask:Bool, p_compareMode:Context3DCompareMode):Void {
+    public function setDepthTest(p_depthMask:Bool, p_depthFunc:GDepthFunc):Void {
         if (g2d_activeRenderer != null) g2d_activeRenderer.push();
 
-        g2d_nativeContext.setDepthTest(p_depthMask, p_compareMode);
+		switch (p_depthFunc) {
+			case GDepthFunc.EQUAL:
+				g2d_nativeContext.setDepthTest(p_depthMask, Context3DCompareMode.EQUAL);
+			case GDepthFunc.GEQUAL:
+				g2d_nativeContext.setDepthTest(p_depthMask, Context3DCompareMode.GREATER_EQUAL);
+			case GDepthFunc.GREATER:
+				g2d_nativeContext.setDepthTest(p_depthMask, Context3DCompareMode.GREATER);
+			case GDepthFunc.LEQUAL:
+				g2d_nativeContext.setDepthTest(p_depthMask, Context3DCompareMode.LESS_EQUAL);
+			case GDepthFunc.LESS:
+				g2d_nativeContext.setDepthTest(p_depthMask, Context3DCompareMode.LESS);
+			case GDepthFunc.NEVER:
+				g2d_nativeContext.setDepthTest(p_depthMask, Context3DCompareMode.NEVER);
+			case GDepthFunc.NOTEQUAL:
+				g2d_nativeContext.setDepthTest(p_depthMask, Context3DCompareMode.NOT_EQUAL);
+			default:
+				g2d_nativeContext.setDepthTest(p_depthMask, Context3DCompareMode.ALWAYS);
+				
+		}
     }
 	
 	/**
