@@ -395,7 +395,6 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal imple
         g2d_onFrame = null;
 		if (g2d_onMouseInput != null) g2d_onMouseInput.removeAll();
         g2d_onMouseInput = null;
-		if (g2d_onMouseInputInternal != null) g2d_onMouseInputInternal.removeAll();
 		g2d_onMouseInputInternal = null;
 		if (g2d_onKeyboardInput != null) g2d_onKeyboardInput.removeAll();
         g2d_onKeyboardInput = null;
