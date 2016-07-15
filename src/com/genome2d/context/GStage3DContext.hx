@@ -461,14 +461,14 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal imple
 	  	Set camera that should be used for all subsequent draws
 	 */
     public function setActiveCamera(p_camera:GCamera):Void {
+		if (g2d_activeRenderer != null) g2d_activeRenderer.push();
+		
         g2d_activeCamera = p_camera;
 
         g2d_activeViewRect.setTo(untyped __int__(g2d_stageViewRect.width*g2d_activeCamera.normalizedViewX),
                                  untyped __int__(g2d_stageViewRect.height*g2d_activeCamera.normalizedViewY),
                                  untyped __int__(g2d_stageViewRect.width*g2d_activeCamera.normalizedViewWidth),
                                  untyped __int__(g2d_stageViewRect.height*g2d_activeCamera.normalizedViewHeight));
-
-        if (g2d_activeRenderer != null) g2d_activeRenderer.push();
 
         g2d_activeCamera.matrix.ortho(g2d_stageViewRect.width, g2d_stageViewRect.height);
         var vx:Float = g2d_activeViewRect.x + g2d_activeViewRect.width*.5;
