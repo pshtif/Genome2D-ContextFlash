@@ -385,13 +385,19 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal imple
     public function dispose():Void {
         GTextureManager.disposeAll();
 
+		if (g2d_onInitialized != null) g2d_onInitialized.removeAll();
         g2d_onInitialized = null;
+		if (g2d_onFailed != null) g2d_onFailed.removeAll();
         g2d_onFailed = null;
+		if (g2d_onInitialized != null) g2d_onInitialized.removeAll();
         g2d_onInvalidated = null;
 		if (g2d_onFrame != null) g2d_onFrame.removeAll();
         g2d_onFrame = null;
+		if (g2d_onMouseInput != null) g2d_onMouseInput.removeAll();
         g2d_onMouseInput = null;
+		if (g2d_onMouseInputInternal != null) g2d_onMouseInputInternal.removeAll();
 		g2d_onMouseInputInternal = null;
+		if (g2d_onKeyboardInput != null) g2d_onKeyboardInput.removeAll();
         g2d_onKeyboardInput = null;
 
 		g2d_nativeStage.removeEventListener(Event.ENTER_FRAME, g2d_enterFrame_handler);
