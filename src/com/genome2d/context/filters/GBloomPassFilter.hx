@@ -10,8 +10,6 @@ package com.genome2d.context.filters;
 
 import com.genome2d.textures.GTexture;
 import flash.Vector;
-import com.genome2d.textures.GTexture;
-import com.genome2d.context.GCamera;
 import com.genome2d.debug.GDebug;
 
 import flash.display3D.Context3D;
