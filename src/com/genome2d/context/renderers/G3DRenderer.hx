@@ -427,4 +427,14 @@ class G3DRenderer implements IGRenderer
         for (i in 0...12) proj[i] /= nL;
         return proj;
     }
+	
+	public function dispose():Void {
+		g2d_indexBuffer.dispose();
+		g2d_vertexBuffer.dispose();
+
+		g2d_program.dispose();
+		g2d_programNormals.dispose();
+		g2d_programDepth.dispose();
+		g2d_programShadow.dispose();
+	}
 }
