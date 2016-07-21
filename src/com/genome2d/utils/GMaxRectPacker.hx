@@ -11,6 +11,7 @@ package com.genome2d.utils;
 import com.genome2d.debug.GDebug;
 import flash.display.BitmapData;
 import flash.geom.Matrix;
+import flash.geom.Point;
 class GMaxRectPacker
 {				
     static public inline var BOTTOM_LEFT:Int = 0;
@@ -397,13 +398,13 @@ class GMaxRectPacker
     }
 
     public function draw(p_bitmapData:BitmapData):Void {
-        var matrix:Matrix = new Matrix();
+        var point:Point = new Point();
         for (i in 0...g2d_rectangles.length) {
             var rect:GPackerRectangle = g2d_rectangles[i];
-            matrix.tx = g2d_rectangles[i].x;
-            matrix.ty = g2d_rectangles[i].y;
+            point.x = g2d_rectangles[i].x;
+            point.y = g2d_rectangles[i].y;
 
-            p_bitmapData.draw(rect.bitmapData, matrix);
+            p_bitmapData.copyPixels(rect.bitmapData, rect.bitmapData.rect, point);
         }
     }
 }

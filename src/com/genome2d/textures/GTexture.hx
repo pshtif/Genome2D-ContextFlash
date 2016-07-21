@@ -62,8 +62,12 @@ class GTexture extends GTextureBase
                     g2d_nativeHeight = untyped __int__(Math.pow(2,byteArray[offset+2]));
                     premultiplied = false;
                 } else {
-                    //g2d_sourceType = GTextureSourceType.BYTEARRAY;
+                    g2d_sourceType = GTextureSourceType.BYTEARRAY;
                 }
+			} else if (Std.is(g2d_source, GByteArrayRectangle)) {
+				g2d_sourceType = GTextureSourceType.BYTEARRAY;
+				g2d_nativeWidth = p_value.width;
+				g2d_nativeHeight = p_value.height;
             } else if (Std.is(g2d_source,GRectangle)) {
                 g2d_sourceType = GTextureSourceType.RENDER_TARGET;
                 g2d_nativeWidth = p_value.width;
@@ -110,18 +114,16 @@ class GTexture extends GTextureBase
                             }
                         }
                         untyped g2d_nativeTexture["uploadFromBitmapData"](resampled);
-                    /*
                     case GTextureSourceType.BYTEARRAY:
                         if (g2d_nativeTexture == null || p_reinitialize) {
                             if (g2d_nativeTexture != null) g2d_nativeTexture.dispose();
-                            if (useRectangle) {
-                                g2d_nativeTexture = untyped contextStage3D.getNativeContext()["createRectangleTexture"](wi, hi, untyped g2d_format, false);
+                            if (usesRectangle()) {
+                                g2d_nativeTexture = untyped contextStage3D.getNativeContext()["createRectangleTexture"](g2d_gpuWidth, g2d_gpuHeight, untyped g2d_format, false);
                             } else {
-                                g2d_nativeTexture = contextStage3D.getNativeContext().createTexture(wi, hi, untyped g2d_format, false);
+                                g2d_nativeTexture = contextStage3D.getNativeContext().createTexture(g2d_gpuWidth, g2d_gpuHeight, untyped g2d_format, false);
                             }
                         }
-                        untyped g2d_nativeTexture["uploadFromByteArray"](g2d_sourceByteArray, 0);
-                    /**/
+                        untyped g2d_nativeTexture["uploadFromByteArray"](g2d_source.byteArray, 0);
                     case GTextureSourceType.ATF_BGRA:
                         if (g2d_nativeTexture == null || p_reinitialize) {
                             if (g2d_nativeTexture != null) g2d_nativeTexture.dispose();
