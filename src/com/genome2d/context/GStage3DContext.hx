@@ -184,6 +184,7 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal imple
 		g2d_configureBackBuffer();
 	}
 	
+	private var g2d_defaultCulling:GCulling;
     private var g2d_enableDepthAndStencil:Bool;
     private var g2d_renderMode:String;
     private var g2d_profile:Object;
@@ -244,6 +245,7 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal imple
 		g2d_hdResolution = p_config.hdResolution;
         g2d_enableDepthAndStencil = p_config.enableDepthAndStencil;
 		g2d_enableErrorChecking = p_config.enableErrorChecking;
+		g2d_defaultCulling = p_config.defaultCulling;
         g2d_renderMode = p_config.renderMode;
         g2d_profile = p_config.profile;
 
@@ -523,8 +525,20 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal imple
         }
 
 		setDepthTest(false, GDepthFunc.ALWAYS);
+		
         g2d_nativeContext.setStencilActions(Context3DTriangleFace.FRONT_AND_BACK, Context3DCompareMode.ALWAYS, Context3DStencilAction.KEEP, Context3DStencilAction.KEEP, Context3DStencilAction.KEEP);
-        g2d_nativeContext.setCulling(Context3DTriangleFace.BACK);
+		
+		switch (g2d_defaultCulling) {
+			case GCulling.BACK:
+				g2d_nativeContext.setCulling(Context3DTriangleFace.BACK);
+			case GCulling.FRONT:
+				g2d_nativeContext.setCulling(Context3DTriangleFace.FRONT);
+			case GCulling.FRONT_AND_BACK:
+				g2d_nativeContext.setCulling(Context3DTriangleFace.FRONT_AND_BACK);
+			case GCulling.NONE:
+				g2d_nativeContext.setCulling(Context3DTriangleFace.NONE);
+		}
+		
 		GBlendMode.setBlendMode(g2d_nativeContext, GBlendMode.NORMAL, g2d_activePremultiply);
         return true;
 	}
