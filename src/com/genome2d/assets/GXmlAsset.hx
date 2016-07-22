@@ -8,13 +8,13 @@
  */
 package com.genome2d.assets;
 
+import com.genome2d.assets.GAsset;
 import flash.events.Event;
 
 /**
- * ...
  * @author Peter "sHTiF" Stefcek
  */
-class GXmlAsset extends GAsset {
+class GXmlAsset extends GFlashAsset {
     private var g2d_xml:Xml;
     #if swc @:extern #end
 	public var xml(get,never):Xml;

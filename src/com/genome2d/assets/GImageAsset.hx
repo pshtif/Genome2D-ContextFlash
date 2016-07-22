@@ -20,7 +20,7 @@ import flash.display.Loader;
 import flash.events.Event;
 import flash.net.URLRequest;
 
-class GImageAsset extends GAsset {
+class GImageAsset extends GFlashAsset {
     private var g2d_bytes:ByteArray;
     #if swc @:extern #end
     public var bytes(get,never):ByteArray;

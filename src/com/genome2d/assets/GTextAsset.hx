@@ -8,12 +8,13 @@
  */
 package com.genome2d.assets;
 
+import com.genome2d.assets.GAsset;
 import flash.events.Event;
 
 /**
  * @author Peter "sHTiF" Stefcek
  */
-class GTextAsset extends GAsset {
+class GTextAsset extends GFlashAsset {
 	
 	public var text:String;
 
