@@ -68,6 +68,7 @@ class GTexture extends GTextureBase
 				g2d_sourceType = GTextureSourceType.BYTEARRAY;
 				g2d_nativeWidth = p_value.width;
 				g2d_nativeHeight = p_value.height;
+				premultiplied = false;
             } else if (Std.is(g2d_source,GRectangle)) {
                 g2d_sourceType = GTextureSourceType.RENDER_TARGET;
                 g2d_nativeWidth = p_value.width;
@@ -123,7 +124,7 @@ class GTexture extends GTextureBase
                                 g2d_nativeTexture = contextStage3D.getNativeContext().createTexture(g2d_gpuWidth, g2d_gpuHeight, untyped g2d_format, false);
                             }
                         }
-                        untyped g2d_nativeTexture["uploadFromByteArray"](g2d_source.byteArray, 0);
+                        untyped g2d_nativeTexture["uploadFromByteArray"](g2d_source.byteArray, g2d_source.offset);
                     case GTextureSourceType.ATF_BGRA:
                         if (g2d_nativeTexture == null || p_reinitialize) {
                             if (g2d_nativeTexture != null) g2d_nativeTexture.dispose();

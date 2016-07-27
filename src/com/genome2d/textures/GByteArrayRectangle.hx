@@ -10,6 +10,7 @@ class GByteArrayRectangle
 	public var width:Int;
 	public var height:Int;
 	public var byteArray:ByteArray;
+	public var offset:Int;
 	
 	public function new(p_width:Int, p_height:Int, p_byteArray:ByteArray) {
 		width = p_width;
