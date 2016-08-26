@@ -35,7 +35,7 @@ class GContextConfig
     public var statsClass:Class<IGStats>;
     public var fallbackContextClass:Class<IGContext> = null;
     public var externalStage3D:Stage3D;
-	public var defaultCulling:GCulling = GCulling.BACK;
+	public var defaultCulling:GCulling = GCulling.NONE;
 
     #if swc
     public function new(p_stage:Stage, ?p_viewRect:GRectangle = null) {
