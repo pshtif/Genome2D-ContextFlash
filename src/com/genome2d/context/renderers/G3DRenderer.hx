@@ -82,14 +82,15 @@ class G3DRenderer implements IGRenderer
             // Light amount
             "mul ft1.xyz, ft0.xyz, ft1.xyz \n" +
             // Light color
-            "mul ft1, ft1, fc4 \n" +
+            "mul ft1.xyz, ft1.xyz, fc4.xyz \n" +
             // Multiply with ambient
-            "mul ft0, ft0, fc2 \n" +
+            "mul ft0.xyz, ft0.xyz, fc2.xyz \n" +
             // Add diffuse + ambient
-            "add ft1, ft1, ft0 \n" +
+            "add ft0.xyz, ft1.xyz, ft0.xyz \n" +
 			//"sat ft1, ft1 \n" +
             // Multiply with tint
-            "mul oc, ft1, fc3";
+			"mul ft0, ft0, fc3 \n" +
+            "mov oc, ft0";
             //"mov oc, v1";
 
     static private inline var VERTEX_SHADER_CODE_SHADOW:String =
@@ -429,12 +430,12 @@ class G3DRenderer implements IGRenderer
     }
 	
 	public function dispose():Void {
-		g2d_indexBuffer.dispose();
-		g2d_vertexBuffer.dispose();
+		if (g2d_indexBuffer != null) g2d_indexBuffer.dispose();
+		if (g2d_vertexBuffer != null) g2d_vertexBuffer.dispose();
 
-		g2d_program.dispose();
-		g2d_programNormals.dispose();
-		g2d_programDepth.dispose();
-		g2d_programShadow.dispose();
+		if (g2d_program != null) g2d_program.dispose();
+		if (g2d_programNormals != null) g2d_programNormals.dispose();
+		if (g2d_programDepth != null) g2d_programDepth.dispose();
+		if (g2d_programShadow != null) g2d_programShadow.dispose();
 	}
 }
