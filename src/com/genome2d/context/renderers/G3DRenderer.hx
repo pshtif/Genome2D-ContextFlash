@@ -129,14 +129,13 @@ class G3DRenderer implements IGRenderer
 	private var g2d_initialized:Int = 0;
     private var g2d_initializedThisFrame:Bool;
 
-    private var g2d_vertexShaderCode:ByteArray;
-    private var g2d_fragmentShaderCode:ByteArray;
-    private var g2d_vertexShaderCodeNormals:ByteArray;
-    private var g2d_fragmentShaderCodeNormals:ByteArray;
-    private var g2d_vertexShaderCodeShadow:ByteArray;
-    private var g2d_fragmentShaderCodeShadow:ByteArray;
-	private var g2d_vertexShaderCodeDepth:ByteArray;
-    private var g2d_fragmentShaderCodeDepth:ByteArray;
+    static private var g2d_vertexShaderCode:ByteArray;
+    static private var g2d_vertexShaderCodeNormals:ByteArray;
+    static private var g2d_fragmentShaderCodeNormals:ByteArray;
+    static private var g2d_vertexShaderCodeShadow:ByteArray;
+    static private var g2d_fragmentShaderCodeShadow:ByteArray;
+	static private var g2d_vertexShaderCodeDepth:ByteArray;
+    static private var g2d_fragmentShaderCodeDepth:ByteArray;
 
     private var g2d_context:GStage3DContext;
 
@@ -193,33 +192,47 @@ class G3DRenderer implements IGRenderer
     public function initialize(p_context:GStage3DContext):Void {
         g2d_context = p_context;
 
-        var agal:AGALMiniAssembler = new AGALMiniAssembler();
-        agal.assemble("vertex", VERTEX_SHADER_CODE, GRenderersCommon.AGAL_VERSION);
-        g2d_vertexShaderCode = agal.agalcode;
+		if (g2d_vertexShaderCode == null) {
+			var agal:AGALMiniAssembler = new AGALMiniAssembler();
+			agal.assemble("vertex", VERTEX_SHADER_CODE, GRenderersCommon.AGAL_VERSION);
+			g2d_vertexShaderCode = agal.agalcode;
+		}
 
-        var agal:AGALMiniAssembler = new AGALMiniAssembler();
-        agal.assemble("vertex", VERTEX_SHADER_CODE_NORMALS, GRenderersCommon.AGAL_VERSION);
-        g2d_vertexShaderCodeNormals = agal.agalcode;
+		if (g2d_vertexShaderCodeNormals == null) {
+			var agal:AGALMiniAssembler = new AGALMiniAssembler();
+			agal.assemble("vertex", VERTEX_SHADER_CODE_NORMALS, GRenderersCommon.AGAL_VERSION);
+			g2d_vertexShaderCodeNormals = agal.agalcode;
+		}
 
-        var agal:AGALMiniAssembler = new AGALMiniAssembler();
-        agal.assemble("fragment", FRAGMENT_SHADER_CODE_NORMALS, GRenderersCommon.AGAL_VERSION);
-        g2d_fragmentShaderCodeNormals = agal.agalcode;
+		if (g2d_fragmentShaderCodeNormals == null) {
+			var agal:AGALMiniAssembler = new AGALMiniAssembler();
+			agal.assemble("fragment", FRAGMENT_SHADER_CODE_NORMALS, GRenderersCommon.AGAL_VERSION);
+			g2d_fragmentShaderCodeNormals = agal.agalcode;
+		}
 
-        var agal:AGALMiniAssembler = new AGALMiniAssembler();
-        agal.assemble("vertex", VERTEX_SHADER_CODE_SHADOW, GRenderersCommon.AGAL_VERSION);
-        g2d_vertexShaderCodeShadow = agal.agalcode;
+		if (g2d_vertexShaderCodeShadow == null) {
+			var agal:AGALMiniAssembler = new AGALMiniAssembler();
+			agal.assemble("vertex", VERTEX_SHADER_CODE_SHADOW, GRenderersCommon.AGAL_VERSION);
+			g2d_vertexShaderCodeShadow = agal.agalcode;
+		}
 
-        var agal:AGALMiniAssembler = new AGALMiniAssembler();
-        agal.assemble("fragment", FRAGMENT_SHADER_CODE_SHADOW, GRenderersCommon.AGAL_VERSION);
-        g2d_fragmentShaderCodeShadow = agal.agalcode;
+		if (g2d_fragmentShaderCodeShadow == null) {
+			var agal:AGALMiniAssembler = new AGALMiniAssembler();
+			agal.assemble("fragment", FRAGMENT_SHADER_CODE_SHADOW, GRenderersCommon.AGAL_VERSION);
+			g2d_fragmentShaderCodeShadow = agal.agalcode;
+		}
 		
-		var agal:AGALMiniAssembler = new AGALMiniAssembler();
-        agal.assemble("vertex", VERTEX_SHADER_CODE_DEPTH, GRenderersCommon.AGAL_VERSION);
-        g2d_vertexShaderCodeDepth = agal.agalcode;
+		if (g2d_vertexShaderCodeDepth == null) {
+			var agal:AGALMiniAssembler = new AGALMiniAssembler();
+			agal.assemble("vertex", VERTEX_SHADER_CODE_DEPTH, GRenderersCommon.AGAL_VERSION);
+			g2d_vertexShaderCodeDepth = agal.agalcode;
+		}
 
-        var agal:AGALMiniAssembler = new AGALMiniAssembler();
-        agal.assemble("fragment", FRAGMENT_SHADER_CODE_DEPTH, GRenderersCommon.AGAL_VERSION);
-        g2d_fragmentShaderCodeDepth = agal.agalcode;
+		if (g2d_fragmentShaderCodeDepth == null) {
+			var agal:AGALMiniAssembler = new AGALMiniAssembler();
+			agal.assemble("fragment", FRAGMENT_SHADER_CODE_DEPTH, GRenderersCommon.AGAL_VERSION);
+			g2d_fragmentShaderCodeDepth = agal.agalcode;
+		}
 
         g2d_program = g2d_context.getNativeContext().createProgram();
         g2d_program.upload(g2d_vertexShaderCode, GRenderersCommon.getTexturedShaderCode(false, GTextureFilteringType.LINEAR, 2, "", null));
