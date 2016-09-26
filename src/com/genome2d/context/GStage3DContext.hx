@@ -375,6 +375,8 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal imple
         g2d_nativeStage.addEventListener(MouseEvent.MOUSE_UP, g2d_mouseEvent_handler);
         g2d_nativeStage.addEventListener(MouseEvent.MOUSE_MOVE, g2d_mouseEvent_handler);
         g2d_nativeStage.addEventListener(MouseEvent.MOUSE_WHEEL, g2d_mouseEvent_handler);
+		g2d_nativeStage.addEventListener(MouseEvent.RIGHT_MOUSE_DOWN, g2d_mouseEvent_handler);
+		g2d_nativeStage.addEventListener(MouseEvent.RIGHT_MOUSE_UP, g2d_mouseEvent_handler);
 
         // Keyboard interaction handlers
         g2d_nativeStage.addEventListener(KeyboardEvent.KEY_DOWN, g2d_keyboardEvent_handler);
