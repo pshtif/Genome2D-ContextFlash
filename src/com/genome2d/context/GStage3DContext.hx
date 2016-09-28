@@ -59,12 +59,8 @@ import flash.geom.Vector3D;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 
-#if genome_stage3donly
 @:native("com.genome2d.context.IGContext")
 class GStage3DContext implements IGDebuggableInternal implements IGInteractive
-#else
-class GStage3DContext implements IGContext implements IGDebuggableInternal implements IGInteractive
-#end
 {
     private var NORMALIZED_VECTOR:Vector3D;
 
@@ -463,7 +459,10 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal imple
     /**
 	  	Set camera that should be used for all subsequent draws
 	 */
-    public function setActiveCamera(p_camera:GCamera):Void {
+    public function setActiveCamera(p_camera:GCamera):Bool {
+        if (g2d_stageViewRect.width*p_camera.normalizedViewWidth <= 0 ||
+            g2d_stageViewRect.height*p_camera.normalizedViewHeight <= 0) return false;
+
 		if (g2d_activeRenderer != null) g2d_activeRenderer.push();
 		
         g2d_activeCamera = p_camera;
@@ -484,6 +483,8 @@ class GStage3DContext implements IGContext implements IGDebuggableInternal imple
 
         g2d_nativeContext.setScissorRectangle(g2d_activeViewRect);
         g2d_nativeContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 0, g2d_activeCamera.matrix, true);
+
+        return true;
     }
 
     public function setDepthTest(p_depthMask:Bool, p_depthFunc:GDepthFunc):Void {

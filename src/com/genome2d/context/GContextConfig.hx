@@ -33,7 +33,6 @@ class GContextConfig
     public var nativeStage:Stage;
     public var contextClass:Class<IGContext>;
     public var statsClass:Class<IGStats>;
-    public var fallbackContextClass:Class<IGContext> = null;
     public var externalStage3D:Stage3D;
 	public var defaultCulling:GCulling = GCulling.NONE;
 
@@ -57,8 +56,5 @@ class GContextConfig
 		renderMode = "auto";
         contextClass = GStage3DContext;
         statsClass = GStats;
-        #if !genome_stage3donly
-        fallbackContextClass = GBitmapContext;
-        #end
 	}
 }
