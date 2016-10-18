@@ -117,7 +117,7 @@ class GStats implements IGStats
             }
         }
 
-        p_context.draw(g2d_texture, (g2d_texture.width*scaleX)/2+x, (g2d_texture.height*scaleY)/2+y, scaleX, scaleY, 0);
+        p_context.draw(g2d_texture, GBlendMode.NORMAL, (g2d_texture.width*scaleX)/2+x, (g2d_texture.height*scaleY)/2+y, scaleX, scaleY, 0);
     }
 
     public function clear():Void {

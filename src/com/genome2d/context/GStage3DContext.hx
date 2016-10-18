@@ -166,7 +166,7 @@ class GStage3DContext implements IGDebuggableInternal implements IGInteractive
 	public var g2d_onMouseInputInternal:GMouseInput->Void;
 
 	private var g2d_activeRenderer:IGRenderer;
-	private var g2d_activeBlendMode:Int;
+	private var g2d_activeBlendMode:GBlendMode;
 	private var g2d_activePremultiply:Bool;
 
 	private var g2d_hdResolution:Bool;
@@ -201,8 +201,9 @@ class GStage3DContext implements IGDebuggableInternal implements IGInteractive
 
     public var enableNativeContentMouseCapture:Bool = false;
 
-    public var g2d_useSeparateAlphaPipeline:Bool;
-    public var g2d_useFastMem:Bool;
+    private var g2d_useSeparateAlphaPipeline:Bool;
+    private var g2d_useFastMem:Bool;
+    private var g2d_useRightClick:Bool;
 
     private var g2d_fastMemArray:ByteArray;
 
@@ -237,6 +238,7 @@ class GStage3DContext implements IGDebuggableInternal implements IGInteractive
         g2d_usingExternalContext = p_config.externalStage3D != null;
         g2d_nativeStage3D = p_config.externalStage3D;
 
+        g2d_useRightClick = p_config.useRightClick;
         g2d_antiAliasing = p_config.antiAliasing;
 		g2d_hdResolution = p_config.hdResolution;
         g2d_enableDepthAndStencil = p_config.enableDepthAndStencil;
@@ -371,8 +373,10 @@ class GStage3DContext implements IGDebuggableInternal implements IGInteractive
         g2d_nativeStage.addEventListener(MouseEvent.MOUSE_UP, g2d_mouseEvent_handler);
         g2d_nativeStage.addEventListener(MouseEvent.MOUSE_MOVE, g2d_mouseEvent_handler);
         g2d_nativeStage.addEventListener(MouseEvent.MOUSE_WHEEL, g2d_mouseEvent_handler);
-		g2d_nativeStage.addEventListener(MouseEvent.RIGHT_MOUSE_DOWN, g2d_mouseEvent_handler);
-		g2d_nativeStage.addEventListener(MouseEvent.RIGHT_MOUSE_UP, g2d_mouseEvent_handler);
+        if (g2d_useRightClick) {
+		    g2d_nativeStage.addEventListener(MouseEvent.RIGHT_MOUSE_DOWN, g2d_mouseEvent_handler);
+		    g2d_nativeStage.addEventListener(MouseEvent.RIGHT_MOUSE_UP, g2d_mouseEvent_handler);
+        }
 
         // Keyboard interaction handlers
         g2d_nativeStage.addEventListener(KeyboardEvent.KEY_DOWN, g2d_keyboardEvent_handler);
@@ -405,6 +409,10 @@ class GStage3DContext implements IGDebuggableInternal implements IGInteractive
         g2d_nativeStage.removeEventListener(MouseEvent.MOUSE_UP, g2d_mouseEvent_handler);
         g2d_nativeStage.removeEventListener(MouseEvent.MOUSE_MOVE, g2d_mouseEvent_handler);
         g2d_nativeStage.removeEventListener(MouseEvent.MOUSE_WHEEL, g2d_mouseEvent_handler);
+        if (g2d_useRightClick) {
+            g2d_nativeStage.removeEventListener(MouseEvent.RIGHT_MOUSE_DOWN, g2d_mouseEvent_handler);
+            g2d_nativeStage.removeEventListener(MouseEvent.RIGHT_MOUSE_UP, g2d_mouseEvent_handler);
+        }
 
         g2d_nativeStage.removeEventListener(KeyboardEvent.KEY_DOWN, g2d_keyboardEvent_handler);
         g2d_nativeStage.removeEventListener(KeyboardEvent.KEY_UP, g2d_keyboardEvent_handler);
@@ -542,7 +550,7 @@ class GStage3DContext implements IGDebuggableInternal implements IGInteractive
 				g2d_nativeContext.setCulling(Context3DTriangleFace.NONE);
 		}
 		
-		GBlendMode.setBlendMode(g2d_nativeContext, GBlendMode.NORMAL, g2d_activePremultiply);
+		GBlendModeFunc.setBlendMode(g2d_nativeContext, GBlendMode.NORMAL, g2d_activePremultiply);
         return true;
 	}
 	
@@ -566,7 +574,7 @@ class GStage3DContext implements IGDebuggableInternal implements IGInteractive
 	}
 
     @:dox(hide)
-    inline public function draw2(p_texture:GTexture, p_x:Float, p_y:Float, p_scaleX:Float = 1, p_scaleY:Float = 1, p_rotation:Float = 0, p_red:Float = 1, p_green:Float = 1, p_blue:Float = 1, p_alpha:Float = 1, p_blendMode:Int = 1, p_filter:GFilter = null, p_id:Int = 0):Void {
+    inline public function draw2(p_texture:GTexture, p_blendMode:GBlendMode, p_x:Float, p_y:Float, p_scaleX:Float = 1, p_scaleY:Float = 1, p_rotation:Float = 0, p_red:Float = 1, p_green:Float = 1, p_blue:Float = 1, p_alpha:Float = 1, p_filter:GFilter = null, p_id:Int = 0):Void {
         if (p_alpha != 0) {
             setBlendMode(p_blendMode, p_texture.premultiplied);
             setRenderer(g2d_quadTextureBufferGPURenderer);
@@ -580,7 +588,7 @@ class GStage3DContext implements IGDebuggableInternal implements IGInteractive
 
        @param p_texture textures instance used to drawing
      */
-	inline public function draw(p_texture:GTexture, p_x:Float, p_y:Float, p_scaleX:Float = 1, p_scaleY:Float = 1, p_rotation:Float = 0, p_red:Float = 1, p_green:Float = 1, p_blue:Float = 1, p_alpha:Float = 1, p_blendMode:Int = 1, p_filter:GFilter = null):Void {
+	inline public function draw(p_texture:GTexture, p_blendMode:GBlendMode, p_x:Float, p_y:Float, p_scaleX:Float = 1, p_scaleY:Float = 1, p_rotation:Float = 0, p_red:Float = 1, p_green:Float = 1, p_blue:Float = 1, p_alpha:Float = 1, p_filter:GFilter = null):Void {
 		if (p_alpha != 0) {
             setBlendMode(p_blendMode, p_texture.premultiplied);
 			setRenderer(g2d_quadTextureShaderRenderer);
@@ -594,7 +602,7 @@ class GStage3DContext implements IGDebuggableInternal implements IGInteractive
 
        @param p_texture textures to be drawn
      */
-    inline public function drawSource(p_texture:GTexture, p_sourceX:Float, p_sourceY:Float, p_sourceWidth:Float, p_sourceHeight:Float, p_sourcePivotX:Float, p_sourcePivotY:Float, p_x:Float, p_y:Float, p_scaleX:Float = 1, p_scaleY:Float = 1, p_rotation:Float = 0, p_red:Float = 1, p_green:Float = 1, p_blue:Float = 1, p_alpha:Float = 1, p_blendMode:Int = 1, p_filter:GFilter = null):Void {
+    inline public function drawSource(p_texture:GTexture, p_blendMode:GBlendMode, p_sourceX:Float, p_sourceY:Float, p_sourceWidth:Float, p_sourceHeight:Float, p_sourcePivotX:Float, p_sourcePivotY:Float, p_x:Float, p_y:Float, p_scaleX:Float = 1, p_scaleY:Float = 1, p_rotation:Float = 0, p_red:Float = 1, p_green:Float = 1, p_blue:Float = 1, p_alpha:Float = 1, p_filter:GFilter = null):Void {
         if (p_alpha != 0) {
             setBlendMode(p_blendMode, p_texture.premultiplied);
             setRenderer(g2d_quadTextureShaderRenderer);
@@ -608,7 +616,7 @@ class GStage3DContext implements IGDebuggableInternal implements IGInteractive
 
        @param p_texture textures to be drawn
      */
-    inline public function drawMatrix(p_texture:GTexture, p_a:Float, p_b:Float, p_c:Float, p_d:Float, p_tx:Float, p_ty:Float, p_red:Float = 1, p_green:Float = 1, p_blue:Float = 1, p_alpha:Float=1, p_blendMode:Int=1, p_filter:GFilter = null):Void {
+    inline public function drawMatrix(p_texture:GTexture, p_blendMode:GBlendMode, p_a:Float, p_b:Float, p_c:Float, p_d:Float, p_tx:Float, p_ty:Float, p_red:Float = 1, p_green:Float = 1, p_blue:Float = 1, p_alpha:Float=1, p_filter:GFilter = null):Void {
         if (p_alpha != 0) {
             setBlendMode(p_blendMode, p_texture.premultiplied);
             setRenderer(g2d_matrixQuadTextureShaderRenderer);
@@ -621,7 +629,7 @@ class GStage3DContext implements IGDebuggableInternal implements IGInteractive
 
        @param p_texture textures to be drawn
      */
-    inline public function drawMatrixSource(p_texture:GTexture, p_sourceX:Float, p_sourceY:Float, p_sourceWidth:Float, p_sourceHeight:Float, p_a:Float, p_b:Float, p_c:Float, p_d:Float, p_tx:Float, p_ty:Float, p_red:Float = 1, p_green:Float = 1, p_blue:Float = 1, p_alpha:Float=1, p_blendMode:Int=1, p_filter:GFilter = null):Void {
+    inline public function drawMatrixSource(p_texture:GTexture, p_blendMode:GBlendMode, p_sourceX:Float, p_sourceY:Float, p_sourceWidth:Float, p_sourceHeight:Float, p_a:Float, p_b:Float, p_c:Float, p_d:Float, p_tx:Float, p_ty:Float, p_red:Float = 1, p_green:Float = 1, p_blue:Float = 1, p_alpha:Float=1, p_filter:GFilter = null):Void {
         if (p_alpha != 0) {
             setBlendMode(p_blendMode, p_texture.premultiplied);
             setRenderer(g2d_matrixQuadTextureShaderRenderer);
@@ -642,7 +650,7 @@ class GStage3DContext implements IGDebuggableInternal implements IGInteractive
         @param p_scaleY y scale
         @param p_rotation rotation
      */
-    inline public function drawPoly(p_texture:GTexture, p_vertices:Array<Float>, p_uvs:Array<Float>, p_x:Float, p_y:Float, p_scaleX:Float = 1, p_scaleY:Float = 1, p_rotation:Float = 0, p_red:Float = 1, p_green:Float = 1, p_blue:Float = 1, p_alpha:Float = 1, p_blendMode:Int=1, p_filter:GFilter = null):Void {
+    inline public function drawPoly(p_texture:GTexture, p_blendMode:GBlendMode, p_vertices:Array<Float>, p_uvs:Array<Float>, p_x:Float, p_y:Float, p_scaleX:Float = 1, p_scaleY:Float = 1, p_rotation:Float = 0, p_red:Float = 1, p_green:Float = 1, p_blue:Float = 1, p_alpha:Float = 1, p_filter:GFilter = null):Void {
         if (p_alpha != 0) {
             setBlendMode(p_blendMode, p_texture.premultiplied);
             setRenderer(g2d_triangleTextureBufferCPURenderer);
@@ -651,13 +659,13 @@ class GStage3DContext implements IGDebuggableInternal implements IGInteractive
         }
     }
 
-    inline public function setBlendMode(p_blendMode:Int, p_premultiplied:Bool):Void {
+    inline public function setBlendMode(p_blendMode:GBlendMode, p_premultiplied:Bool):Void {
         if (p_blendMode != g2d_activeBlendMode || p_premultiplied != g2d_activePremultiply) {
             if (g2d_activeRenderer != null) g2d_activeRenderer.push();
 
             g2d_activeBlendMode = p_blendMode;
             g2d_activePremultiply = p_premultiplied;
-            GBlendMode.setBlendMode(g2d_nativeContext, g2d_activeBlendMode, g2d_activePremultiply);
+            GBlendModeFunc.setBlendMode(g2d_nativeContext, g2d_activeBlendMode, g2d_activePremultiply);
         }
     }
 

@@ -133,7 +133,8 @@ class GMatrixQuadTextureShaderRenderer implements IGRenderer
 
         return program;
     }
-	
+
+    @:access(com.genome2d.context.GStage3DContext)
 	public function initialize(p_context:GStage3DContext):Void {
         g2d_context = p_context;
 		g2d_nativeContext = g2d_context.getNativeContext();

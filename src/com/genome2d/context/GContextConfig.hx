@@ -35,6 +35,7 @@ class GContextConfig
     public var statsClass:Class<IGStats>;
     public var externalStage3D:Stage3D;
 	public var defaultCulling:GCulling = GCulling.NONE;
+    public var useRightClick:Bool = false;
 
     #if swc
     public function new(p_stage:Stage, ?p_viewRect:GRectangle = null) {
