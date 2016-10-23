@@ -55,7 +55,7 @@ class GTriangleTextureBufferCPURenderer implements IGRenderer
     private var g2d_activeAlpha:Bool = false;
     private var g2d_activeAtf:String = "";
     private var g2d_activeFilter:GFilter;
-    private var g2d_activeFiltering:Int;
+    private var g2d_activeFiltering:GTextureFilteringType;
     private var g2d_activeTexture:TextureBase;
     private var g2d_activeRepeat:Bool = false;
 
@@ -69,7 +69,7 @@ class GTriangleTextureBufferCPURenderer implements IGRenderer
     private var g2d_context:GStage3DContext;
     private var g2d_nativeContext:Context3D;
 
-    inline private function getCachedProgram(p_textured:Bool, p_alpha:Bool, p_repeat:Bool, p_filtering:Int, p_atf:String, p_filter:GFilter):Program3D {
+    inline private function getCachedProgram(p_textured:Bool, p_alpha:Bool, p_repeat:Bool, p_filtering:GTextureFilteringType, p_atf:String, p_filter:GFilter):Program3D {
         var programBit:Int = 0;
 
         if (p_alpha) programBit |= 1;

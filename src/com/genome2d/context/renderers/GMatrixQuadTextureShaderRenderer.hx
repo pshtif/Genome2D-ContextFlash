@@ -80,7 +80,7 @@ class GMatrixQuadTextureShaderRenderer implements IGRenderer
 	private var g2d_initialized:Int = 0;
 	private var g2d_quadCount:Int = 0;
 	private var g2d_activeNativeTexture:TextureBase;
-	private var g2d_activeFiltering:Int;
+	private var g2d_activeFiltering:GTextureFilteringType;
 	private var g2d_activeAlpha:Bool = false;
 	private var g2d_activeAtf:String = "";
 	private var g2d_activeFilter:GFilter;
@@ -105,7 +105,7 @@ class GMatrixQuadTextureShaderRenderer implements IGRenderer
         g2d_fastMemArray = p_fastMemArray;
     }
 
-    inline private function getCachedProgram(p_alpha:Bool, p_repeat:Bool, p_filtering:Int, p_atf:String, p_filter:GFilter):Program3D {
+    inline private function getCachedProgram(p_alpha:Bool, p_repeat:Bool, p_filtering:GTextureFilteringType, p_atf:String, p_filter:GFilter):Program3D {
         var programBit:Int = 0;
 
         if (p_alpha) programBit |= 1;
@@ -203,7 +203,7 @@ class GMatrixQuadTextureShaderRenderer implements IGRenderer
 		
 		g2d_quadCount = 0;
 		g2d_activeNativeTexture = null;
-		g2d_activeFiltering = -1;
+		g2d_activeFiltering = null;
 		g2d_activeFilter = null;
 	}
 

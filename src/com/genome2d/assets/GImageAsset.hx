@@ -37,11 +37,11 @@ class GImageAsset extends GFlashAsset {
         return g2d_bitmapData;
     }
 
-    private var g2d_type:Int;
+    private var g2d_type:GImageAssetType;
     #if swc @:extern #end
-    public var type(get,never):Int;
+    public var type(get,never):GImageAssetType;
     #if swc @:getter(type) #end
-    inline private function get_type():Int {
+    inline private function get_type():GImageAssetType {
         return g2d_type;
     }
 

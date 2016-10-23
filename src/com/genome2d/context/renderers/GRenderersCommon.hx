@@ -8,6 +8,7 @@
  */
 package com.genome2d.context.renderers;
 
+import com.genome2d.textures.GTextureFilteringType;
 import com.genome2d.context.filters.GFilter;
 import com.adobe.utils.extended.AGALMiniAssembler;
 import flash.utils.ByteArray;
@@ -22,7 +23,7 @@ class GRenderersCommon
         return assembler.agalcode;
     }
 
-    static public function getTexturedShaderCode(p_repeat:Bool, p_filtering:Int, p_alpha:Int, p_atf:String = "", p_filter:GFilter = null):ByteArray {
+    static public function getTexturedShaderCode(p_repeat:Bool, p_filtering:GTextureFilteringType, p_alpha:Int, p_atf:String = "", p_filter:GFilter = null):ByteArray {
         var shaderString:String;
         if (p_filter==null || !p_filter.overrideFragmentShader) {
             shaderString = GShaderCode.getSamplerFragmentCode(p_repeat, p_filtering, p_atf);
