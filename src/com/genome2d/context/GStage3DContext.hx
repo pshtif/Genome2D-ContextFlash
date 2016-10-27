@@ -451,7 +451,7 @@ class GStage3DContext implements IGDebuggableInternal implements IGInteractive
 	  	@param p_maskRect AABB rectangle that defines masking
 	 */
     inline public function setMaskRect(p_maskRect:GRectangle):Void {
-        if (p_maskRect != g2d_activeMaskRect) {
+        if (p_maskRect != g2d_activeMaskRect || ((p_maskRect != null && g2d_activeMaskRect != null) && (p_maskRect.width != g2d_activeMaskRect.width || p_maskRect.height != g2d_activeMaskRect.height && p_maskRect.x != g2d_activeMaskRect.x || p_maskRect.y != g2d_activeMaskRect.y))) {
             if (g2d_activeRenderer != null) g2d_activeRenderer.push();
 
             if (p_maskRect == null) {
@@ -529,6 +529,7 @@ class GStage3DContext implements IGDebuggableInternal implements IGInteractive
 		g2d_renderTarget = null;
 		g2d_activeRenderer = null;
 		g2d_activePremultiply = true;
+        g2d_activeMaskRect = null;
 		g2d_activeBlendMode = GBlendMode.NORMAL;
 
         if (!g2d_usingExternalContext) {
@@ -536,7 +537,7 @@ class GStage3DContext implements IGDebuggableInternal implements IGInteractive
         }
 
 		setDepthTest(false, GDepthFunc.ALWAYS);
-		
+        g2d_nativeContext.setScissorRectangle(null);
         g2d_nativeContext.setStencilActions(Context3DTriangleFace.FRONT_AND_BACK, Context3DCompareMode.ALWAYS, Context3DStencilAction.KEEP, Context3DStencilAction.KEEP, Context3DStencilAction.KEEP);
 		
 		switch (g2d_defaultCulling) {
@@ -549,7 +550,7 @@ class GStage3DContext implements IGDebuggableInternal implements IGInteractive
 			case GCulling.NONE:
 				g2d_nativeContext.setCulling(Context3DTriangleFace.NONE);
 		}
-		
+
 		GBlendModeFunc.setBlendMode(g2d_nativeContext, GBlendMode.NORMAL, g2d_activePremultiply);
         return true;
 	}
