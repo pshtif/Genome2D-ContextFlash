@@ -840,4 +840,12 @@ class GStage3DContext implements IGDebuggableInternal implements IGInteractive
 		input.shiftKey = event.shiftKey;
         g2d_onKeyboardInput.dispatch(input);
     }
+
+    private function gotFocus():Void {
+
+    }
+
+    private function lostFocus():Void {
+
+    }
 }
