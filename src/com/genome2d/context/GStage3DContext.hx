@@ -458,7 +458,7 @@ class GStage3DContext implements IGDebuggableInternal implements IGInteractive
                 g2d_activeMaskRect = null;
                 g2d_nativeContext.setScissorRectangle(g2d_activeViewRect);
             } else {
-                g2d_activeMaskRect = g2d_activeViewRect.intersection(p_maskRect);
+                g2d_activeMaskRect = g2d_activeViewRect.intersection(new GRectangle(p_maskRect.x + g2d_stageViewRect.width * .5 - g2d_activeCamera.x * g2d_activeCamera.scaleX, p_maskRect.y + g2d_stageViewRect.height * .5 - g2d_activeCamera.y * g2d_activeCamera.scaleY, p_maskRect.width, p_maskRect.height));
                 g2d_nativeContext.setScissorRectangle(g2d_activeMaskRect);
             }
         }
@@ -468,24 +468,24 @@ class GStage3DContext implements IGDebuggableInternal implements IGInteractive
 	  	Set camera that should be used for all subsequent draws
 	 */
     public function setActiveCamera(p_camera:GCamera):Bool {
-        if (g2d_stageViewRect.width*p_camera.normalizedViewWidth <= 0 ||
-            g2d_stageViewRect.height*p_camera.normalizedViewHeight <= 0) return false;
+        if (g2d_stageViewRect.width * p_camera.normalizedViewWidth <= 0 ||
+            g2d_stageViewRect.height * p_camera.normalizedViewHeight <= 0) return false;
 
 		if (g2d_activeRenderer != null) g2d_activeRenderer.push();
 		
         g2d_activeCamera = p_camera;
 
-        g2d_activeViewRect.setTo(untyped __int__(g2d_stageViewRect.width*g2d_activeCamera.normalizedViewX),
-                                 untyped __int__(g2d_stageViewRect.height*g2d_activeCamera.normalizedViewY),
-                                 untyped __int__(g2d_stageViewRect.width*g2d_activeCamera.normalizedViewWidth),
-                                 untyped __int__(g2d_stageViewRect.height*g2d_activeCamera.normalizedViewHeight));
+        g2d_activeViewRect.setTo(untyped __int__(g2d_stageViewRect.width * g2d_activeCamera.normalizedViewX),
+                                 untyped __int__(g2d_stageViewRect.height * g2d_activeCamera.normalizedViewY),
+                                 untyped __int__(g2d_stageViewRect.width * g2d_activeCamera.normalizedViewWidth),
+                                 untyped __int__(g2d_stageViewRect.height * g2d_activeCamera.normalizedViewHeight));
 
         g2d_activeCamera.matrix.ortho(g2d_stageViewRect.width, g2d_stageViewRect.height);
-        var vx:Float = g2d_activeViewRect.x + g2d_activeViewRect.width*.5;
+        var vx:Float = g2d_activeViewRect.x + g2d_activeViewRect.width * .5;
         var vy:Float = g2d_activeViewRect.y + g2d_activeViewRect.height * .5;
 
         p_camera.matrix.prependTranslation(vx, vy, 0);
-        p_camera.matrix.prependRotation(g2d_activeCamera.rotation*180/Math.PI, Vector3D.Z_AXIS, NORMALIZED_VECTOR);
+        p_camera.matrix.prependRotation(g2d_activeCamera.rotation * 180 / Math.PI, Vector3D.Z_AXIS, NORMALIZED_VECTOR);
         p_camera.matrix.prependScale(g2d_activeCamera.scaleX, g2d_activeCamera.scaleY, 1);
         p_camera.matrix.prependTranslation(-g2d_activeCamera.x, -g2d_activeCamera.y, 0);
 
