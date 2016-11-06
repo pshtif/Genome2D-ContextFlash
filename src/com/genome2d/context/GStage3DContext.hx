@@ -254,7 +254,6 @@ class GStage3DContext implements IGDebuggableInternal implements IGInteractive
             g2d_fastMemArray = new ByteArray();
             g2d_fastMemArray.endian = Endian.LITTLE_ENDIAN;
             g2d_fastMemArray.length = 10040000;
-            Memory.select(g2d_fastMemArray);
         }
     }
 
@@ -523,6 +522,7 @@ class GStage3DContext implements IGDebuggableInternal implements IGInteractive
 	 */
     public function begin():Bool {
         if (g2d_nativeContext.driverInfo == "Disposed") return false;
+        if (g2d_useFastMem) Memory.select(g2d_fastMemArray);
         g2d_stats.clear();
         setActiveCamera(g2d_defaultCamera);
 
