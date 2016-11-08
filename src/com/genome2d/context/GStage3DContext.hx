@@ -11,7 +11,7 @@ package com.genome2d.context;
 import com.genome2d.context.GDepthFunc;
 import com.genome2d.callbacks.GCallback;
 import com.genome2d.debug.IGDebuggableInternal;
-import com.genome2d.input.IGInteractive;
+import com.genome2d.input.IGFocusable;
 import com.genome2d.macros.MGDebug;
 import flash.display.BitmapData;
 
@@ -60,7 +60,7 @@ import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 
 @:native("com.genome2d.context.IGContext")
-class GStage3DContext implements IGDebuggableInternal implements IGInteractive
+class GStage3DContext implements IGDebuggableInternal implements IGFocusable
 {
     private var NORMALIZED_VECTOR:Vector3D;
 
@@ -438,16 +438,16 @@ class GStage3DContext implements IGDebuggableInternal implements IGInteractive
      *  Scissor masking methods
      ****************************************************************************************************/
     /**
-	  	Get the masking rectangle
+	  	Get the masking _rectangle
 	 */
     inline public function getMaskRect():GRectangle {
         return g2d_activeMaskRect;
     }
 
     /**
-	  	Set masking rectangle for all subsequent draws
+	  	Set masking _rectangle for all subsequent draws
 
-	  	@param p_maskRect AABB rectangle that defines masking
+	  	@param p_maskRect AABB _rectangle that defines masking
 	 */
     inline public function setMaskRect(p_maskRect:GRectangle):Void {
         if (p_maskRect != g2d_activeMaskRect || ((p_maskRect != null && g2d_activeMaskRect != null) && (p_maskRect.width != g2d_activeMaskRect.width || p_maskRect.height != g2d_activeMaskRect.height && p_maskRect.x != g2d_activeMaskRect.x || p_maskRect.y != g2d_activeMaskRect.y))) {
@@ -599,7 +599,7 @@ class GStage3DContext implements IGDebuggableInternal implements IGInteractive
 	}
 
     /**
-       Draw quad using source rectangle
+       Draw quad using source _rectangle
 
        @param p_texture textures to be drawn
      */
