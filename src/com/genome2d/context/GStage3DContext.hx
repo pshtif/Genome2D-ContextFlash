@@ -830,7 +830,7 @@ class GStage3DContext implements IGDebuggableInternal implements IGFocusable
 		input.nativeCaptured = captured;
 		
         g2d_onMouseInput.dispatch(input);
-		g2d_onMouseInputInternal(input);
+        if (!input.captured) g2d_onMouseInputInternal(input);
     }
 
     private function g2d_keyboardEvent_handler(event:KeyboardEvent):Void {
