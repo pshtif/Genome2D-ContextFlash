@@ -83,6 +83,7 @@ class GTexture extends GTextureBase
 				g2d_nativeHeight = parent.g2d_nativeHeight;
 				g2d_nativeTexture = parent.nativeTexture;
 				g2d_sourceType = GTextureSourceType.TEXTURE;
+                g2d_atfType = parent.g2d_atfType;
 			} else {
                 GDebug.error("Invalid texture source.");
             }
