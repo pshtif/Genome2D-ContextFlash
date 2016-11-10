@@ -455,10 +455,10 @@ class GStage3DContext implements IGDebuggableInternal implements IGFocusable
 
             if (p_maskRect == null) {
                 g2d_activeMaskRect = null;
-                g2d_nativeContext.setScissorRectangle(g2d_activeViewRect);
+                g2d_nativeContext.setScissorRectangle(g2d_activeViewRect.toNative());
             } else {
                 g2d_activeMaskRect = g2d_activeViewRect.intersection(new GRectangle(p_maskRect.x + g2d_stageViewRect.width * .5 - g2d_activeCamera.x * g2d_activeCamera.scaleX, p_maskRect.y + g2d_stageViewRect.height * .5 - g2d_activeCamera.y * g2d_activeCamera.scaleY, p_maskRect.width, p_maskRect.height));
-                g2d_nativeContext.setScissorRectangle(g2d_activeMaskRect);
+                g2d_nativeContext.setScissorRectangle(g2d_activeMaskRect.toNative());
             }
         }
     }
@@ -488,7 +488,7 @@ class GStage3DContext implements IGDebuggableInternal implements IGFocusable
         p_camera.matrix.prependScale(g2d_activeCamera.scaleX, g2d_activeCamera.scaleY, 1);
         p_camera.matrix.prependTranslation(-g2d_activeCamera.x, -g2d_activeCamera.y, 0);
 
-        g2d_nativeContext.setScissorRectangle(g2d_activeViewRect);
+        g2d_nativeContext.setScissorRectangle(g2d_activeViewRect.toNative());
         g2d_nativeContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 0, g2d_activeCamera.matrix, true);
 
         return true;
