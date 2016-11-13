@@ -53,7 +53,7 @@ class GContextConfig
             viewRect = p_viewRect;
         }
 
-		profile = Vector.ofArray(["baselineExtended", "baseline", "baselineConstrained"]);
+		profile = Vector.ofArray(["standardExtended","standard","baselineExtended", "baseline", "baselineConstrained"]);
 		renderMode = "auto";
         contextClass = GStage3DContext;
         statsClass = GStats;

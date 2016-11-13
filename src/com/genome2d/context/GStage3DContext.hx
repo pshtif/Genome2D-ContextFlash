@@ -298,11 +298,12 @@ class GStage3DContext implements IGDebuggableInternal implements IGFocusable
     private function g2d_contextInitialized_handler(event:Event):Void {
         g2d_nativeContext = g2d_nativeStage3D.context3D;
         g2d_nativeContext.enableErrorChecking = g2d_enableErrorChecking;
-
         if (untyped g2d_nativeContext.hasOwnProperty("profile")) {
             g2d_profile = untyped g2d_nativeContext["profile"];
+            // Retarded Adobe bug again
+            if (g2d_profile == null) MGDebug.ERROR("This is fucked up Adobe bug in some SDKs you need to specify single profile.");
         }
-
+        trace(g2d_profile);
         // Init renderers
         GRenderersCommon.init(g2d_profile == "standard" ? 2 : 1);
         g2d_quadTextureShaderRenderer = new GQuadTextureShaderRenderer(g2d_useFastMem, g2d_fastMemArray);
