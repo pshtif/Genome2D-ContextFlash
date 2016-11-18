@@ -594,7 +594,6 @@ class GStage3DContext implements IGDebuggableInternal implements IGFocusable
 		if (p_alpha != 0) {
             setBlendMode(p_blendMode, p_texture.premultiplied);
 			setRenderer(g2d_quadTextureShaderRenderer);
-
 			g2d_quadTextureShaderRenderer.draw(p_x, p_y, p_scaleX, p_scaleY, p_rotation, p_red, p_green, p_blue, p_alpha, p_texture, p_filter, false, 0, 0, 0, 0, 0, 0);
 		}
 	}
@@ -778,7 +777,7 @@ class GStage3DContext implements IGDebuggableInternal implements IGFocusable
 			if (p_texture.nativeTexture == null) MGDebug.WARNING("Null render texture, will incorrectly render to backbuffer instead.");
 			g2d_nativeContext.setRenderToTexture(p_texture.nativeTexture, g2d_enableDepthAndStencil, g2d_antiAliasing, 0);
             g2d_nativeContext.setScissorRectangle(null);
-            if (p_texture.needClearAsRenderTarget(p_clear)) g2d_nativeContext.clear(0,0,0,0);
+            if (p_texture.needClearAsRenderTarget(p_clear)) g2d_nativeContext.clear(0,0,0,p_texture.renderTargetAlpha);
 
 			g2d_nativeContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 0, GProjectionMatrix.getOrtho(p_texture.nativeWidth, p_texture.nativeHeight, p_transform), true);
 		}
