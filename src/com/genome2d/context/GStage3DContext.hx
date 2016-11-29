@@ -303,7 +303,7 @@ class GStage3DContext implements IGDebuggableInternal implements IGFocusable
             // Retarded Adobe bug again
             if (g2d_profile == null) MGDebug.ERROR("This is fucked up Adobe bug in some SDKs you need to specify single profile.");
         }
-        trace(g2d_profile);
+
         // Init renderers
         GRenderersCommon.init(g2d_profile == "standard" ? 2 : 1);
         g2d_quadTextureShaderRenderer = new GQuadTextureShaderRenderer(g2d_useFastMem, g2d_fastMemArray);
@@ -813,9 +813,6 @@ class GStage3DContext implements IGDebuggableInternal implements IGFocusable
     }
 
     private function g2d_mouseEvent_handler(event:MouseEvent):Void {
-        var captured:Bool = false;
-        if (enableNativeContentMouseCapture && event.target != g2d_nativeStage) captured = true;
-
         var mx:Float = event.stageX - g2d_stageViewRect.x;
         var my:Float = event.stageY - g2d_stageViewRect.y;
 		
@@ -827,8 +824,8 @@ class GStage3DContext implements IGDebuggableInternal implements IGFocusable
         input.altKey = event.altKey;
         input.shiftKey = event.shiftKey;
         input.delta = event.delta;
-		input.nativeCaptured = captured;
-		
+		input.nativeCaptured = enableNativeContentMouseCapture && event.target != g2d_nativeStage;
+
         g2d_onMouseInput.dispatch(input);
         if (!input.captured) g2d_onMouseInputInternal(input);
     }
