@@ -8,6 +8,8 @@
  */
 package com.genome2d.context;
 
+import flash.geom.Rectangle;
+import flash.errors.Error;
 import com.genome2d.context.GDepthFunc;
 import com.genome2d.callbacks.GCallback;
 import com.genome2d.debug.IGDebuggableInternal;
@@ -458,8 +460,13 @@ class GStage3DContext implements IGDebuggableInternal implements IGFocusable
                 g2d_activeMaskRect = null;
                 g2d_nativeContext.setScissorRectangle(g2d_activeViewRect.toNative());
             } else {
-                g2d_activeMaskRect = g2d_activeViewRect.intersection(new GRectangle(p_maskRect.x + g2d_stageViewRect.width * .5 - g2d_activeCamera.x * g2d_activeCamera.scaleX, p_maskRect.y + g2d_stageViewRect.height * .5 - g2d_activeCamera.y * g2d_activeCamera.scaleY, p_maskRect.width, p_maskRect.height));
-                g2d_nativeContext.setScissorRectangle(g2d_activeMaskRect.toNative());
+                g2d_activeMaskRect = g2d_activeViewRect.intersection(new GRectangle(p_maskRect.x + g2d_activeViewRect.x + g2d_activeViewRect.width * .5 - g2d_activeCamera.x * g2d_activeCamera.scaleX, p_maskRect.y + g2d_activeViewRect.y + g2d_activeViewRect.height * .5 - g2d_activeCamera.y * g2d_activeCamera.scaleY, p_maskRect.width, p_maskRect.height));
+                // Hack to mask stuff with 0 or negative masks otherwise Stage3D throws error or doesn't mask at all
+                if (g2d_activeMaskRect.width <= 0 || g2d_activeMaskRect.height<=0) {
+                    g2d_nativeContext.setScissorRectangle(new Rectangle(0,0,1,1));
+                } else {
+                    g2d_nativeContext.setScissorRectangle(g2d_activeMaskRect.toNative());
+                }
             }
         }
     }
