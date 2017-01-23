@@ -187,6 +187,8 @@ class GStage3DContext implements IGDebuggableInternal implements IGFocusable
     private var g2d_renderMode:String;
     private var g2d_profile:Object;
     private var g2d_usingExternalContext:Bool;
+    private var g2d_maxBackbufferWidth:Int;
+    private var g2d_maxBackbufferHeight:Int;
 	
 	private var g2d_enableErrorChecking:Bool;
 
@@ -248,6 +250,8 @@ class GStage3DContext implements IGDebuggableInternal implements IGFocusable
 		g2d_defaultCulling = p_config.defaultCulling;
         g2d_renderMode = p_config.renderMode;
         g2d_profile = p_config.profile;
+        g2d_maxBackbufferWidth = p_config.maxBackbufferWidth;
+        g2d_maxBackbufferHeight = p_config.maxBackbufferHeight;
 
         g2d_useSeparateAlphaPipeline = p_config.useSeparateAlphaPipeline;
         g2d_useFastMem = p_config.useFastMem;
@@ -324,6 +328,8 @@ class GStage3DContext implements IGDebuggableInternal implements IGFocusable
 	private function g2d_configureBackBuffer():Void {
 		var w:Int = untyped __int__(g2d_stageViewRect.width);
         var h:Int = untyped __int__(g2d_stageViewRect.height);
+        if (w > g2d_maxBackbufferWidth) w = g2d_maxBackbufferWidth;
+        if (h > g2d_maxBackbufferHeight) w = g2d_maxBackbufferHeight;
         g2d_nativeContext.configureBackBuffer(w, h, g2d_antiAliasing, g2d_enableDepthAndStencil, g2d_hdResolution);
 	}
 

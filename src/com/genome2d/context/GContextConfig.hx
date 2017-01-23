@@ -36,6 +36,8 @@ class GContextConfig
     public var externalStage3D:Stage3D;
 	public var defaultCulling:GCulling = GCulling.NONE;
     public var useRightClick:Bool = false;
+    public var maxBackbufferWidth:Int = 2048;
+    public var maxBackbufferHeight:Int = 2048;
 
     #if swc
     public function new(p_stage:Stage, ?p_viewRect:GRectangle = null) {
