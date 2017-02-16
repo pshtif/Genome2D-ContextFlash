@@ -11,7 +11,6 @@ import flash.display3D.Context3DVertexBufferFormat;
 import flash.display3D.IndexBuffer3D;
 import flash.display3D.Program3D;
 import flash.display3D.VertexBuffer3D;
-import flash.geom.Vector3D;
 import flash.utils.ByteArray;
 import flash.utils.Dictionary;
 import flash.Vector;

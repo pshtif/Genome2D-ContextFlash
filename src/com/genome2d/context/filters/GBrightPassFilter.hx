@@ -10,9 +10,6 @@ package com.genome2d.context.filters;
 
 import flash.Vector;
 
-import flash.display3D.Context3D;
-import flash.display3D.Context3DProgramType;
-
 class GBrightPassFilter extends GFilter
 {
     private var g2d_treshold:Float = .5;

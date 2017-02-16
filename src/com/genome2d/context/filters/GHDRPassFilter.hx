@@ -12,8 +12,6 @@ import com.genome2d.textures.GTexture;
 import flash.Vector;
 import com.genome2d.debug.GDebug;
 
-import flash.display3D.Context3D;
-
 class GHDRPassFilter extends GFilter
 {
     public var texture:GTexture;

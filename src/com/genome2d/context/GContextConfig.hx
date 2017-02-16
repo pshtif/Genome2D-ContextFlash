@@ -15,7 +15,6 @@ import com.genome2d.context.stats.GStats;
 import com.genome2d.context.stats.IGStats;
 import flash.Vector;
 import com.genome2d.geom.GRectangle;
-import flash.Lib;
 import flash.display.Stage;
 
 class GContextConfig

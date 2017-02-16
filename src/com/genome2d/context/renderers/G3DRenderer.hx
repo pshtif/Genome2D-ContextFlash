@@ -8,22 +8,16 @@
  */
 package com.genome2d.context.renderers;
 
-import com.genome2d.context.GBlendMode;
 import com.genome2d.context.IGRenderer;
-import com.genome2d.geom.GVector3D;
 import com.genome2d.geom.GFloat4;
 import com.genome2d.context.stats.GStats;
 import com.genome2d.textures.GTexture;
 import com.genome2d.textures.GTextureFilteringType;
 import com.genome2d.context.GStage3DContext;
 import com.genome2d.geom.GMatrix3D;
-import flash.display3D.Context3DBlendFactor;
-
 import com.adobe.utils.extended.AGALMiniAssembler;
-
 import flash.display3D.Context3DTriangleFace;
 import flash.display3D.Context3DCompareMode;
-import flash.display3D.textures.TextureBase;
 import flash.display3D.Context3D;
 import flash.display3D.Context3DProgramType;
 import flash.display3D.Context3DVertexBufferFormat;

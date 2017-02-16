@@ -8,9 +8,9 @@
  */
 package com.genome2d.context.filters;
 
-import flash.display3D.Context3D;
 import flash.Vector;
 import com.genome2d.textures.GTexture;
+
 class GOutlineFilter extends GFilter
 {
     public var size:Float = 0;

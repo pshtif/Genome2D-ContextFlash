@@ -10,8 +10,8 @@ package com.genome2d.utils;
 
 import com.genome2d.debug.GDebug;
 import flash.display.BitmapData;
-import flash.geom.Matrix;
 import flash.geom.Point;
+
 class GMaxRectPacker
 {				
     static public inline var BOTTOM_LEFT:Int = 0;
@@ -298,7 +298,6 @@ class GMaxRectPacker
 
     inline private function g2d_getAvailableArea(p_width:Int, p_height:Int):GPackerRectangle {
         var available:GPackerRectangle = g2d_negativeArea;
-        var index:Int = -1;
         var area:GPackerRectangle;
         var w:Int;
         var h:Int;
