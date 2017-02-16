@@ -8,25 +8,20 @@
  */
 package com.genome2d.context.renderers;
 
-import com.genome2d.textures.GTexture;
 import flash.display3D.textures.TextureBase;
 import com.genome2d.textures.GTextureFilteringType;
 import com.genome2d.context.stats.GStats;
 import flash.utils.Dictionary;
-import flash.Lib;
 import com.genome2d.context.filters.GFilter;
 import com.adobe.utils.extended.AGALMiniAssembler;
 import com.genome2d.textures.GTexture;
 import flash.display3D.Context3D;
-import flash.display3D.Context3DProgramType;
 import flash.display3D.Context3DVertexBufferFormat;
 import flash.display3D.IndexBuffer3D;
 import flash.display3D.Program3D;
 import flash.display3D.VertexBuffer3D;
-import flash.display3D.textures.Texture;
 import flash.utils.ByteArray;
 import flash.Vector;
-import flash.utils.Endian;
 import flash.Memory;
 
 @:access(com.genome2d.textures.GTexture)

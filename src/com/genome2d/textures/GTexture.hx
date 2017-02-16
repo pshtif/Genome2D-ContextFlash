@@ -8,13 +8,9 @@
  */
 package com.genome2d.textures;
 
-import com.genome2d.callbacks.GCallback.GCallback0;
-import com.genome2d.callbacks.GCallback.GCallback1;
-import com.genome2d.context.GContextFeature;
 import com.genome2d.context.GStage3DContext;
 import com.genome2d.debug.GDebug;
 import com.genome2d.geom.GRectangle;
-import com.genome2d.proto.IGPrototypable;
 import com.genome2d.textures.GTextureManager;
 import com.genome2d.textures.GTextureSourceType;
 import com.genome2d.textures.GTextureBase;
@@ -23,7 +19,6 @@ import flash.display.BitmapData;
 import flash.display3D.Context3DTextureFormat;
 import flash.display3D.textures.TextureBase;
 import flash.utils.ByteArray;
-import flash.utils.Object;
 
 @:access(com.genome2d.textures.GTextureManager)
 class GTexture extends GTextureBase

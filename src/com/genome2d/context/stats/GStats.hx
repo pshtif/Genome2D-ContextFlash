@@ -8,13 +8,9 @@
  */
 package com.genome2d.context.stats;
 
-import com.genome2d.context.renderers.GQuadTextureShaderRenderer;
-import com.genome2d.context.renderers.GQuadTextureShaderRenderer;
 import com.genome2d.textures.GTextureManager;
-import com.genome2d.textures.GTexture;
 import com.genome2d.textures.GTextureFilteringType;
 import com.genome2d.context.GStage3DContext;
-import com.genome2d.geom.GRectangle;
 import com.genome2d.textures.GTextureUtils;
 import flash.text.TextFieldAutoSize;
 import com.genome2d.context.IGContext;

@@ -8,7 +8,6 @@
  */
 package com.genome2d.textures;
 
-import flash.geom.Matrix;
 import flash.geom.Point;
 import flash.display.BitmapData;
 
@@ -50,9 +49,6 @@ class GTextureUtils
 		if (validWidth == bitmapWidth && validHeight == bitmapHeight) return p_bitmapData;
 		
 		var resampled:BitmapData;
-		var resampleMatrix:Matrix;
-		
-        resampleMatrix = new Matrix();
         resampled = new BitmapData(untyped __int__(validWidth), untyped __int__(validHeight), true, 0x0);
         resampled.copyPixels(p_bitmapData, p_bitmapData.rect, zero);
 

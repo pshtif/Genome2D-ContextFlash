@@ -9,16 +9,12 @@
 package com.genome2d.assets;
 
 import com.genome2d.assets.GAsset;
-import com.genome2d.assets.GAssetManager;
-import com.genome2d.callbacks.GCallback;
 import com.genome2d.debug.GDebug;
-import com.genome2d.debug.GDebug;
-import com.genome2d.proto.IGPrototypable;
-import flash.net.URLRequest;
 import flash.events.IOErrorEvent;
 import flash.events.Event;
 import flash.net.URLLoaderDataFormat;
 import flash.net.URLLoader;
+import flash.net.URLRequest;
 
 /*
  *

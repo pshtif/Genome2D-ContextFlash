@@ -22,7 +22,6 @@ import flash.display3D.Context3DVertexBufferFormat;
 import flash.display3D.IndexBuffer3D;
 import flash.display3D.Program3D;
 import flash.display3D.VertexBuffer3D;
-import flash.display3D.textures.Texture;
 import flash.utils.ByteArray;
 import flash.Vector;
 
@@ -157,7 +156,7 @@ class GTriangleTextureBufferCPURenderer implements IGRenderer
         var notSameFilter:Bool = g2d_activeFilter != p_filter;
         var notSameRepeat:Bool = g2d_activeRepeat != p_texture.g2d_repeatable;
 
-        if (notSameRepeat || notSameTexture || notSameFiltering || notSameAlpha || notSameAtf) {
+        if (notSameFilter || notSameRepeat || notSameTexture || notSameFiltering || notSameAlpha || notSameAtf) {
             if (g2d_activeTexture != null) push();
 
             if (notSameTexture) {
@@ -165,7 +164,7 @@ class GTriangleTextureBufferCPURenderer implements IGRenderer
                 g2d_nativeContext.setTextureAt(0, g2d_activeTexture);
             }
 
-            if (notSameRepeat || notSameFiltering || notSameAlpha || notSameAtf) {
+            if (notSameFilter || notSameRepeat || notSameFiltering || notSameAlpha || notSameAtf) {
                 g2d_activeFiltering = p_texture.g2d_filteringType;
                 g2d_activeAlpha = useAlpha;
                 g2d_activeAtf = p_texture.g2d_atfType;

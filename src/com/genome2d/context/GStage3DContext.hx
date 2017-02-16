@@ -9,7 +9,6 @@
 package com.genome2d.context;
 
 import flash.geom.Rectangle;
-import flash.errors.Error;
 import com.genome2d.context.GDepthFunc;
 import com.genome2d.callbacks.GCallback;
 import com.genome2d.debug.IGDebuggableInternal;
@@ -18,9 +17,6 @@ import com.genome2d.macros.MGDebug;
 import flash.display.BitmapData;
 
 import com.genome2d.textures.GTextureManager;
-import com.genome2d.textures.GTexture;
-import com.genome2d.context.filters.GColorMatrixFilter;
-import com.genome2d.context.stats.GStats;
 import com.genome2d.geom.GMatrix3D;
 import com.genome2d.context.renderers.GRenderersCommon;
 import com.genome2d.context.stats.IGStats;
@@ -41,8 +37,6 @@ import com.genome2d.input.GKeyboardInputType;
 import com.genome2d.input.GMouseInputType;
 
 import flash.utils.Object;
-import flash.Vector;
-import flash.display3D.Context3DTriangleFace;
 import flash.display.Stage;
 import flash.display.Stage3D;
 import flash.display3D.Context3D;
@@ -53,7 +47,6 @@ import flash.display3D.Context3DStencilAction;
 import flash.display3D.Context3DTriangleFace;
 import flash.events.ErrorEvent;
 import flash.events.Event;
-import flash.geom.Matrix3D;
 import flash.utils.ByteArray;
 import flash.utils.Endian;
 import flash.Memory;

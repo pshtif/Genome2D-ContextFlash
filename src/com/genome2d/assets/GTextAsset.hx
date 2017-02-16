@@ -8,7 +8,6 @@
  */
 package com.genome2d.assets;
 
-import com.genome2d.assets.GAsset;
 import flash.events.Event;
 
 /**

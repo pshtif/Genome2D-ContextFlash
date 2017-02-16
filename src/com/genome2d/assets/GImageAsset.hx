@@ -10,15 +10,12 @@ package com.genome2d.assets;
 
 import flash.utils.ByteArray;
 import com.genome2d.assets.GAssetManager;
-import com.genome2d.assets.GAssetManager;
-import com.genome2d.assets.GAsset;
 import flash.display.Bitmap;
 import flash.display.BitmapData;
 import flash.system.ImageDecodingPolicy;
 import flash.system.LoaderContext;
 import flash.display.Loader;
 import flash.events.Event;
-import flash.net.URLRequest;
 
 class GImageAsset extends GFlashAsset {
     private var g2d_bytes:ByteArray;
@@ -55,7 +52,7 @@ class GImageAsset extends GFlashAsset {
     override private function g2d_complete_handler(event:Event):Void {
         g2d_bytes = event.target.data;
         GAssetManager.PATH_REGEX.match(g2d_url);
-        var extension:String = GAssetManager.PATH_REGEX.matched(2);
+
         switch (GAssetManager.PATH_REGEX.matched(2)) {
             case "jpg" | "jpeg" | "png":
                 var loaderContext:LoaderContext = new LoaderContext();

@@ -9,7 +9,6 @@
 package com.genome2d.context.renderers;
 
 import com.genome2d.context.IGRenderer;
-import com.genome2d.textures.GTexture;
 import flash.display3D.textures.TextureBase;
 import com.genome2d.textures.GTextureFilteringType;
 import com.genome2d.textures.GTexture;
@@ -26,7 +25,6 @@ import flash.display3D.Program3D;
 import flash.display3D.VertexBuffer3D;
 import flash.utils.ByteArray;
 import flash.utils.Dictionary;
-import flash.utils.Endian;
 
 @:access(com.genome2d.textures.GTexture)
 class GQuadTextureShaderRenderer implements IGRenderer
