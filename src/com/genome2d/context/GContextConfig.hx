@@ -8,19 +8,16 @@
  */
 package com.genome2d.context;
 
-import com.genome2d.context.GStage3DContext;
-import flash.display.Stage3D;
-import flash.utils.Object;
-import com.genome2d.context.stats.GStats;
 import com.genome2d.context.stats.IGStats;
-import flash.Vector;
+import com.genome2d.context.stats.GStats;
 import com.genome2d.geom.GRectangle;
+import flash.display.Stage3D;
 import flash.display.Stage;
+import flash.utils.Object;
 import flash.Lib;
 
 class GContextConfig
 {
-    //public var alwaysUseRectangleTextures:Bool = true;
     public var useSeparateAlphaPipeline:Bool = true;
     public var useFastMem:Bool = true;
 	public var enableDepthAndStencil:Bool = false;
@@ -55,7 +52,7 @@ class GContextConfig
             viewRect = p_viewRect;
         }
 
-		profile = Vector.ofArray(["standardExtended","standard","baselineExtended", "baseline", "baselineConstrained"]);
+		profile = "baseline"; //Vector.ofArray(["standardExtended","standard","baselineExtended", "baseline", "baselineConstrained"]);
 		renderMode = "auto";
         contextClass = GStage3DContext;
         statsClass = GStats;
