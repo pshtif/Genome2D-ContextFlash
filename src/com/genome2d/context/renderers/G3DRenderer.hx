@@ -37,6 +37,7 @@ class G3DRenderer implements IGRenderer
     static private inline var VERTEX_SHADER_CODE:String =
             // Model view matrix
             "m44 vt0, va0, vc4          \n" +
+            // Camera matrix
             "m44 vt0, vt0, vc8          \n" +
             // Projection matrix
             "m44 op, vt0, vc0			\n" +
