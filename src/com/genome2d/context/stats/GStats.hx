@@ -8,6 +8,7 @@
  */
 package com.genome2d.context.stats;
 
+import com.genome2d.debug.GDebug;
 import com.genome2d.textures.GTextureManager;
 import com.genome2d.textures.GTextureFilteringType;
 import com.genome2d.context.GStage3DContext;
@@ -85,7 +86,7 @@ class GStats implements IGStats
 
         ++g2d_fpsCounter;
 
-        g2d_statsField.htmlText = g2d_fpsString+" "+g2d_memString+ (untyped __is__(p_context, GStage3DContext) ? " <font color='#999999'>DRAWS:</font> "+drawCalls : "") + " ";
+        g2d_statsField.htmlText = g2d_fpsString+" "+g2d_memString+ (untyped __is__(p_context, GStage3DContext) ? " <font color='#999999'>DRAWS:</font> "+drawCalls+(GDebug.debugDrawCall==0?"":"["+GDebug.debugDrawCall+"]") : "") + " ";
 
         if (customStats != null) {
             for (i in 0...customStats.length) {

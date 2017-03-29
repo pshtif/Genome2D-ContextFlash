@@ -8,6 +8,8 @@
  */
 package com.genome2d.context;
 
+import com.genome2d.debug.GDebug;
+import com.genome2d.context.stats.GStats;
 import flash.geom.Rectangle;
 import com.genome2d.context.GDepthFunc;
 import com.genome2d.callbacks.GCallback;
@@ -568,8 +570,10 @@ class GStage3DContext implements IGDebuggableInternal implements IGFocusable
     public function end():Void {
 		if (g2d_renderTarget != null) setRenderTarget(null);
         g2d_stats.render(this);
-
+        var ddc:Int = GDebug.debugDrawCall;
+        if (GStats.visible) GDebug.debugDrawCall = 0;
         flushRenderer();
+        GDebug.debugDrawCall = ddc;
 
 		if (g2d_bitmapDataTarget != null) {
 			g2d_nativeContext.drawToBitmapData(g2d_bitmapDataTarget);

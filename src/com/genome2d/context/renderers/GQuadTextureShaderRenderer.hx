@@ -8,6 +8,7 @@
  */
 package com.genome2d.context.renderers;
 
+import com.genome2d.debug.GDebug;
 import com.genome2d.context.IGRenderer;
 import flash.display3D.textures.TextureBase;
 import com.genome2d.textures.GTextureFilteringType;
@@ -384,15 +385,17 @@ class GQuadTextureShaderRenderer implements IGRenderer
 	inline public function push():Void {
 		if (g2d_quadCount != 0) {
             ++GStats.drawCalls;
-            if (g2d_useFastMem) {
-                g2d_nativeContext.setProgramConstantsFromByteArray(Context3DProgramType.VERTEX, CONSTANTS_OFFSET, MAX_CONSTANTS, g2d_fastMemArray, 0);
-            } else {
-			    g2d_nativeContext.setProgramConstantsFromVector(Context3DProgramType.VERTEX, CONSTANTS_OFFSET, g2d_vertexConstants, MAX_CONSTANTS);
-            }
-			g2d_nativeContext.drawTriangles(g2d_indexBuffer, 0, g2d_quadCount << 1);
+			if (GDebug.debugDrawCall == 0 || GDebug.debugDrawCall == GStats.drawCalls) {
+				if (g2d_useFastMem) {
+					g2d_nativeContext.setProgramConstantsFromByteArray(Context3DProgramType.VERTEX, CONSTANTS_OFFSET, MAX_CONSTANTS, g2d_fastMemArray, 0);
+				} else {
+					g2d_nativeContext.setProgramConstantsFromVector(Context3DProgramType.VERTEX, CONSTANTS_OFFSET, g2d_vertexConstants, MAX_CONSTANTS);
+				}
+				g2d_nativeContext.drawTriangles(g2d_indexBuffer, 0, g2d_quadCount << 1);
+			}
 			g2d_quadCount = 0;
 			g2d_textureIndex = MAX_CONSTANTS;
-            g2d_activeTextureId = 0;
+			g2d_activeTextureId = 0;
 		}
 	}
 
