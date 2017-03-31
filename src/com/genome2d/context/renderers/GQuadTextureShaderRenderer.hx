@@ -131,11 +131,11 @@ class GQuadTextureShaderRenderer implements IGRenderer
         var programBit:Int = 0;
 
         if (p_alpha) programBit |= 1;
-        if (p_repeat) programBit |= 1 << 2;
-        if (p_filtering == GTextureFilteringType.LINEAR) programBit |= 1 << 3;
+        if (p_repeat) programBit |= 1 << 1;
+        if (p_filtering == GTextureFilteringType.LINEAR) programBit |= 1 << 2;
 
-        if (p_atf == "dxt1") programBit |= 1 << 4;
-        else if (p_atf == "dxt5") programBit |= 1 << 5;
+        if (p_atf == "dxt1") programBit |= 1 << 3;
+        else if (p_atf == "dxt5") programBit |= 1 << 4;
 
         var programId:String = untyped g2d_cachedProgramIds[programBit];
 
@@ -144,7 +144,7 @@ class GQuadTextureShaderRenderer implements IGRenderer
             untyped g2d_cachedProgramIds[programBit] = programId;
         }
 
-        if (p_filter != null) programId+=p_filter.id;
+        if (p_filter != null) programId+="_"+p_filter.id;
 
         var program:Program3D = untyped g2d_cachedPrograms[programId];
         if (program == null) {
