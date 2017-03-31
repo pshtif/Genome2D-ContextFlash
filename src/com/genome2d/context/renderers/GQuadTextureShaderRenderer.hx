@@ -8,6 +8,7 @@
  */
 package com.genome2d.context.renderers;
 
+import com.genome2d.macros.MGDebug;
 import com.genome2d.debug.GDebug;
 import com.genome2d.context.IGRenderer;
 import flash.display3D.textures.TextureBase;
@@ -236,6 +237,11 @@ class GQuadTextureShaderRenderer implements IGRenderer
 	}
 	
 	inline public function draw(p_x:Float, p_y:Float, p_scaleX:Float, p_scaleY:Float, p_rotation:Float, p_red:Float, p_green:Float, p_blue:Float, p_alpha:Float, p_texture:GTexture, p_filter:GFilter, p_overrideSource:Bool, p_sourceX:Float, p_sourceY:Float, p_sourceWidth:Float, p_sourceHeight:Float, p_sourcePivotX:Float, p_sourcePivotY:Float):Void {
+		if (p_texture.isDirty()) {
+			MGDebug.WARNING("Trying to render a dirty texture, invalidate ", p_texture.id);
+			return;
+		}
+
 		var notSameTexture:Bool = g2d_activeNativeTexture != p_texture.g2d_nativeTexture;
 		var notSameFiltering:Bool = g2d_activeFiltering != p_texture.g2d_filteringType;
         var notSameRepeat:Bool = g2d_activeRepeat != p_texture.g2d_repeatable;
