@@ -587,7 +587,7 @@ class GStage3DContext implements IGDebuggableInternal implements IGFocusable
 
     @:dox(hide)
     inline public function draw2(p_texture:GTexture, p_blendMode:GBlendMode, p_x:Float, p_y:Float, p_scaleX:Float = 1, p_scaleY:Float = 1, p_rotation:Float = 0, p_red:Float = 1, p_green:Float = 1, p_blue:Float = 1, p_alpha:Float = 1, p_filter:GFilter = null, p_id:Int = 0):Void {
-        if (p_alpha != 0) {
+        if (p_alpha != 0 && p_texture.nativeTexture != null) {
             setBlendMode(p_blendMode, p_texture.premultiplied);
             setRenderer(g2d_quadTextureBufferGPURenderer);
 
@@ -601,7 +601,7 @@ class GStage3DContext implements IGDebuggableInternal implements IGFocusable
        @param p_texture textures instance used to drawing
      */
 	inline public function draw(p_texture:GTexture, p_blendMode:GBlendMode, p_x:Float, p_y:Float, p_scaleX:Float = 1, p_scaleY:Float = 1, p_rotation:Float = 0, p_red:Float = 1, p_green:Float = 1, p_blue:Float = 1, p_alpha:Float = 1, p_filter:GFilter = null):Void {
-		if (p_alpha != 0) {
+		if (p_alpha != 0 && p_texture.nativeTexture != null) {
             setBlendMode(p_blendMode, p_texture.premultiplied);
 			setRenderer(g2d_quadTextureShaderRenderer);
 			g2d_quadTextureShaderRenderer.draw(p_x, p_y, p_scaleX, p_scaleY, p_rotation, p_red, p_green, p_blue, p_alpha, p_texture, p_filter, false, 0, 0, 0, 0, 0, 0);
@@ -614,7 +614,7 @@ class GStage3DContext implements IGDebuggableInternal implements IGFocusable
        @param p_texture textures to be drawn
      */
     inline public function drawSource(p_texture:GTexture, p_blendMode:GBlendMode, p_sourceX:Float, p_sourceY:Float, p_sourceWidth:Float, p_sourceHeight:Float, p_sourcePivotX:Float, p_sourcePivotY:Float, p_x:Float, p_y:Float, p_scaleX:Float = 1, p_scaleY:Float = 1, p_rotation:Float = 0, p_red:Float = 1, p_green:Float = 1, p_blue:Float = 1, p_alpha:Float = 1, p_filter:GFilter = null):Void {
-        if (p_alpha != 0) {
+        if (p_alpha != 0 && p_texture.nativeTexture != null) {
             setBlendMode(p_blendMode, p_texture.premultiplied);
             setRenderer(g2d_quadTextureShaderRenderer);
 
@@ -628,7 +628,7 @@ class GStage3DContext implements IGDebuggableInternal implements IGFocusable
        @param p_texture textures to be drawn
      */
     inline public function drawMatrix(p_texture:GTexture, p_blendMode:GBlendMode, p_a:Float, p_b:Float, p_c:Float, p_d:Float, p_tx:Float, p_ty:Float, p_red:Float = 1, p_green:Float = 1, p_blue:Float = 1, p_alpha:Float=1, p_filter:GFilter = null):Void {
-        if (p_alpha != 0) {
+        if (p_alpha != 0 && p_texture.nativeTexture != null) {
             setBlendMode(p_blendMode, p_texture.premultiplied);
             setRenderer(g2d_matrixQuadTextureShaderRenderer);
             g2d_matrixQuadTextureShaderRenderer.draw(p_a, p_b, p_c, p_d, p_tx, p_ty, p_red, p_green, p_blue, p_alpha, p_texture, p_filter, false, 0, 0, 0, 0);
@@ -641,7 +641,7 @@ class GStage3DContext implements IGDebuggableInternal implements IGFocusable
        @param p_texture textures to be drawn
      */
     inline public function drawMatrixSource(p_texture:GTexture, p_blendMode:GBlendMode, p_sourceX:Float, p_sourceY:Float, p_sourceWidth:Float, p_sourceHeight:Float, p_a:Float, p_b:Float, p_c:Float, p_d:Float, p_tx:Float, p_ty:Float, p_red:Float = 1, p_green:Float = 1, p_blue:Float = 1, p_alpha:Float=1, p_filter:GFilter = null):Void {
-        if (p_alpha != 0) {
+        if (p_alpha != 0 && p_texture.nativeTexture != null) {
             setBlendMode(p_blendMode, p_texture.premultiplied);
             setRenderer(g2d_matrixQuadTextureShaderRenderer);
 
@@ -662,7 +662,7 @@ class GStage3DContext implements IGDebuggableInternal implements IGFocusable
         @param p_rotation rotation
      */
     inline public function drawPoly(p_texture:GTexture, p_blendMode:GBlendMode, p_vertices:Array<Float>, p_uvs:Array<Float>, p_x:Float, p_y:Float, p_scaleX:Float = 1, p_scaleY:Float = 1, p_rotation:Float = 0, p_red:Float = 1, p_green:Float = 1, p_blue:Float = 1, p_alpha:Float = 1, p_filter:GFilter = null):Void {
-        if (p_alpha != 0) {
+        if (p_alpha != 0 && p_texture.nativeTexture != null) {
             setBlendMode(p_blendMode, p_texture.premultiplied);
             setRenderer(g2d_triangleTextureBufferCPURenderer);
 
