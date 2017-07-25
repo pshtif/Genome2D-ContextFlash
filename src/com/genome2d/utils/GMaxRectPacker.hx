@@ -87,7 +87,7 @@ class GMaxRectPacker
         return success;
     }
     
-    public function g2d_packRectangles(p_rectangles:Array<GPackerRectangle>, p_padding:Int = 0, p_sort:Int = SORT_DESCENDING):Bool {
+    public function packRectangles(p_rectangles:Array<GPackerRectangle>, p_padding:Int = 0, p_sort:Int = SORT_DESCENDING):Bool {
         if (p_sort != SORT_NONE) p_rectangles.sort((p_sort == SORT_ASCENDING) ? g2d_sortOnHeightAscending : g2d_sortOnHeightDescending);
         var count:Int = p_rectangles.length;
         var success:Bool = true;
