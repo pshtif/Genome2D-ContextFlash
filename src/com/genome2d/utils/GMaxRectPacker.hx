@@ -79,7 +79,7 @@ class GMaxRectPacker
             storedRectangles.push(p_rect);
 
             clear();
-            g2d_packRectangles(storedRectangles, p_padding, g2d_sortOnExpand);
+            packRectangles(storedRectangles, p_padding, g2d_sortOnExpand);
 
             success = true;
         }
