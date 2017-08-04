@@ -87,6 +87,7 @@ class GStage3DContext implements IGDebuggableInternal implements IGFocusable
     }
 
     private var g2d_stats:IGStats;
+    private var g2d_invalidatingTextures:Bool = false;
 
     private var g2d_currentTime:Float = 0;
     private var g2d_currentDeltaTime:Float;
@@ -203,6 +204,7 @@ class GStage3DContext implements IGDebuggableInternal implements IGFocusable
     private var g2d_useSeparateAlphaPipeline:Bool;
     private var g2d_useFastMem:Bool;
     private var g2d_useRightClick:Bool;
+    private var g2d_useAsyncInvalidation:Bool;
 
     private var g2d_fastMemArray:ByteArray;
 
@@ -248,6 +250,7 @@ class GStage3DContext implements IGDebuggableInternal implements IGFocusable
         g2d_maxBackbufferWidth = p_config.maxBackbufferWidth;
         g2d_maxBackbufferHeight = p_config.maxBackbufferHeight;
 
+        g2d_useAsyncInvalidation = p_config.useAsyncInvalidation;
         g2d_useSeparateAlphaPipeline = p_config.useSeparateAlphaPipeline;
         g2d_useFastMem = p_config.useFastMem;
 		
@@ -313,11 +316,20 @@ class GStage3DContext implements IGDebuggableInternal implements IGFocusable
 
         g2d_triangleTextureBufferCPURenderer = new GTriangleTextureBufferCPURenderer();
 
-        GTextureManager.invalidateAll(true);
+        if (g2d_useAsyncInvalidation) {
+            g2d_invalidatingTextures = true;
+            GTextureManager.invalidateAll(true, true, g2d_textureInvalidationComplete_handler);
+        } else {
+            GTextureManager.invalidateAll(true);
+        }
 
         g2d_invalidate();
 
         g2d_reinitialize++;
+    }
+
+    private function g2d_textureInvalidationComplete_handler():Void {
+        g2d_invalidatingTextures = false;
     }
 	
 	private function g2d_configureBackBuffer():Void {
@@ -530,6 +542,7 @@ class GStage3DContext implements IGDebuggableInternal implements IGFocusable
 	  	Start the drawing
 	 */
     public function begin():Bool {
+        if (g2d_invalidatingTextures) return false;
         if (g2d_nativeContext.driverInfo == "Disposed") return false;
         if (g2d_useFastMem) Memory.select(g2d_fastMemArray);
         g2d_stats.clear();
@@ -815,10 +828,20 @@ class GStage3DContext implements IGDebuggableInternal implements IGFocusable
 		g2d_bitmapDataTarget = p_bitmapData;
 	}
 
+    private var g2d_nextFrameCallback:Void->Void;
+    public function callNextFrame(p_callback:Void->Void):Void {
+        g2d_nextFrameCallback = p_callback;
+    }
+
     private function g2d_enterFrame_handler(event:Event):Void {
         var currentTime:Float =  untyped __global__["flash.utils.getTimer"]();
         g2d_currentDeltaTime = currentTime - g2d_currentTime;
         g2d_currentTime = currentTime;
+        if (g2d_nextFrameCallback != null) {
+            var callback:Void->Void = g2d_nextFrameCallback;
+            g2d_nextFrameCallback = null;
+            callback();
+        }
         g2d_onFrame.dispatch(g2d_currentDeltaTime);
     }
 

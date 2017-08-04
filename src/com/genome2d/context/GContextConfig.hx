@@ -18,6 +18,7 @@ import flash.Lib;
 
 class GContextConfig
 {
+    public var useAsyncInvalidation:Bool = false;
     public var useSeparateAlphaPipeline:Bool = true;
     public var useFastMem:Bool = true;
 	public var enableDepthAndStencil:Bool = false;
