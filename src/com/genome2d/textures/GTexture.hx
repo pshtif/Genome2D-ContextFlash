@@ -199,12 +199,20 @@ class GTexture extends GTextureBase
 		super.dispose(p_disposeSource);
     }
 
-    override public function getAlphaAtUV(p_u:Float, p_v:Float):Float {
+    override public function getAlphaAtUV(p_u:Float, p_v:Float):UInt {
 		var bitmapData:BitmapData = (Std.is(g2d_source, GTexture)) ? cast cast(g2d_source, GTexture).g2d_source : Std.is(g2d_source, BitmapData) ? cast g2d_source : null;
         if (bitmapData == null)  return 255;
 		p_u = (p_u * width) / g2d_gpuWidth;
 		p_v = (p_v * height) / g2d_gpuHeight;
         return bitmapData.getPixel32(untyped __int__((g2d_u + p_u) * g2d_gpuWidth), untyped __int__((g2d_v + p_v) * g2d_gpuHeight)) >> 24 & 0xFF;
+    }
+
+    override public function getColorAtUV(p_u:Float, p_v:Float):UInt {
+        var bitmapData:BitmapData = (Std.is(g2d_source, GTexture)) ? cast cast(g2d_source, GTexture).g2d_source : Std.is(g2d_source, BitmapData) ? cast g2d_source : null;
+        if (bitmapData == null)  return 0;
+        p_u = (p_u * width) / g2d_gpuWidth;
+        p_v = (p_v * height) / g2d_gpuHeight;
+        return bitmapData.getPixel(untyped __int__((g2d_u + p_u) * g2d_gpuWidth), untyped __int__((g2d_v + p_v) * g2d_gpuHeight));
     }
 	
 	/*
