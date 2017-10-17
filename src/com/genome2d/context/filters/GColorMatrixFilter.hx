@@ -14,7 +14,7 @@ class GColorMatrixFilter extends GFilter
 {
     private var g2d_identityMatrix:Vector<Float>;
 
-    public function setMatrix(p_matrix:Vector<Float>):Void {
+    public function setMatrix(p_matrix:Array<Float>):Void {
         if (fragmentConstants == null) fragmentConstants = new Vector<Float>(24);
         fragmentConstants[0] = p_matrix[0];
         fragmentConstants[1] = p_matrix[1];
