@@ -12,8 +12,6 @@ package com.genome2d.context.filters;
 import flash.Vector;
 class GColorMatrixFilter extends GFilter
 {
-    private var g2d_identityMatrix:Vector<Float>;
-
     public function setMatrix(p_matrix:Array<Float>):Void {
         if (fragmentConstants == null) fragmentConstants = new Vector<Float>(24);
         fragmentConstants[0] = p_matrix[0];
@@ -42,15 +40,15 @@ class GColorMatrixFilter extends GFilter
         fragmentConstants[23] = 0.0001;
     }
 
-    public function new(p_matrix:Vector<Float> = null) {
+    public function new(p_matrix:Array<Float> = null) {
         super();
 
-        g2d_identityMatrix = Vector.ofArray([1,0,0,0,0,
-                              0,1,0,0,0,
-                              0,0,1,0,0,
-                              0,0,0,1,0.0]);
+        var identityMatrix:Array<Float> = [1,0,0,0,0,
+                                           0,1,0,0,0,
+                                           0,0,1,0,0,
+                                           0,0,0,1,0.0];
 
-        setMatrix(p_matrix == null ? g2d_identityMatrix : p_matrix);
+        setMatrix(p_matrix == null ? identityMatrix : p_matrix);
 
         fragmentCode =	"max ft0, ft0, fc6             \n" +
                         "div ft0.xyz, ft0.xyz, ft0.www \n" +
