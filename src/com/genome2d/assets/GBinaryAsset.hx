@@ -8,6 +8,7 @@
  */
 package com.genome2d.assets;
 
+import flash.utils.ByteArray;
 import com.genome2d.assets.GAsset;
 import com.genome2d.debug.GDebug;
 import flash.events.IOErrorEvent;
@@ -21,8 +22,9 @@ import flash.net.URLRequest;
  * @author Peter "sHTiF" Stefcek / www.flash-core.com
  */
 
-class GFlashAsset extends GAsset
+class GBinaryAsset extends GAsset
 {
+    public var data:ByteArray;
     /**
         Load the asset
     **/
@@ -40,6 +42,10 @@ class GFlashAsset extends GAsset
     }
 	
 	private function g2d_complete_handler(p_event:Event):Void {
+        g2d_loading = false;
+        data = p_event.target.data;
+        g2d_loaded = true;
+        onLoaded.dispatch(this);
     }
 
     private function g2d_ioError_handler(event:IOErrorEvent):Void {

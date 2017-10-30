@@ -13,7 +13,7 @@ import flash.events.Event;
 /**
  * @author Peter "sHTiF" Stefcek
  */
-class GTextAsset extends GFlashAsset {
+class GTextAsset extends GBinaryAsset {
 	
 	public var text:String;
 

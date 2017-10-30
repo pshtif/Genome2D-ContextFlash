@@ -17,7 +17,7 @@ import flash.system.LoaderContext;
 import flash.display.Loader;
 import flash.events.Event;
 
-class GImageAsset extends GFlashAsset {
+class GImageAsset extends GBinaryAsset {
     private var g2d_bytes:ByteArray;
     #if swc @:extern #end
     public var bytes(get,never):ByteArray;

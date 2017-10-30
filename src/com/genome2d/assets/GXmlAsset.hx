@@ -13,7 +13,7 @@ import flash.events.Event;
 /**
  * @author Peter "sHTiF" Stefcek
  */
-class GXmlAsset extends GFlashAsset {
+class GXmlAsset extends GBinaryAsset {
     private var g2d_xml:Xml;
     #if swc @:extern #end
 	public var xml(get,never):Xml;
