@@ -16,15 +16,11 @@ import flash.events.Event;
 import flash.net.URLLoaderDataFormat;
 import flash.net.URLLoader;
 import flash.net.URLRequest;
-
-/*
- *
- * @author Peter "sHTiF" Stefcek / www.flash-core.com
- */
+import haxe.io.Bytes;
 
 class GBinaryAsset extends GAsset
 {
-    public var data:ByteArray;
+    public var data:Bytes;
     /**
         Load the asset
     **/
@@ -43,7 +39,7 @@ class GBinaryAsset extends GAsset
 	
 	private function g2d_complete_handler(p_event:Event):Void {
         g2d_loading = false;
-        data = p_event.target.data;
+        data = Bytes.ofData(p_event.target.data);
         g2d_loaded = true;
         onLoaded.dispatch(this);
     }
