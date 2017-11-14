@@ -21,10 +21,10 @@ class GProjectionMatrix extends Matrix3D
 
     public function new(v:Vector<Float> = null) {
         super(v);
-        g2d_vector = Vector.ofArray([2.0, 0.0, 0.0, 0.0,
-                                     0.0, -2.0, 0.0, 0.0,
-                                     0.0, 0.0, 1/(FAR-NEAR), -NEAR/(FAR-NEAR),
-                                     -1.0, 1.0, 0, 1.0
+        g2d_vector = Vector.ofArray([2.0  , 0.0  , 0.0          , 0.0,
+                                     0.0  , -2.0 , 0.0          , 0.0,
+                                     0.0  , 0.0  , 1/(FAR-NEAR) , -NEAR/(FAR-NEAR),
+                                     -1.0 , 1.0  , 0            , 1.0
                                     ]);
     }
 
@@ -34,8 +34,8 @@ class GProjectionMatrix extends Matrix3D
     }
 
     public function ortho(p_width:Float, p_height:Float, p_transform:Matrix3D = null):GProjectionMatrix {
-        g2d_vector[0] = 2/p_width;
-        g2d_vector[5] = -2/p_height;
+        g2d_vector[0] = 2 / p_width;
+        g2d_vector[5] = -2 / p_height;
         this.copyRawDataFrom(g2d_vector);
 
         if (p_transform != null) this.prepend(p_transform);
@@ -44,10 +44,10 @@ class GProjectionMatrix extends Matrix3D
     }
 
     public function perspective(p_width:Float, p_height:Float, zNear:Float, zFar:Float):GProjectionMatrix {
-        this.copyRawDataFrom(Vector.ofArray([2/p_width, 0.0, 0.0, 0.0,
-                                             0.0, -2/p_height, 0.0, 0.0,
-                                             0, 0, zFar/(zFar-zNear), 1.0,
-                                             0, 0, (zNear*zFar)/(zNear-zFar), 0
+        this.copyRawDataFrom(Vector.ofArray([2/p_width , 0.0         , 0.0                       , 0.0,
+                                             0.0       , -2/p_height , 0.0                       , 0.0,
+                                             0         , 0           , zFar/(zFar-zNear)         , 1.0,
+                                             0         , 0           , (zNear*zFar)/(zNear-zFar) , 0
                                             ]));
 
         return this;
