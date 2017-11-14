@@ -175,7 +175,7 @@ class G3DRenderer implements IGRenderer
         if (p_generatePerspectiveMatrix) {
             projectionMatrix = new GProjectionMatrix();
         }
-        
+
         g2d_vertices = p_vertices;
         g2d_uvs = p_uvs;
         g2d_normals = p_normals;
@@ -331,11 +331,17 @@ class G3DRenderer implements IGRenderer
             }
         }
 
-        if (p_cull == 2) g2d_context.getNativeContext().setCulling(Context3DTriangleFace.FRONT);
-        else if (p_cull == 1) g2d_context.getNativeContext().setCulling(Context3DTriangleFace.BACK);
-        else g2d_context.getNativeContext().setCulling(Context3DTriangleFace.NONE);
+        if (p_cull == 2) {
+            g2d_context.getNativeContext().setCulling(Context3DTriangleFace.FRONT);
+        } else if (p_cull == 1) {
+            g2d_context.getNativeContext().setCulling(Context3DTriangleFace.BACK);
+        } else {
+            g2d_context.getNativeContext().setCulling(Context3DTriangleFace.NONE);
+        }
 
-        if (projectionMatrix != null) nativeContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 0, projectionMatrix, true);
+        if (projectionMatrix != null) {
+            nativeContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 0, projectionMatrix, true);
+        }
 
         nativeContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 4, modelMatrix, true);
         nativeContext.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 8, cameraMatrix, true);
