@@ -8,6 +8,7 @@
  */
 package com.genome2d.context.renderers;
 
+import com.genome2d.debug.GDebug;
 import com.genome2d.context.IGRenderer;
 import com.genome2d.geom.GFloat4;
 import com.genome2d.context.stats.GStats;
