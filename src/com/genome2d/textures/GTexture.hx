@@ -8,6 +8,8 @@
  */
 package com.genome2d.textures;
 
+import com.genome2d.macros.MGDebug;
+import com.genome2d.callbacks.GCallback.GCallback0;
 import com.genome2d.context.GStage3DContext;
 import com.genome2d.debug.GDebug;
 import com.genome2d.geom.GRectangle;
@@ -15,6 +17,8 @@ import com.genome2d.textures.GTextureManager;
 import com.genome2d.textures.GTextureSourceType;
 import com.genome2d.textures.GTextureBase;
 
+import flash.errors.Error;
+import flash.events.Event;
 import flash.display.BitmapData;
 import flash.display3D.Context3DTextureFormat;
 import flash.display3D.textures.TextureBase;
@@ -24,6 +28,25 @@ import flash.utils.ByteArray;
 class GTexture extends GTextureBase
 {
     private var g2d_atfType:String = "";
+
+    public var useAsyncUpload:Bool = false;
+
+    private var g2d_onTextureReady:GCallback0;
+    #if swc @:extern #end
+    public var onTextureReady(get, never):GCallback0;
+    #if swc @:getter(onTextureReady) #end
+    inline private function get_onTextureReady():GCallback0 {
+        if (g2d_onTextureReady == null) g2d_onTextureReady = new GCallback0();
+        return g2d_onTextureReady;
+    }
+
+    private var g2d_isReady:Bool = false;
+    #if swc @:extern #end
+    public var isReady(get, never):Bool;
+    #if swc @:getter(isReady) #end
+    inline private function get_isReady():Bool {
+        return g2d_isReady;
+    }
     
     override public function setSource(p_value:Dynamic):Dynamic {
         if (g2d_source != p_value) {
@@ -90,6 +113,7 @@ class GTexture extends GTextureBase
     public function invalidateNativeTexture(p_reinitialize:Bool):Void {
         if (untyped __is__(g2d_context, GStage3DContext)) {
             var contextStage3D:GStage3DContext = cast g2d_context;
+            g2d_isReady = false;
 
             if (g2d_sourceType != GTextureSourceType.TEXTURE && contextStage3D.getNativeContext().driverInfo != "Disposed") {
                 g2d_gpuWidth = usesRectangle() ? g2d_nativeWidth : GTextureUtils.getNextValidTextureSize(g2d_nativeWidth);
@@ -110,7 +134,17 @@ class GTexture extends GTextureBase
                                 g2d_nativeTexture = contextStage3D.getNativeContext().createTexture(g2d_gpuWidth, g2d_gpuHeight, untyped g2d_format, false);
                             }
                         }
-                        untyped g2d_nativeTexture["uploadFromBitmapData"](resampled);
+                        if (useAsyncUpload) {
+                            g2d_nativeTexture.addEventListener(Event.TEXTURE_READY, textureReady_handler);
+                            try {
+                                untyped g2d_nativeTexture["uploadFromBitmapDataAsync"](resampled);
+                            } catch (error:Error) {
+                                MGDebug.ERROR("Async upload for textures not available on this target.");
+                            }
+                        } else {
+                            untyped g2d_nativeTexture["uploadFromBitmapData"](resampled);
+                            g2d_isReady = true;
+                        }
                     case GTextureSourceType.BYTEARRAY:
                         if (g2d_nativeTexture == null || p_reinitialize) {
                             if (g2d_nativeTexture != null) g2d_nativeTexture.dispose();
@@ -120,25 +154,38 @@ class GTexture extends GTextureBase
                                 g2d_nativeTexture = contextStage3D.getNativeContext().createTexture(g2d_gpuWidth, g2d_gpuHeight, untyped g2d_format, false);
                             }
                         }
-                        untyped g2d_nativeTexture["uploadFromByteArray"](g2d_source.byteArray, g2d_source.offset);
+                        if (useAsyncUpload) {
+                            g2d_nativeTexture.addEventListener(Event.TEXTURE_READY, textureReady_handler);
+                            try {
+                                untyped g2d_nativeTexture["uploadFromByteArrayAsync"](g2d_source.byteArray, g2d_source.offset);
+                            } catch (error:Error) {
+                                MGDebug.ERROR("Async upload for textures not available on this target.");
+                            }
+                        } else {
+                            untyped g2d_nativeTexture["uploadFromByteArray"](g2d_source.byteArray, g2d_source.offset);
+                            g2d_isReady = true;
+                        }
                     case GTextureSourceType.ATF_BGRA:
                         if (g2d_nativeTexture == null || p_reinitialize) {
                             if (g2d_nativeTexture != null) g2d_nativeTexture.dispose();
                             g2d_nativeTexture = contextStage3D.getNativeContext().createTexture(g2d_gpuWidth, g2d_gpuHeight, Context3DTextureFormat.BGRA, false);
                         }
                         untyped g2d_nativeTexture["uploadCompressedTextureFromByteArray"](cast g2d_source, 0);
+                        g2d_isReady = true;
                     case GTextureSourceType.ATF_COMPRESSED:
                         if (g2d_nativeTexture == null || p_reinitialize) {
                             if (g2d_nativeTexture != null) g2d_nativeTexture.dispose();
                             g2d_nativeTexture = contextStage3D.getNativeContext().createTexture(g2d_gpuWidth, g2d_gpuHeight, Context3DTextureFormat.COMPRESSED, false);
                         }
                         untyped g2d_nativeTexture["uploadCompressedTextureFromByteArray"](cast g2d_source, 0);
+                        g2d_isReady = true;
                     case GTextureSourceType.ATF_COMPRESSEDALPHA:
                         if (g2d_nativeTexture == null || p_reinitialize) {
                             if (g2d_nativeTexture != null) g2d_nativeTexture.dispose();
                             g2d_nativeTexture = contextStage3D.getNativeContext().createTexture(g2d_gpuWidth, g2d_gpuHeight, Context3DTextureFormat.COMPRESSED_ALPHA, false);
                         }
                         untyped g2d_nativeTexture["uploadCompressedTextureFromByteArray"](cast g2d_source, 0);
+                        g2d_isReady = true;
                     case GTextureSourceType.RENDER_TARGET:
                         if (g2d_nativeTexture == null || p_reinitialize) {
                             if (g2d_nativeTexture != null) g2d_nativeTexture.dispose();
@@ -147,9 +194,11 @@ class GTexture extends GTextureBase
                             } else {
                                 g2d_nativeTexture = contextStage3D.getNativeContext().createTexture(g2d_gpuWidth, g2d_gpuHeight, Context3DTextureFormat.BGRA, true);
                             }
+                            g2d_isReady = true;
                         }
                     case GTextureSourceType.TEXTURE:
                         g2d_nativeTexture = g2d_source;
+                        g2d_isReady = true;
                     default:
                 }
 				
@@ -214,7 +263,12 @@ class GTexture extends GTextureBase
         p_v = (p_v * height) / g2d_gpuHeight;
         return bitmapData.getPixel(untyped __int__((g2d_u + p_u) * g2d_gpuWidth), untyped __int__((g2d_v + p_v) * g2d_gpuHeight));
     }
-	
+
+    private function textureReady_handler(event:Event) {
+        g2d_isReady = true;
+        if (g2d_onTextureReady != null) g2d_onTextureReady.dispatch();
+    }
+
 	/*
 	 * 	Get an instance from reference
 	 */
