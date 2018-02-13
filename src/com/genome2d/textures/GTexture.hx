@@ -248,7 +248,7 @@ class GTexture extends GTextureBase
 		super.dispose(p_disposeSource);
     }
 
-    override public function getAlphaAtUV(p_u:Float, p_v:Float):UInt {
+    override public function getAlphaAtUV(p_u:Float, p_v:Float):Int {
 		var bitmapData:BitmapData = (Std.is(g2d_source, GTexture)) ? cast cast(g2d_source, GTexture).g2d_source : Std.is(g2d_source, BitmapData) ? cast g2d_source : null;
         if (bitmapData == null)  return 255;
 		p_u = (p_u * width) / g2d_gpuWidth;
