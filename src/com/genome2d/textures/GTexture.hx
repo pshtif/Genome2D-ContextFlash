@@ -239,8 +239,11 @@ class GTexture extends GTextureBase
 	}
 
     override public function dispose(p_disposeSource:Bool = false):Void {
-        if (g2d_sourceType != GTextureSourceType.TEXTURE && g2d_nativeTexture != null) g2d_nativeTexture.dispose();
-        g2d_nativeTexture = null;
+        if (g2d_isReady) {
+            if (g2d_sourceType != GTextureSourceType.TEXTURE && g2d_nativeTexture != null) g2d_nativeTexture.dispose();
+            g2d_nativeTexture = null;
+        }
+
 		if (p_disposeSource) {
 			if (g2d_sourceType == GTextureSourceType.BITMAPDATA) cast (g2d_source, BitmapData).dispose();
 		}
@@ -267,13 +270,14 @@ class GTexture extends GTextureBase
     private function textureReady_handler(event:Event) {
         g2d_isReady = true;
 
+        g2d_nativeTexture.removeEventListener(Event.TEXTURE_READY, textureReady_handler);
+
         if (g2d_disposed) {
             g2d_nativeTexture.dispose();
+            g2d_nativeTexture = null;
         } else if (g2d_onTextureReady != null) {
              g2d_onTextureReady.dispatch();
         }
-
-        g2d_nativeTexture.removeEventListener(Event.TEXTURE_READY, textureReady_handler);
     }
 
 	/*
