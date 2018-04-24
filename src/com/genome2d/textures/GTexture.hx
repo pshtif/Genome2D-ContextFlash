@@ -111,7 +111,7 @@ class GTexture extends GTextureBase
     }
 
     public function invalidateNativeTexture(p_reinitialize:Bool):Void {
-        if (untyped __is__(g2d_context, GStage3DContext)) {
+        if (untyped __is__(g2d_conteg2d_context, GStage3DContext)) {
             var contextStage3D:GStage3DContext = cast g2d_context;
             g2d_isReady = false;
 
@@ -266,7 +266,14 @@ class GTexture extends GTextureBase
 
     private function textureReady_handler(event:Event) {
         g2d_isReady = true;
-        if (g2d_onTextureReady != null) g2d_onTextureReady.dispatch();
+
+        if (g2d_disposed) {
+            g2d_nativeTexture.dispose();
+        } else if (g2d_onTextureReady != null) {
+             g2d_onTextureReady.dispatch();
+        }
+
+        g2d_nativeTexture.removeEventListener(Event.TEXTURE_READY, textureReady_handler);
     }
 
 	/*
