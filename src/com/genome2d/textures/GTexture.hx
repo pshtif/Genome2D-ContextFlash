@@ -111,7 +111,7 @@ class GTexture extends GTextureBase
     }
 
     public function invalidateNativeTexture(p_reinitialize:Bool):Void {
-        if (untyped __is__(g2d_conteg2d_context, GStage3DContext)) {
+        if (untyped __is__(g2d_context, GStage3DContext)) {
             var contextStage3D:GStage3DContext = cast g2d_context;
             g2d_isReady = false;
 
