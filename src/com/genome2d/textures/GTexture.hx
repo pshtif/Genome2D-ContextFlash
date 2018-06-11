@@ -40,6 +40,15 @@ class GTexture extends GTextureBase
         return g2d_onTextureReady;
     }
 
+    private var g2d_onTextureError:GCallback0;
+    #if swc @:extern #end
+    public var onTextureError(get, never):GCallback0;
+    #if swc @:getter(onTextureError) #end
+    inline private function get_onTextureError():GCallback0 {
+        if (g2d_onTextureError == null) g2d_onTextureError = new GCallback0();
+        return g2d_onTextureError;
+    }
+
     private var g2d_isReady:Bool = false;
     #if swc @:extern #end
     public var isReady(get, never):Bool;
@@ -137,6 +146,7 @@ class GTexture extends GTextureBase
                         }
                         if (useAsyncUpload) {
                             g2d_nativeTexture.addEventListener(Event.TEXTURE_READY, textureReady_handler);
+                            g2d_nativeTexture.addEventListener("error", textureError_handler);
                             try {
                                 untyped g2d_nativeTexture["uploadFromBitmapDataAsync"](resampled);
                             } catch (error:Error) {
@@ -157,6 +167,7 @@ class GTexture extends GTextureBase
                         }
                         if (useAsyncUpload) {
                             g2d_nativeTexture.addEventListener(Event.TEXTURE_READY, textureReady_handler);
+                            g2d_nativeTexture.addEventListener("error", textureError_handler);
                             try {
                                 untyped g2d_nativeTexture["uploadFromByteArrayAsync"](g2d_source.byteArray, g2d_source.offset);
                             } catch (error:Error) {
@@ -278,6 +289,18 @@ class GTexture extends GTextureBase
             g2d_nativeTexture = null;
         } else if (g2d_onTextureReady != null) {
              g2d_onTextureReady.dispatch();
+        }
+    }
+
+    private function textureError_handler(event:Event) {
+
+        g2d_nativeTexture.removeEventListener("error", textureError_handler);
+
+        if (g2d_disposed) {
+            g2d_nativeTexture.dispose();
+            g2d_nativeTexture = null;
+        } else if (g2d_onTextureError != null) {
+            g2d_onTextureError.dispatch();
         }
     }
 
