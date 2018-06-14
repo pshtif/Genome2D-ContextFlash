@@ -88,6 +88,26 @@ class G3DRenderer implements IGRenderer
 			"mul ft0, ft0, fc3 \n" +
             "mov oc, ft0";
             //"mov oc, v1";
+			
+	static private inline var FRAGMENT_SHADER_CODE_NORMALS_REPEAT:String =
+            "tex ft0, v0, fs0 <2d,repeat,linear> \n" +
+            "dp3 ft1, v1, fc1 \n" +
+            "neg ft1, ft1 \n" +
+            // Saturate to 0,1
+            "sat ft1, ft1 \n" +
+            // Light amount
+            "mul ft1.xyz, ft0.xyz, ft1.xyz \n" +
+            // Light color
+            "mul ft1.xyz, ft1.xyz, fc4.xyz \n" +
+            // Multiply with ambient
+            "mul ft0.xyz, ft0.xyz, fc2.xyz \n" +
+            // Add diffuse + ambient
+            "add ft0.xyz, ft1.xyz, ft0.xyz \n" +
+			//"sat ft1, ft1 \n" +
+            // Multiply with tint
+			"mul ft0, ft0, fc3 \n" +
+            "mov oc, ft0";
+            //"mov oc, v1";
 
     static private inline var VERTEX_SHADER_CODE_SHADOW:String =
             // Model matrix
@@ -128,6 +148,7 @@ class G3DRenderer implements IGRenderer
     static private var g2d_vertexShaderCode:ByteArray;
     static private var g2d_vertexShaderCodeNormals:ByteArray;
     static private var g2d_fragmentShaderCodeNormals:ByteArray;
+	static private var g2d_fragmentShaderCodeNormalsRepeat:ByteArray;
     static private var g2d_vertexShaderCodeShadow:ByteArray;
     static private var g2d_fragmentShaderCodeShadow:ByteArray;
 	static private var g2d_vertexShaderCodeDepth:ByteArray;
@@ -139,10 +160,13 @@ class G3DRenderer implements IGRenderer
     private var g2d_indexBuffer:IndexBuffer3D;
     private var g2d_triangleCount:Int;
     private var g2d_program:Program3D;
+	private var g2d_programRepeat:Program3D;
     private var g2d_programNormals:Program3D;
+	private var g2d_programNormalsRepeat:Program3D;
     private var g2d_programShadow:Program3D;
 	private var g2d_programDepth:Program3D;
     private var g2d_generatePerspectiveMatrix:Bool = false;
+	private var g2d_needVertexBufferReinitialization:Bool = false;
 
     private var g2d_vertices:Array<Float>;
     private var g2d_uvs:Array<Float>;
@@ -177,13 +201,19 @@ class G3DRenderer implements IGRenderer
             projectionMatrix = new GProjectionMatrix();
         }
 
-        g2d_vertices = p_vertices;
+		invalidateGeometry(p_vertices, p_uvs, p_indices, p_normals);
+        g2d_generatePerspectiveMatrix = p_generatePerspectiveMatrix;
+    }
+	
+	public function invalidateGeometry(p_vertices:Array<Float>, p_uvs:Array<Float>, p_indices:Array<UInt> = null, p_normals:Array<Float>) {
+		g2d_vertices = p_vertices;
         g2d_uvs = p_uvs;
         g2d_normals = p_normals;
         if (g2d_normals != null) renderType = 1;
         g2d_indices = p_indices;
-        g2d_generatePerspectiveMatrix = p_generatePerspectiveMatrix;
-    }
+		
+		g2d_needVertexBufferReinitialization = true;
+	}
 
     public function initialize(p_context:GStage3DContext):Void {
         g2d_context = p_context;
@@ -204,6 +234,12 @@ class G3DRenderer implements IGRenderer
 			var agal:AGALMiniAssembler = new AGALMiniAssembler();
 			agal.assemble("fragment", FRAGMENT_SHADER_CODE_NORMALS, GRenderersCommon.AGAL_VERSION);
 			g2d_fragmentShaderCodeNormals = agal.agalcode;
+		}
+		
+		if (g2d_fragmentShaderCodeNormalsRepeat == null) {
+			var agal:AGALMiniAssembler = new AGALMiniAssembler();
+			agal.assemble("fragment", FRAGMENT_SHADER_CODE_NORMALS_REPEAT, GRenderersCommon.AGAL_VERSION);
+			g2d_fragmentShaderCodeNormalsRepeat = agal.agalcode;
 		}
 
 		if (g2d_vertexShaderCodeShadow == null) {
@@ -232,9 +268,15 @@ class G3DRenderer implements IGRenderer
 
         g2d_program = g2d_context.getNativeContext().createProgram();
         g2d_program.upload(g2d_vertexShaderCode, GRenderersCommon.getTexturedShaderCode(false, GTextureFilteringType.LINEAR, 2, "", null));
+		
+		g2d_programRepeat = g2d_context.getNativeContext().createProgram();
+        g2d_programRepeat.upload(g2d_vertexShaderCode, GRenderersCommon.getTexturedShaderCode(true, GTextureFilteringType.LINEAR, 2, "", null));
 
         g2d_programNormals = g2d_context.getNativeContext().createProgram();
         g2d_programNormals.upload(g2d_vertexShaderCodeNormals, g2d_fragmentShaderCodeNormals);
+		
+		g2d_programNormalsRepeat = g2d_context.getNativeContext().createProgram();
+        g2d_programNormalsRepeat.upload(g2d_vertexShaderCodeNormals, g2d_fragmentShaderCodeNormalsRepeat);
 
         g2d_programShadow = g2d_context.getNativeContext().createProgram();
         g2d_programShadow.upload(g2d_vertexShaderCodeShadow, g2d_fragmentShaderCodeShadow);
@@ -248,12 +290,35 @@ class G3DRenderer implements IGRenderer
         if (g2d_generatePerspectiveMatrix) {
             projectionMatrix.perspective(contextWidth/contextHeight, 1, .1, 2*contextHeight);
         }
-
+		
+		reinitializeVertexBuffer();
+		
         var size:Int = g2d_uvs.length>>1;
-        var vertexVector:Vector<Float> = new Vector<Float>((g2d_normals == null) ? size  * DATA_PER_VERTEX : size * DATA_PER_VERTEX_NORMALS);
+        if (g2d_indices == null) {
+            g2d_triangleCount = untyped __int__(size/3);
+            g2d_indexBuffer = g2d_context.getNativeContext().createIndexBuffer(size);
+            var indices:Vector<UInt> = new Vector<UInt>(size);
+            for (i in 0...size) {
+                indices[i] = i;
+            }
+            g2d_indexBuffer.uploadFromVector(indices, 0, size);
+        } else {
+            g2d_triangleCount = untyped __int__(g2d_indices.length/3);
+            g2d_indexBuffer = g2d_context.getNativeContext().createIndexBuffer(g2d_indices.length);
+            var indices:Vector<UInt> = new Vector<UInt>(g2d_indices.length);
+            for (i in 0...g2d_indices.length) {
+                indices[i] = g2d_indices[i];
+            }
+            g2d_indexBuffer.uploadFromVector(indices,0,indices.length);
+        }
+    }
+	
+	public function reinitializeVertexBuffer():Void {
+		var size:Int = g2d_uvs.length>>1;
+		var vertexVector:Vector<Float> = new Vector<Float>((g2d_normals == null) ? size  * DATA_PER_VERTEX : size * DATA_PER_VERTEX_NORMALS);
         g2d_vertexBuffer = g2d_context.getNativeContext().createVertexBuffer(size, (g2d_normals == null) ? DATA_PER_VERTEX : DATA_PER_VERTEX_NORMALS);
-
-        var index:Int = 0;
+		
+		var index:Int = 0;
         for (i in 0...size) {
             // xyz
             vertexVector[index] = g2d_vertices[i*3];
@@ -274,43 +339,15 @@ class G3DRenderer implements IGRenderer
         }
 
         g2d_vertexBuffer.uploadFromVector(vertexVector, 0, size);
-
-        if (g2d_indices == null) {
-            g2d_triangleCount = untyped __int__(size/3);
-            g2d_indexBuffer = g2d_context.getNativeContext().createIndexBuffer(size);
-            var indices:Vector<UInt> = new Vector<UInt>(size);
-            for (i in 0...size) {
-                indices[i] = i;
-            }
-            g2d_indexBuffer.uploadFromVector(indices, 0, size);
-        } else {
-            g2d_triangleCount = untyped __int__(g2d_indices.length/3);
-            g2d_indexBuffer = g2d_context.getNativeContext().createIndexBuffer(g2d_indices.length);
-            var indices:Vector<UInt> = new Vector<UInt>(g2d_indices.length);
-            for (i in 0...g2d_indices.length) {
-                indices[i] = g2d_indices[i];
-            }
-            g2d_indexBuffer.uploadFromVector(indices,0,indices.length);
-        }
-    }
+	}
 
     public function bind(p_context:IGContext, p_reinitialize:Int):Void {
         if (g2d_program==null || (p_reinitialize != g2d_initialized)) initialize(cast p_context);
         g2d_initialized = p_reinitialize;
 
         g2d_context.getNativeContext().setDepthTest(true, Context3DCompareMode.LESS);
-
-        switch (renderType) {
-            case 0:
-                g2d_context.getNativeContext().setProgram(g2d_program);
-            case 1:
-                g2d_context.getNativeContext().setProgram(g2d_programNormals);
-            case 2:
-                g2d_context.getNativeContext().setProgram(g2d_programShadow);
-			case 3:
-                g2d_context.getNativeContext().setProgram(g2d_programDepth);
-            case _:
-        }
+		
+		if (g2d_needVertexBufferReinitialization) reinitializeVertexBuffer();
     }
 
     public function draw(p_cull:Int = 0, p_renderType:Int):Void {
@@ -319,17 +356,26 @@ class G3DRenderer implements IGRenderer
         if (p_renderType != renderType) {
             clear();
             renderType = p_renderType;
-            switch (renderType) {
-                case 0:
-                    g2d_context.getNativeContext().setProgram(g2d_program);
-                case 1:
-                    g2d_context.getNativeContext().setProgram(g2d_programNormals);
-                case 2:
-                    g2d_context.getNativeContext().setProgram(g2d_programShadow);
-				case 3:
-                    g2d_context.getNativeContext().setProgram(g2d_programDepth);
-                case _:
-            }
+        }
+		
+		switch (renderType) {
+            case 0:
+				if (texture.repeatable) {
+					g2d_context.getNativeContext().setProgram(g2d_programRepeat);
+				} else {
+					g2d_context.getNativeContext().setProgram(g2d_program);
+				}
+            case 1:
+				if (texture.repeatable) {
+					g2d_context.getNativeContext().setProgram(g2d_programNormalsRepeat);
+				} else {
+					g2d_context.getNativeContext().setProgram(g2d_programNormals);
+				}
+            case 2:
+                g2d_context.getNativeContext().setProgram(g2d_programShadow);
+			case 3:
+                g2d_context.getNativeContext().setProgram(g2d_programDepth);
+            case _:
         }
 
         if (p_cull == 2) {
