@@ -340,6 +340,8 @@ class G3DRenderer implements IGRenderer
         }
 
         g2d_vertexBuffer.uploadFromVector(vertexVector, 0, size);
+
+        g2d_needVertexBufferReinitialization = false;
 	}
 
     public function bind(p_context:IGContext, p_reinitialize:Int):Void {
