@@ -316,6 +316,7 @@ class G3DRenderer implements IGRenderer
 	public function reinitializeVertexBuffer():Void {
 		var size:Int = g2d_uvs.length>>1;
 		var vertexVector:Vector<Float> = new Vector<Float>((g2d_normals == null) ? size  * DATA_PER_VERTEX : size * DATA_PER_VERTEX_NORMALS);
+        if (g2d_vertexBuffer != null) g2d_vertexBuffer.dispose();
         g2d_vertexBuffer = g2d_context.getNativeContext().createVertexBuffer(size, (g2d_normals == null) ? DATA_PER_VERTEX : DATA_PER_VERTEX_NORMALS);
 		
 		var index:Int = 0;
