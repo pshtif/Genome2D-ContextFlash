@@ -213,9 +213,8 @@ class GTexture extends GTextureBase
                         g2d_isReady = true;
                     default:
                 }
-				
-				region = new GRectangle(0,0,g2d_nativeWidth,g2d_nativeHeight);
-				invalidateUV();
+                region.setTo(0,0,g2d_nativeWidth,g2d_nativeHeight);
+                invalidateRegion();
 
 				if (g2d_onInvalidated != null) g2d_onInvalidated.dispatch(this);
             }
