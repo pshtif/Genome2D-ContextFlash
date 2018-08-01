@@ -336,7 +336,7 @@ class GStage3DContext implements IGDebuggableInternal implements IGFocusable
 		var w:Int = untyped __int__(g2d_stageViewRect.width);
         var h:Int = untyped __int__(g2d_stageViewRect.height);
         if (w > g2d_maxBackbufferWidth) w = g2d_maxBackbufferWidth;
-        if (h > g2d_maxBackbufferHeight) w = g2d_maxBackbufferHeight;
+        if (h > g2d_maxBackbufferHeight) h = g2d_maxBackbufferHeight;
         g2d_nativeContext.configureBackBuffer(w, h, g2d_antiAliasing, g2d_enableDepthAndStencil, g2d_hdResolution);
 	}
 
