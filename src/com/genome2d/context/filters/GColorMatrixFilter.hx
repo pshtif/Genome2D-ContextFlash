@@ -8,12 +8,13 @@
  */
 package com.genome2d.context.filters;
 
-
+import com.genome2d.geom.GFloat;
 import flash.Vector;
+
 class GColorMatrixFilter extends GFilter
 {
-    public function setMatrix(p_matrix:Array<Float>):Void {
-        if (fragmentConstants == null) fragmentConstants = new Vector<Float>(24);
+    public function setMatrix(p_matrix:Array<GFloat>):Void {
+        if (fragmentConstants == null) fragmentConstants = new Vector<GFloat>(24);
         fragmentConstants[0] = p_matrix[0];
         fragmentConstants[1] = p_matrix[1];
         fragmentConstants[2] = p_matrix[2];
@@ -40,10 +41,10 @@ class GColorMatrixFilter extends GFilter
         fragmentConstants[23] = 0.0001;
     }
 
-    public function new(p_matrix:Array<Float> = null) {
+    public function new(p_matrix:Array<GFloat> = null) {
         super();
 
-        var identityMatrix:Array<Float> = [1,0,0,0,0,
+        var identityMatrix:Array<GFloat> = [1,0,0,0,0,
                                            0,1,0,0,0,
                                            0,0,1,0,0,
                                            0,0,0,1,0.0];
