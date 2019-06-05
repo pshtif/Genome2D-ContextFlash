@@ -378,7 +378,7 @@ class GStage3DContext implements IGDebuggableInternal implements IGFocusable
         g2d_defaultCamera = new GCamera(this);
         g2d_defaultCamera.x = g2d_stageViewRect.width*.5;
         g2d_defaultCamera.y = g2d_stageViewRect.height*.5;
-        g2d_activeViewRect = new GRectangle();
+        g2d_activeViewRect = new GRectangle(0, 0, 0, 0);
 
         // Frame handler
         g2d_nativeStage.addEventListener(Event.ENTER_FRAME, g2d_enterFrame_handler);
