@@ -19,21 +19,29 @@ class GProjectionMatrix extends Matrix3D
 
     private var g2d_vector:Vector<Float>;
 
-    public function new(v:Vector<Float> = null) {
-        super(v);
-        g2d_vector = Vector.ofArray([2.0  , 0.0  , 0.0          , 0.0,
-                                     0.0  , -2.0 , 0.0          , 0.0,
-                                     0.0  , 0.0  , 1/(FAR-NEAR) , -NEAR/(FAR-NEAR),
-                                     -1.0 , 1.0  , 0            , 1.0
-                                    ]);
+    public function new() {
+        super();
+
+        reset();
     }
 
-    static public function getOrtho(p_width:Float, p_height:Float, p_transform:Matrix3D = null):GProjectionMatrix {
+    static public function getOrtho(p_width:Float, p_height:Float, p_transform:Matrix3D):GProjectionMatrix {
         if (g2d_instance == null) g2d_instance = new GProjectionMatrix();
         return g2d_instance.ortho(p_width, p_height, p_transform);
     }
 
-    public function ortho(p_width:Float, p_height:Float, p_transform:Matrix3D = null):GProjectionMatrix {
+    public function reset():Void
+    {
+        g2d_vector = Vector.ofArray(
+            [2.0  , 0.0  , 0.0          , 0.0,
+            0.0  , -2.0 , 0.0          , 0.0,
+            0.0  , 0.0  , 1/(FAR-NEAR) , -NEAR/(FAR-NEAR),
+            -1.0 , 1.0  , 0            , 1.0
+            ]);
+        this.copyRawDataFrom(g2d_vector);
+    }
+    
+    public function ortho(p_width:Float, p_height:Float, p_transform:Matrix3D):GProjectionMatrix {
         g2d_vector[0] = 2 / p_width;
         g2d_vector[5] = -2 / p_height;
         this.copyRawDataFrom(g2d_vector);

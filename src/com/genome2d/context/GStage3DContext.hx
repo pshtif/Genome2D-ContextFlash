@@ -500,7 +500,7 @@ class GStage3DContext implements IGDebuggableInternal implements IGFocusable
                                  untyped __int__(g2d_stageViewRect.width * g2d_activeCamera.normalizedViewWidth),
                                  untyped __int__(g2d_stageViewRect.height * g2d_activeCamera.normalizedViewHeight));
 
-        g2d_activeCamera.matrix.ortho(g2d_stageViewRect.width, g2d_stageViewRect.height);
+        g2d_activeCamera.matrix.ortho(g2d_stageViewRect.width, g2d_stageViewRect.height, null);
         var vx:Float = g2d_activeViewRect.x + g2d_activeViewRect.width * .5;
         var vy:Float = g2d_activeViewRect.y + g2d_activeViewRect.height * .5;
 
