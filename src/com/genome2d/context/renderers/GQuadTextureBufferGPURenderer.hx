@@ -236,7 +236,8 @@ class GQuadTextureBufferGPURenderer implements IGRenderer
             alpha = untyped __int__(p_alpha*255);
         }
 
-		/**/
+		/*
+		*/
 		var w:Float = p_texture.width * p_scaleX;
 		var h:Float = p_texture.height * p_scaleY;
         var px:Float = p_texture.pivotX * p_scaleX;
@@ -389,7 +390,8 @@ class GQuadTextureBufferGPURenderer implements IGRenderer
 				g2d_transformVector[index + 12] = p_alpha;
 			}			
 		}
-		/**/
+		/*
+		*/
 		g2d_quadCount++;
 		
 		if (g2d_quadCount == BATCH_SIZE) push();
@@ -431,5 +433,6 @@ class GQuadTextureBufferGPURenderer implements IGRenderer
 		
 		g2d_activeTexture = null;
 	}
-	/**/
+	/*
+	*/
 }
