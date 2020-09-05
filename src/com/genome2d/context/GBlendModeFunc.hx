@@ -38,7 +38,8 @@ class GBlendModeFunc
 		
 		return blendFactors[0].length;
 	}
-	/**/
+	/*
+	*/
 	static public function setBlendMode(p_context:Context3D, p_mode:GBlendMode, p_premultiplied:Bool):Void {
 		var p:Int = (p_premultiplied) ? 1 : 0;
 		p_context.setBlendFactors(blendFactors[p][p_mode][0], blendFactors[p][p_mode][1]);
